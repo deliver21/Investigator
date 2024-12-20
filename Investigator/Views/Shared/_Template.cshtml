@@ -1,0 +1,38 @@
+﻿@model Template
+@section Stylesheets {
+    <link href="~/css/template.css" rel="stylesheet" />
+}
+<div class="container">
+    <div class="card">
+        <img src="@(Model != null ? $"https://drive.google.com/thumbnail?id={Model.ImageId}" : "https://via.placeholder.com/1200x300")"
+             class="card-img-top" alt="Event Image" style="max-height:100px">
+        <div class="card-body">
+            <h6 class="card-title text-center">@(Model != null && !string.IsNullOrEmpty(Model.Title) ? Model.Title : "Empty title") – Template</h6>
+            <hr>
+            <p class="text-center">
+                @(Model != null ? Html.Raw(Model.Description) : "")
+            </p>
+        </div>
+    </div>
+    <div class="mt-0">
+        <div id="questions" class="list-group">
+            @if (Model != null && Model.Questions.Count > 0)
+            {
+                foreach (var question in Model.Questions.OrderBy(q => q.Order))
+                {
+                    <div class="list-group-item m-1" data-question-id="@question.QuestionId">
+                        <input type="hidden" name="questions[@question.QuestionId].id" value="@question.QuestionId">
+                        <input type="text" name="questions[@question.QuestionId].text" value="@question.Text"
+                       placeholder="Question text" class="form-control mb-2 font-weight-bold" required>
+                        <select name="questions[@question.QuestionId].type" class="form-select" value="@question.Type">
+                            <option value="SingleLine">Single Line</option>
+                            <option value="MultiLine">Multi Line</option>
+                            <option value="Integer">Integer</option>
+                            <option value="CheckBox">CheckBox</option>
+                        </select>                        
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>

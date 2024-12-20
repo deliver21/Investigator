@@ -1,0 +1,91 @@
+﻿@model Template
+@{
+    IEnumerable<SelectListItem> visibilities = new List<SelectListItem>()
+    {
+        new SelectListItem{Value = "0" , Text = "Public"},
+        new SelectListItem{Value = "1" , Text = "Restricted"}
+    };
+}
+<div class="card shadow border-0 mb-5 mt-1 pt-1">
+    <div class="card-header bg-primary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white">@(Model != null ? "Update" : "Create") Template</h2>
+            </div>
+        </div>        
+    </div>
+    <div class="card-body pt-4">
+        <form method="post" class="row" enctype="multipart/form-data">
+            <div class=row> 
+                <div class="col-2 mt-4">
+                    <img src="@(Model != null ? $"https://drive.google.com/thumbnail?id={Model.ImageId}" : "")" 
+                    width="100%" style="border-radius:5px; border:1px solid #bbb9b9" />
+                </div>
+                <div class="col-10">
+                    <div class="border p-2 mt-4">
+                        <div asp-validation-summary="All" class="text-danger-emphasis"></div>
+                        <input asp-for="TemplateId" type="hidden" />
+                        <input asp-for="CreatorId" type="hidden"/>
+                        <div class="mb-3 form-floating col-12 bg-white">
+                            <input asp-for="Title" class="form-control border-0 shadow ps-lg-2" />
+                            <label asp-for="Title" class="p-0"></label>
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3 form-floating col-12 bg-white">rder-0 shadow ps-lg-2" />
+                            <select asp-for="Topic" asp-items="@ViewBag.RoleList" class="form-select border-0 shadow ps-lg-2">
+                                <option disabled selected>---Select Topic---</option>
+                            </select>
+                            <span asp-validation-for="Topic" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3 col-12">
+                            <label asp-for="Description" class="ms-2 text-muted"></label>
+                            <textarea data-bs-theme="light" asp-for="Description" class="form-control border-0 shadow ps-lg-4"></textarea>
+                        </div>
+                        <div class="mb-3 form-floating col-12">
+                            <input type="file" name="file" placeholder="" class="form-control border-0 shadow ps-lg-4" />
+                            <label asp-for="ImageId" class="ms-2"></label>
+                        </div>
+                        <div class="mb-3 form-floating col-12">
+                            <select asp-for="Visibility" asp-items="@visibilities" class="form-select border-0 shadow ps-lg-4">
+                                <option disabled selected>----Set Visibility----</option>
+                            </select>
+                            <label asp-for="Visibility" class="ms-2"></label>
+                            <span asp-validation-for="Visibility" class="text-danger"></span>
+                        </div>
+                        <div class="row pt-2">
+                            <div class="col-3 col-md-3">
+                                <button type="submit" class="btn btn-primary bg-info rounded-1" style="width:150px">
+                                    @(Model != null ? "Update" : "Create")
+                                </button>
+                            </div>
+                            <div class="col-6"></div>
+                            <div class="col-3 col-md-3 text-end">
+                                <a asp-controller="Template" asp-action="Index" class="btn btn-primary rounded-1">
+                                    Back to list
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        tinymce.init({
+            selector: 'textarea',
+            plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount linkchecker',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+            tinycomments_mode: 'embedded',
+            tinycomments_author: 'Author name',
+            mergetags_list: [
+                { value: 'First.Name', title: 'First Name' },
+                { value: 'Email', title: 'Email' },
+            ],
+            ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
+        });
+    </script>
+}

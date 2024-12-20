@@ -1,0 +1,72 @@
+﻿@model FormDto
+@{
+    ViewData["Title"] = "Generate form";
+    string? serializeData = JsonConvert.SerializeObject(Model);
+}
+<div class="form-container">
+    <div class="row pt-2">
+        <div class="col-3 col-md-3">
+            <a class="m-1 p-2 px-2 text-start text-center btn btn-sm btn-outline-info rounded-1" asp-area="Customer" asp-controller="Home" asp-action="Index">
+                <i class="bi bi-arrow-bar-left"></i> Back
+            </a>
+        </div>
+        <div class="col-6"></div>
+    </div>
+    <div class="card">
+        <img src="@(Model != null ? $"https://drive.google.com/thumbnail?id={Model.Template.ImageId}" : "https://via.placeholder.com/1200x300")"
+             class="card-img-top" alt="Event Image" style="max-height:100px; object-fit: cover;">
+        <div class="card-body">
+            <h3 class="card-title text-center">
+                @(Model != null && !string.IsNullOrEmpty(Model.Title) ? Model.Template.Title : "Empty title") – Form
+            </h3>
+            <hr>
+            <p class="text-center">
+                @(Model != null ? Html.Raw(Model.Description) : "")
+            </p>
+        </div>
+    </div>
+    <div id="questions-list" class="list-group">
+        @foreach (var question in Model.Questions.OrderBy(q => q.Order))
+        {
+            <div class="question-item list-group-item m-1" data-question-id="@question.QuestionId">
+                <input type="text" name="questions[@question.QuestionId].text" value="@question.Text"
+                   placeholder="Question text" class="form-control mb-2 font-weight-bold" required>
+                 <div class="response-container">
+                       @switch (question.Type)
+                       {
+                           case "SingleLine":
+                               <input type="text" class="form-control mb-1" placeholder="Response text" required="@(!question.IsOptional)" />
+                               break;
+                           case "MultiLine":
+                               <textarea class="form-control mb-1" placeholder="Response text" required="@(!question.IsOptional)"></textarea>
+                               break;
+                           case "Integer":
+                               <input type="number" class="form-control mb-1" placeholder="Response text" required="@(!question.IsOptional)" />
+                               break;
+                           case "CheckBox":
+                               foreach (var option in question.Options)
+                               {
+                                   <div class="form-check">
+                                       <input class="form-check-input" type="checkbox" id="@option.OptionId" />
+                                       <label class="form-check-label" for="@option.OptionId">@option.Text</label>
+                                   </div>
+                               }
+                               <button type="button" class="btn btn-sm btn-secondary add-option" data-question-id="@question.QuestionId">Add Option</button>
+                               <div class="new-options" data-question-id="@question.QuestionId"></div>
+                               break;
+                       }
+                 </div>
+                <button class="btn btn-sm btn-warning text-start toggle-required">@(question.IsOptional ? "Mark Required" : "Mark Optional")</button>
+                <button type="button" class="btn btn-sm btn-danger text-end m-1 delete-question">
+                    <i class="bi bi-file-earmark-x"></i> Delete Question
+                </button>
+            </div>
+        }
+    </div>
+    <button id="add-question" class="btn btn-primary">Add Question</button>
+    <button id="save-form" class="btn btn-success">Save Form</button>
+</div>
+@section Scripts{
+    <script src="~/js/form.js"></script>
+}
+

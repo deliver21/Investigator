@@ -1,0 +1,95 @@
+﻿@inject IViewLocalizer localizer
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Investigator</title>
+    <link rel="icon" type="image/svg" href="~/Images/Icon/binoculars-fill.svg" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Investigator.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.1/css/dataTables.dataTables.css" />
+    <link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
+    @RenderSection("Stylesheets", required: false)
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-primary border-bottom box-shadow mb-1" data-bs-theme="dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="Customer" asp-controller="Home" asp-action="Index"><i class="bi bi-binoculars-fill"></i> Investigator</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="Customer" asp-controller="Home" asp-action="Index">@localizer["Home"]</a>
+                        </li>
+@*                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="Customer" asp-controller="Template" asp-action="Create">@localizer["Privacy"]</a>
+                        </li>*@
+                        @if(User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Content Management
+                                </a>
+                                <ul class="dropdown-menu m-0" aria-labelledby="navbarDropdownMenuLink">
+                                    <li class="nav-item">
+                                        <a class="dropdown-item text-white" asp-area="Admin" asp-controller="Tag" asp-action="Index">Tags</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="dropdown-item text-white" asp-area="Admin" asp-controller="Template" asp-action="Index">Templates</a>
+                                    </li>
+                                    @if(User.IsInRole(SD.AdminRole))
+                                    {
+                                        <li class="nav-item">
+                                            <a class="dropdown-item text-white" asp-area="Admin" asp-controller="User" asp-action="Index">@localizer["UserManagement"]</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="dropdown-item text-white" asp-area="Identity" asp-page="/Account/Register">Create User</a>
+                                        </li>
+                                    }                                   
+                                </ul>
+                            </li>
+                        }                       
+                    </ul>  
+                   @* @if (User.Identity.IsAuthenticated)
+                    {
+                        <form id="findFriendForm" asp-area="Admin" asp-controller="Template" asp-action="GetTemplate"  method="post" class="d-flex">
+                            <input name="searchTemplate" class="form-control me-sm-2" type="search" placeholder="Find a template">
+                            <button type="submit" class="btn btn-outline-light">Search</button>
+                        </form>
+                    }*@                 
+                     <partial name="_loginPartial" />
+                     <partial name="_Culture" />
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="mt-0 mb-2">
+            <partial name="_Notification" />
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted text-center">
+        <div class="container">
+            &copy; 2024 - <i class="bi bi-binoculars-fill"></i> Investigator @localizer["By"] MateCode
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.tiny.cloud/1/ei3qt01vmoxkc2r64pas61zsqslghnmw69ebzkulyr0lq3yz/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js" integrity="sha512-lbwH47l/tPXJYG9AcFNoJaTMhGvYWhVM9YI43CT+uteTRRaiLCui8snIgyAN8XWgNjNhCqlAUdzZptso6OCoFQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.datatables.net/2.0.1/js/dataTables.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,52 @@
+﻿@model IEnumerable<TemplateTag>
+@{
+    ViewData["Title"] = "Templates";
+}
+<div class="card shadow border-0 mb-5 mt-5">
+    <div class="card-header bg-primary bg-gradient ml-0">
+        <div class="row">
+            <div class="col-4"></div>
+            <div class="col-lg-4 col-sm-6 text-center pt-2">
+                <h3 class="text-white">Tags List</h3>
+            </div>
+            <div class="col-lg-4 col-sm-6 text-end pt-2">
+                <a asp-controller="Tag" asp-action="Upsert" class="btn btn-dark">
+                    <i class="bi bi-plus-circle"></i>  Create Tag
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <table id="tblData" class="table table-bordered table-striped table-hover" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Tag Name</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var row in Model)
+            {
+            <tr>
+            <td class="custom-medium-text">@row.TagName</td>
+            <td>
+            <div class="w-50 btn-group" role="group">
+            <a asp-area="Admin" asp-controller="Tag" asp-action="Upsert" asp-route-tagId="@row.TagId" class="btn btn-primary mx-2 custom-medium-text">
+            <i class="bi bi-pencil-square"></i> Edit
+            </a>
+            </div>
+            </td>
+            <td>
+            <div class="w-50 btn-group" role="group">
+            <a asp-area="Admin" asp-controller="Tag" asp-action="Delete" asp-route-tagId="@row.TagId" class="btn btn-danger mx-2">
+            <i class="bi bi-trash-fill"></i> Delete
+            </a>
+            </div>
+            </td>
+            </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

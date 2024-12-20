@@ -1,0 +1,79 @@
+﻿@model TemplateVM
+@{ 
+    ViewData["Title"] = "Home Page";
+}
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+@section Stylesheets {
+    <link href="~/css/template.css" rel="stylesheet" />
+}
+<section class="template py-3 mt-0">
+    <div class="row text-white text-end">
+        <div class="col">
+            <a asp-area="Customer" asp-controller="Home" asp-action="ExtendTemplates" class="btn btn-primary rounded-1 display-6">
+                Template Gallery <i class="bi bi-arrows-expand"></i>
+            </a>
+        </div>        
+    </div>
+    <div class="row">
+        <h6 class="fs-5">Create Template</h6>
+        <div class="d-flex gap-3">
+            
+            <div class="card text-center shadow-sm" style="width: 12rem;">
+                <a asp-area="Admin" asp-controller="Template" asp-action="Upsert" class="text-decorative" style="height:400px;">
+                    <div class="card-body" style="margin-top:45%">
+                         <div class="text-primary mt-5 display-4">
+                             <i class="bi bi-clipboard2-plus"></i>
+                         </div>
+                         <p class="card-text">Blank Template</p>
+                     </div>    
+                </a>
+            </div>
+           
+            @foreach (var template in Model.Template)
+            {
+                <div class="card shadow-sm p-1" style="width: 15rem; max-height:400px">
+                    <div class="card-body border-opacity-10" style="object-fit:cover">
+                        <partial name="_Template" model="@template"/>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-sm-7 col-md-8 text-start">
+                            <a asp-area="Admin" asp-controller="Form" asp-action="Generate" asp-route-templateId="@template.TemplateId" class="btn btn-info rounded-1 p-2 py-1" style="font-size:9px">
+                                Generate form
+                            </a>
+                        </div>
+                        <div class="col-sm-5 col-md-4 text-end">
+                            <a class="btn btn-primary rounded-circle p-2 py-1" asp-area="Customer" asp-controller="Home" asp-action="GetDetails" asp-route-templateId="@template.TemplateId" title="Template Details"><i class="bi bi-info-circle"></i></a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+<section class="recentForm bg-light p-3 m-3">
+    <div class="container-fluid" style ="min-height:250px;">
+        <div class="row">
+            <h5 class="fs-5">Recent Forms</h5>
+            @foreach(var form in Model.Form)
+            {
+                <div class="col-12 p-1">
+                    <div class="card border-0 p-3 shadow border-top border-5 rounded text-center">
+                        <div class="card text-center shadow-sm" style="width: 15rem;">
+                            <img src="@(Model != null ? $" https: //drive.google.com/thumbnail?id ={form.Template.ImageId}" : "https://via.placeholder.com/1200x300" )" class="card-img-top" alt="Recent Form">
+                            <div class="card-body">
+                                <p class="card-text">@form.Title - Response Form</p>
+                                <div class="row mt-4">
+                                    <div class="col-sm-7 col-md-8 text-start">
+                                    </div>
+                                    <div class="col-sm-5 col-md-4 text-end">
+                                        <a class="btn btn-primary rounded-circle p-2 py-1" asp-area="Customer" asp-controller="Home" asp-action="GetDetails" asp-route-templateId="@form.FormId" title="Template Details"><i class="bi bi-info-circle"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>    
+</section>

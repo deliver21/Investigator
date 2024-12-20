@@ -1,0 +1,53 @@
+﻿﻿@{
+    ViewData["Title"] = "UserManagement";
+}
+<div class="card shadow border-0 mb-3">
+    <div class="card-header bg-body-tertiary bg-gradient">
+        <div class="row m-2">
+            <h3 class="text-primary text-center mt-1 mb-2">Users List</h3>
+            <div class="col-md-4 col-sm-6 text-start m-2">
+
+                <a id="bulkLockButton" class="btn btn-outline-warning m-1 rounded-1"
+                   data-bs-toggle="tooltip" data-bs-placement="auto"
+                   title="Use this button to block users">
+                    <i class="bi bi-person-lock"></i>
+                </a>
+
+                <a id="bulkUnlockButton" class="btn btn-outline-info m-1 rounded-1"
+                   data-bs-toggle="tooltip" data-bs-placement="auto"
+                   title="Use this button to unlock users">
+                    <i class="bi bi-unlock"></i>
+                </a>
+
+                <a id="bulkDeleteButton" class="btn btn-outline-danger m-1 rounded-1"
+                    data-bs-toggle="tooltip" data-bs-placement="auto"
+                   title="Delete selected users">
+                    <i class="bi bi-trash3"></i>
+                </a>
+
+            </div>
+        </div>
+    </div>
+    <div class="card-body pt-2">
+        <div class="table-responsive">
+            <table id="tblData" class="table table-bordered table-striped table-hover" style="width:100%; overflow:auto">
+                <thead>
+                    <tr>
+                        <th><input class="form-check-input text-info" type="checkbox" id="flexCheckBoxes"></th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Last seen</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        
+    </div>
+</div>
+
+
+@section Scripts
+{
+    <script src="~/js/user.js"></script>
+}
