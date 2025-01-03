@@ -1,97 +1,43 @@
 ﻿@model IEnumerable<Template>
 @using Investigator.Utilities;
+
 <div class="row pb-5 mt-5 mb-1">
-    @if(Model.Any(u => u.Topic == SD.PersonalTopic))
+    @if (Model.Any(u => u.Topic == SD.PersonalTopic))
     {
         <h6 class="fs-5">@SD.PersonalTopic</h6>
-        @foreach (var template in Model.Where(u => u.Topic == SD.PersonalTopic))
-        {
-            <div class="col-lg-3 col-sm-6">
-                <div class="row p-2">
-                    <div class="col-12 p-1">
-                        <div class="card border-0 p-3 shadow border-top border-5 rounded text-center ">
-                            <div class="card shadow-sm p-1" style="width: 15rem; max-height:400px">
-                                <div class="card-body border-opacity-10" style="object-fit:cover">
-                                    <partial name="_Template" model="@template" />
-                                </div>
-                                <div class="row mt-4">
-                                    <div class="col-sm-7 col-md-8 text-start">
-                                        <a asp-area="Admin" asp-controller="Form" asp-action="Generate" asp-route-templateId="@template.TemplateId" class="btn btn-info rounded-1 p-2 py-1" style="font-size:9px">
-                                            Generate form
-                                        </a>
-                                    </div>
-                                    <div class="col-sm-5 col-md-4 text-end">
-                                        <a class="btn btn-primary rounded-circle p-2 py-1" asp-area="Customer" asp-controller="Home" asp-action="GetDetails" asp-route-templateId="@template.TemplateId" title="Template Details"><i class="bi bi-info-circle"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
+        <div class="row">
+            @foreach (var template in Model.Where(u => u.Topic == SD.PersonalTopic))
+            {
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    @Html.Partial("_Template", template)
                 </div>
-            </div>
-        }
+            }
+        </div>
     }
+
     @if (Model.Any(u => u.Topic == SD.EducationTopic))
     {
         <h6 class="fs-5">@SD.EducationTopic</h6>
-        @foreach (var template in Model.Where(u => u.Topic == SD.EducationTopic))
-        {
-            <div class="col-lg-3 col-sm-6">
-                <div class="row p-2">
-                    <div class="col-12 p-1">
-                        <div class="card border-0 p-3 shadow border-top border-5 rounded text-center ">
-                            <div class="card shadow-sm p-1" style="width: 15rem; max-height:400px">
-                                <div class="card-body border-opacity-10" style="object-fit:cover">
-                                    <partial name="_Template" model="@template" />
-                                </div>
-                                <div class="row mt-4">
-                                    <div class="col-sm-7 col-md-8 text-start">
-                                        <a asp-area="Admin" asp-controller="Form" asp-action="Generate" asp-route-templateId="@template.TemplateId" class="btn btn-info rounded-1 p-2 py-1" style="font-size:9px">
-                                            Generate form
-                                        </a>
-                                    </div>
-                                    <div class="col-sm-5 col-md-4 text-end">
-                                        <a class="btn btn-primary rounded-circle p-2 py-1" asp-area="Customer" asp-controller="Home" asp-action="GetDetails" asp-route-templateId="@template.TemplateId" title="Template Details"><i class="bi bi-info-circle"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
+        <div class="row">
+            @foreach (var template in Model.Where(u => u.Topic == SD.EducationTopic))
+            {
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    @Html.Partial("_Template", template)
                 </div>
-            </div>
-        }
+            }
+        </div>
     }
+
     @if (Model.Any(u => u.Topic == SD.ProfessionalTopic))
     {
         <h6 class="fs-5">@SD.ProfessionalTopic</h6>
-        @foreach (var template in Model.Where(u => u.Topic == SD.ProfessionalTopic))
-        {
-            <div class="col-lg-3 col-sm-6">
-                <div class="row p-2">
-                    <div class="col-12 p-1">
-                        <div class="card border-0 p-3 shadow border-top border-5 rounded text-center ">
-                            <div class="card shadow-sm p-1" style="width: 15rem; max-height:400px">
-                                <div class="card-body border-opacity-10" style="object-fit:cover">
-                                    <partial name="_Template" model="@template" />
-                                </div>
-                                <div class="row mt-4">
-                                    <div class="col-sm-7 col-md-8 text-start">
-                                        <a asp-area="Admin" asp-controller="Form" asp-action="Generate" asp-route-templateId="@template.TemplateId" class="btn btn-info rounded-1 p-2 py-1" style="font-size:9px">
-                                            Generate form
-                                        </a>
-                                    </div>
-                                    <div class="col-sm-5 col-md-4 text-end">
-                                        <a class="btn btn-primary rounded-circle p-2 py-1" asp-area="Customer" asp-controller="Home" asp-action="GetDetails" asp-route-templateId="@template.TemplateId" title="Template Details"><i class="bi bi-info-circle"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
+        <div class="row">
+            @foreach (var template in Model.Where(u => u.Topic == SD.ProfessionalTopic))
+            {
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    @Html.Partial("_Template", template)
                 </div>
-            </div>
-        }
-    }    
+            }
+        </div>
+    }
 </div>

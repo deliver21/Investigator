@@ -36,7 +36,7 @@ namespace Investigator.Controllers
             }
             TemplateVM = new()
             {
-                Template = _unit.Template.GetAll(u => u.Visibility == 0, "Questions").Take(4),
+                Template = _unit.Template.GetAll(u => u.Visibility == 0, "Questions").Take(5),
                 Form = userId != null ? _unit.Form.GetAll(u => u.CreatorId == userId) : new List<Form>()
             };
             return View(TemplateVM);

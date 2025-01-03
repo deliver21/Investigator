@@ -21,16 +21,57 @@ body {
   margin-bottom: 60px;
 }
 
-/* Styling for rows of blocked users */
 .blocked-row {
-    background-color: #f8f9fa; /* Optional: Light gray background */
+    background-color: #f8f9fa; 
 }
 
-    .blocked-row td {
-        opacity: 0.6; /* Make all text in the row semi-transparent */
-    }
+.blocked-row td {
+    opacity: 0.6; 
+}
 
-    .blocked-row span.name-field {
-        text-decoration: line-through; /* Strikethrough the name field */
-        opacity: 1; /* Keep the name field fully visible */
+.blocked-row span.name-field {
+    text-decoration: line-through;
+    opacity: 1;
+}
+card-menu-body {
+    object-fit: cover
+}
+
+.card {
+    border-radius: 8px;
+}
+
+.card img {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    object-fit: cover;
+    width: 100%;
+}
+
+.card-text {
+    margin: 0;
+}
+
+.text-primary {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+nav input {
+    font-size: 12px;
+}
+
+/* Responsive Design */
+@media (min-width: 576px) {
+    .card-menu {
+        width: 12rem;
+        max-height: 300px;
     }
+}
+
+@media (min-width: 768px) {
+    .card-menu {
+        width: 15rem;
+        max-height: 350px;
+    }
+}

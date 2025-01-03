@@ -1,4 +1,4 @@
-﻿input::placeholder {
+﻿/*input::placeholder {
     font-size: 10px;
 }
 html{
@@ -44,4 +44,32 @@ body {
 .text-primary {
     font-size: 2rem;
     font-weight: bold;
+}*/
+/* Template-Specific Styles */
+input::placeholder {
+    font-size: 10px;
 }
+
+.container {
+    font-size: 12px;
+    height: auto;
+    width: 100%;
+    overflow: visible;
+}
+
+input {
+    height: auto;
+    width: 100%;
+}
+
+.card-body {
+    height: auto;
+    overflow: visible;
+}
+
+/* Adjustments for better responsiveness */
+.card img {
+    height: auto;
+    max-height: 120px;
+}
+
