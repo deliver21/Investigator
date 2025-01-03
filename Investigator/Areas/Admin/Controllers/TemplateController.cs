@@ -26,8 +26,8 @@ namespace Investigator.Areas.Admin.Controllers
         }
         [Authorize]
         [IsBlockedAuthorize]
-        public IActionResult Index()
-        {            
+        public IActionResult Index(string ? status)
+        {   
             return View();
         }
         [Authorize]
@@ -93,12 +93,24 @@ namespace Investigator.Areas.Admin.Controllers
         }
 
         #region Api's Calls
+        
+        [Authorize]
+        [IsBlockedAuthorize]
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetAll(string status)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-            List<Template> templates = _unit.Template.GetAll(u => u.CreatorId == userId, null).ToList();
+            List<Template> templates = new List<Template>();
+
+            if(status == "allTemplate" && User.IsInRole(SD.AdminRole))
+            {
+                templates = _unit.Template.GetAll().ToList();
+            }
+            else
+            {
+                templates = _unit.Template.GetAll(u => u.CreatorId == userId, null).ToList();
+            }            
             return Json(new { data = templates });
         }
 

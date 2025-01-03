@@ -1,14 +1,19 @@
 ﻿let questionId = 0;
 var dataTable;
-
 $(document).ready(function () {
-    loadDataTable();
+    var url = window.location.search;
+    if (url.includes("allTemplate")) {
+        loadDataTable("allTemplate");
+    }
+    else {
+        loadDataTable("ownTemplate");
+    }
 });
 
-function loadDataTable() {
+function loadDataTable(status) {
     dataTable = $('#tblData').DataTable({
         "responsive": true,
-        "ajax": { url: '/admin/template/getall' },
+        "ajax": { url: '/admin/template/getall?status='+status },
         "columns": [
             { data: 'title', "width": "25%" },
             { data: 'topic', "width": "25%" },
