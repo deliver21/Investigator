@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Investigator.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class TagController : Controller
     {
         private readonly IUnitOfWork _unit;

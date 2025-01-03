@@ -1,6 +1,8 @@
 ﻿@model IEnumerable<Template>
 @using Investigator.Utilities;
-
+<a class="m-1 p-2 px-2 text-start text-center btn btn-sm btn-outline-info rounded-1" asp-area="Customer" asp-controller="Home" asp-action="Index">
+                <i class="bi bi-arrow-bar-left"></i> Back
+ </a>
 <div class="row pb-5 mt-5 mb-1">
     @if (Model.Any(u => u.Topic == SD.PersonalTopic))
     {

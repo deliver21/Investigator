@@ -12,6 +12,7 @@ using Investigator.Services;
 using AutoMapper;
 using Investigator.Models;
 using Microsoft.AspNetCore.Authorization;
+using Investigator.DbInitializer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,6 +71,7 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IFileSaver, FileSaver>();
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper); 
 
@@ -108,4 +110,14 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
+SeedDataBase();
+
 app.Run();
+void SeedDataBase()
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+        dbInitializer.Initialize();
+    }
+}

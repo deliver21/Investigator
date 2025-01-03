@@ -41,9 +41,13 @@ namespace Investigator.Controllers
             };
             return View(TemplateVM);
         }
-        public IActionResult ExtendTemplates()
+        public IActionResult ExtendTemplates(string? query)
         {
             IEnumerable<Template> templates = _unit.Template.GetAll(u => u.Visibility == 0, "Questions");
+            if (!string.IsNullOrEmpty(query))
+            {
+                templates = templates.Where(u => u.Title.Contains(query) || u.Description.Contains(query));
+            }            
             return View(templates);
         }
         private void IndexCulture()
