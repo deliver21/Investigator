@@ -16,7 +16,7 @@ input {
 
 .card-body {
     height: auto;
-    overflow: visible;
+    overflow: hidden;
 }
 
 /* Adjustments for better responsiveness */

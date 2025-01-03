@@ -31,7 +31,7 @@
             <div class="question-item list-group-item m-1" data-question-id="@question.QuestionId">
                 <input type="text" name="questions[@question.QuestionId].text" value="@question.Text"
                    placeholder="Question text" class="form-control mb-2 font-weight-bold" required>
-                 <div class="response-container">
+                <div class="response-container">
                        @switch (question.Type)
                        {
                            case "SingleLine":
@@ -51,8 +51,8 @@
                                        <label class="form-check-label" for="@option.OptionId">@option.Text</label>
                                    </div>
                                }
-                               <button type="button" class="btn btn-sm btn-secondary add-option" data-question-id="@question.QuestionId">Add Option</button>
-                               <div class="new-options" data-question-id="@question.QuestionId"></div>
+                            <button type="button" class="btn btn-sm btn-secondary add-option" data-question-id="@question.QuestionId">Add Option</button>
+                            <div class="new-options" data-question-id="@question.QuestionId"></div>
                                break;
                        }
                  </div>

@@ -37,7 +37,7 @@ function createQuestionElement() {
 
 function handleQuestionTypeChange(event, questionItem) {
     const responseContainer = questionItem.querySelector('.response-container');
-    responseContainer.innerHTML = ''; 
+    responseContainer.innerHTML = '';
 
     switch (event.target.value) {
         case 'SingleLine':
@@ -51,21 +51,31 @@ function handleQuestionTypeChange(event, questionItem) {
             break;
         case 'CheckBox':
             responseContainer.innerHTML = `
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="${questionCounter}-option-1">
-                    <label class="form-check-label" for="${questionCounter}-option-1">Option 1</label>
-                </div>
-                <button type="button" class="btn btn-sm btn-secondary add-option">Add Option</button>
+                <button type="button" class="btn btn-sm btn-secondary add-option" data-question-id="${questionItem.getAttribute('data-question-id')}">Add Option</button>
+                <div class="new-options" data-question-id="${questionItem.getAttribute('data-question-id')}"></div>
             `;
+            document.getElementById('questions-list').addEventListener('click', function (e) {
+                if (e.target && e.target.classList.contains('add-option')) {
+                    const button = e.target;
+                    const questionId = button.getAttribute('data-question-id');
+                    const container = document.querySelector(`.new-options[data-question-id="${questionId}"]`);
 
-            responseContainer.querySelector('.add-option').addEventListener('click', () => addCheckboxOption(responseContainer));
+                    if (!container) {
+                        console.error(`Container not found for questionId: ${questionId}`);
+                        return;
+                    }
+
+                    addCheckboxOption(container, questionId);
+                }
+            });
             break;
     }
 }
 
-function addCheckboxOption(container) {
+
+function addCheckboxOption(container, questionId) {
     const optionCount = container.querySelectorAll('.form-check').length + 1;
-    const optionId = `${questionCounter}-option-${optionCount}`;
+    const optionId = `${questionId}-option-${optionCount}`;
 
     const optionElement = document.createElement('div');
     optionElement.className = 'form-check';
@@ -74,8 +84,9 @@ function addCheckboxOption(container) {
         <label class="form-check-label" for="${optionId}">Option ${optionCount}</label>
     `;
 
-    container.insertBefore(optionElement, container.querySelector('.add-option'));
+    container.appendChild(optionElement);
 }
+
 
 function toggleRequired(event) {
     const button = event.target;
