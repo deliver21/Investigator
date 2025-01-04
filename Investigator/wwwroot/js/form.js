@@ -64,6 +64,9 @@ function handleQuestionTypeChange(event, questionItem) {
                         console.error(`Container not found for questionId: ${questionId}`);
                         return;
                     }
+                    else {
+                        console.log('it works !');
+                    }
 
                     addCheckboxOption(container, questionId);
                 }
