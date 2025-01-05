@@ -62,6 +62,12 @@ nav input {
 }
 
 /* Responsive Design */
+@media (max-width: 576px) {
+    .card-menu {
+        width: 11rem;
+        max-height: 250px;
+    }
+}
 @media (min-width: 576px) {
     .card-menu {
         width: 12rem;
@@ -71,7 +77,7 @@ nav input {
 
 @media (min-width: 768px) {
     .card-menu {
-        width: 15rem;
+        width: 14rem;
         max-height: 350px;
     }
 }

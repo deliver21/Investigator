@@ -123,13 +123,19 @@
   <data name="Contentmanagement" xml:space="preserve">
     <value>Content Management</value>
   </data>
+  <data name="Createuser" xml:space="preserve">
+    <value>Create User</value>
+  </data>
   <data name="Home" xml:space="preserve">
     <value>Home</value>
   </data>
   <data name="Privacy" xml:space="preserve">
     <value>Privacy</value>
   </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
   <data name="Usermanagement" xml:space="preserve">
-    <value>Gestion d'utilisateurs</value>
+    <value>User Management</value>
   </data>
 </root>
