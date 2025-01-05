@@ -20,7 +20,7 @@ function loadDataTable(status) {
             {
                 data: "templateId",
                 "render": function (data) {
-                    return `<div class="w-50 btn-group" role="group" style="font-size:12px">
+                    return `<div class="w-50 btn-group" role="group" style="font-size:12px;">
                                     <a id="templateField" href="/Admin/Template/ManageQuestions?id=${data}" class="btn btn-primary mx-2 rounded-1">
                                         <i class="bi bi-pencil-square"></i> <span style="font-size:12px"> Manage questions</span>
                                     </a>
