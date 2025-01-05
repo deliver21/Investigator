@@ -120,10 +120,16 @@
   <data name="By" xml:space="preserve">
     <value>By</value>
   </data>
+  <data name="Contentmanagement" xml:space="preserve">
+    <value>Content Management</value>
+  </data>
   <data name="Home" xml:space="preserve">
     <value>Home</value>
   </data>
   <data name="Privacy" xml:space="preserve">
     <value>Privacy</value>
+  </data>
+  <data name="Usermanagement" xml:space="preserve">
+    <value>Gestion d'utilisateurs</value>
   </data>
 </root>

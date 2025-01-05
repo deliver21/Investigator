@@ -32,30 +32,33 @@
                 <input type="text" name="questions[@question.QuestionId].text" value="@question.Text"
                    placeholder="Question text" class="form-control mb-2 font-weight-bold" required>
                 <div class="response-container">
-                       @switch (question.Type)
-                       {
-                           case "SingleLine":
-                               <input type="text" class="form-control mb-1" placeholder="Response text" required="@(!question.IsOptional)" />
-                               break;
-                           case "MultiLine":
-                               <textarea class="form-control mb-1" placeholder="Response text" required="@(!question.IsOptional)"></textarea>
-                               break;
-                           case "Integer":
-                               <input type="number" class="form-control mb-1" placeholder="Response text" required="@(!question.IsOptional)" />
-                               break;
-                           case "CheckBox":
-                               foreach (var option in question.Options)
-                               {
-                                   <div class="form-check">
-                                       <input class="form-check-input" type="checkbox" id="@option.OptionId" />
-                                       <label class="form-check-label" for="@option.OptionId">@option.Text</label>
-                                   </div>
-                               }
-                            <button type="button" class="btn btn-sm btn-secondary add-option" data-question-id="@question.QuestionId">Add Option</button>
-                            <div class="new-options" data-question-id="@question.QuestionId"></div>
-                               break;
-                       }
-                 </div>
+                    @switch (question.Type)
+                    {
+                        case "SingleLine":
+                            <input type="text" class="form-control mb-1" placeholder="Response text" required="@(!question.IsOptional)" />
+                            break;
+                        case "MultiLine":
+                            <textarea class="form-control mb-1" placeholder="Response text" required="@(!question.IsOptional)"></textarea>
+                            break;
+                        case "Integer":
+                            <input type="number" class="form-control mb-1" placeholder="Response text" required="@(!question.IsOptional)" />
+                            break;
+                        case "CheckBox":
+                         <div class="form-check">
+                             <button type="button" class="btn btn-sm btn-secondary mb-1 add-option" data-question-id="@question.QuestionId">Add Option</button>
+                             <div class="new-options my-1" data-question-id="@question.QuestionId">
+                                 @foreach (var option in question.Options)
+                                 {
+                                      <input class="form-check-input" type="checkbox" id="@option.OptionId">
+                                      <input class="form-control form-check-label" type="text" value="@option.Text" placeholder="Enter option text"
+                                      data-option-id="@option.OptionId" style="display: inline-block; width: auto; margin-left: 10px;" />
+                                 }
+                             </div>
+                         </div>                         
+                         
+                            break;
+                    }
+                </div>
                 <button class="btn btn-sm btn-warning text-start toggle-required">@(question.IsOptional ? "Mark Required" : "Mark Optional")</button>
                 <button type="button" class="btn btn-sm btn-danger text-end m-1 delete-question">
                     <i class="bi bi-file-earmark-x"></i> Delete Question
@@ -69,4 +72,5 @@
 @section Scripts{
     <script src="~/js/form.js"></script>
 }
+
 

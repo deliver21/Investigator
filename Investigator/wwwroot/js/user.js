@@ -1,7 +1,7 @@
 ﻿var dataTable;
 
 $(document).ready(function () {
-    loadDataTable(); ``
+    loadDataTable();
 });
 
 function loadDataTable() {

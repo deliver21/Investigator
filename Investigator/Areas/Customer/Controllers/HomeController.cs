@@ -46,7 +46,7 @@ namespace Investigator.Controllers
             IEnumerable<Template> templates = _unit.Template.GetAll(u => u.Visibility == 0, "Questions");
             if (!string.IsNullOrEmpty(query))
             {
-                templates = templates.Where(u => u.Title.Contains(query) || u.Description.Contains(query));
+                templates = templates.Where(u => u.Title.ToUpper().Contains(query.ToUpper()) || u.Description.ToUpper().Contains(query.ToUpper()));
             }            
             return View(templates);
         }

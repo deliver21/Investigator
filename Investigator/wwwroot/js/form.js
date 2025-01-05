@@ -51,8 +51,8 @@ function handleQuestionTypeChange(event, questionItem) {
             break;
         case 'CheckBox':
             responseContainer.innerHTML = `
-                <button type="button" class="btn btn-sm btn-secondary add-option" data-question-id="${questionItem.getAttribute('data-question-id')}">Add Option</button>
-                <div class="new-options" data-question-id="${questionItem.getAttribute('data-question-id')}"></div>
+                <button type="button" class="btn btn-sm btn-secondary mb-1 add-option" data-question-id="${questionItem.getAttribute('data-question-id')}">Add Option</button>
+                <div class="new-options my-2" data-question-id="${questionItem.getAttribute('data-question-id')}"></div>
             `;
             document.getElementById('questions-list').addEventListener('click', function (e) {
                 if (e.target && e.target.classList.contains('add-option')) {
@@ -75,7 +75,6 @@ function handleQuestionTypeChange(event, questionItem) {
     }
 }
 
-
 function addCheckboxOption(container, questionId) {
     const optionCount = container.querySelectorAll('.form-check').length + 1;
     const optionId = `${questionId}-option-${optionCount}`;
@@ -84,7 +83,14 @@ function addCheckboxOption(container, questionId) {
     optionElement.className = 'form-check';
     optionElement.innerHTML = `
         <input class="form-check-input" type="checkbox" id="${optionId}">
-        <label class="form-check-label" for="${optionId}">Option ${optionCount}</label>
+        <input 
+            class="form-control form-check-label" 
+            type="text" 
+            value="Option ${optionCount}" 
+            placeholder="Enter option text" 
+            data-option-id="${optionId}" 
+            style="display: inline-block; width: auto; margin-left: 10px;"
+        />
     `;
 
     container.appendChild(optionElement);

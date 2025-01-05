@@ -117,11 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ASoftwareToQuestion" xml:space="preserve">
-    <value>Un logiciel permettant d'interroger</value>
-  </data>
   <data name="By" xml:space="preserve">
     <value>Par</value>
+  </data>
+  <data name="Contentmanagement" xml:space="preserve">
+    <value>Gestion des contenus</value>
   </data>
   <data name="CreateTemplate" xml:space="preserve">
     <value>Créer un modele</value>
@@ -135,13 +135,7 @@
   <data name="Signin" xml:space="preserve">
     <value>Se Connecter</value>
   </data>
-  <data name="UserManagement" xml:space="preserve">
+  <data name="Usermanagement" xml:space="preserve">
     <value>Gestionnaire d'utilisateurs</value>
-  </data>
-  <data name="UsersOnTheInternet" xml:space="preserve">
-    <value>les utilisateurs sur internet.</value>
-  </data>
-  <data name="WelcomeTo" xml:space="preserve">
-    <value>Bienvenue à</value>
   </data>
 </root>
