@@ -1,14 +1,15 @@
 ﻿@model Template
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
 <input type="hidden" id="templateId" value="@Model.TemplateId" hidden>
 <div class="container mb-2">
     <a class="m-1 p-2 px-2 text-start text-center btn  btn-sm btn-outline-info" asp-area="Admin" asp-controller="Template" asp-action="Index">
-        <i class="bi bi-arrow-bar-left"></i> Back
+        <i class="bi bi-arrow-bar-left"></i> @localizer["Back"]
     </a>
     <div class="card">
         <img src="@(Model != null ? $"https://drive.google.com/thumbnail?id={Model.ImageId}" : "https://via.placeholder.com/1200x300")"
              class="card-img-top" alt="Event Image" style="max-height:100px; object-fit: cover;">
         <div class="card-body">
-            <h3 class="card-title text-center">@(Model !=null && !string.IsNullOrEmpty(Model.Title)? Model.Title : "Empty title") – Template</h3>
+            <h3 class="card-title text-center">@(Model != null && !string.IsNullOrEmpty(Model.Title) ? Model.Title : localizer["Emptytitle"]) – Template</h3>
             <hr>
             <p class="text-center">
                 @(Model != null ? Html.Raw(Model.Description) :"")
@@ -37,7 +38,7 @@
                             @(question.IsOptional ? "Mark as Required" : "Mark as Optional")
                         </button>
                         <button type="button" class="btn btn-sm btn-danger text-end m-1">
-                            <i class="bi bi-file-earmark-x"></i> Delete Question
+                            <i class="bi bi-file-earmark-x"></i> @localizer["Deletequestion"]
                         </button>
                     </div>
                 }
@@ -46,8 +47,8 @@
     </div>
 
     <!-- Add and Save Buttons -->
-    <button id="addQuestion" class="btn btn-info mt-3 rounded-1"><i class="bi bi-file-plus"></i> Add Question</button>
-    <button id="saveQuestions" class="btn btn-primary mt-3 rounded-1"><i class="bi bi-floppy"></i> Save Questions</button>
+    <button id="addQuestion" class="btn btn-info mt-3 rounded-1"><i class="bi bi-file-plus"></i> @localizer["Addquestion"]</button>
+    <button id="saveQuestions" class="btn btn-primary mt-3 rounded-1"><i class="bi bi-floppy"></i> @localizer["Savequestions"]</button>
 </div>
 
 @section Scripts

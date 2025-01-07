@@ -7,6 +7,7 @@ using Investigator.Services.IServices;
 using Investigator.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Localization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
 
@@ -15,20 +16,29 @@ namespace Investigator.Areas.Admin.Controllers
     [Area("Admin")]
     public class TemplateController : Controller
     {
+        private readonly IHtmlLocalizer<TemplateController> _localizer;
         private readonly IUnitOfWork _unit;
         private readonly IFileSaver _fileSaver;
         private IMapper _mapper;       
-        public TemplateController(IUnitOfWork unit, IFileSaver fileSaver, IMapper mapper) 
+        public TemplateController(IUnitOfWork unit, IFileSaver fileSaver, IMapper mapper, IHtmlLocalizer<TemplateController> localizer) 
         {
             _unit = unit;
             _fileSaver = fileSaver;
             _mapper = mapper;
+            _localizer = localizer;
         }
         [Authorize]
         [IsBlockedAuthorize]
         public IActionResult Index(string ? status)
-        {   
+        {
+            LocalizeTemplateTable();
             return View();
+        }
+        private void LocalizeTemplateTable()
+        {
+            ViewBag.ManageQuestions = _localizer["Managequestions"];
+            ViewBag.EditTemplateHeader = _localizer["Edittemplateheader"];
+            ViewBag.DeleteTemplate = _localizer["Deletetemplate"];
         }
         [Authorize]
         [IsBlockedAuthorize]

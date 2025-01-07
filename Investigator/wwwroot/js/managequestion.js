@@ -26,8 +26,7 @@ document.getElementById("questions").addEventListener("click", (e) => {
         const questionItem = e.target.closest(".list-group-item");
         const questionId = parseInt(questionItem.dataset.questionId, 10);
 
-        if (questionId > 0) {
-            // Send a DELETE request to the API endpoint
+        if (questionId > 0) {            
             fetch(`/DeleteQuestion/${questionId}`, {
                 method: "DELETE",
             })
@@ -38,7 +37,7 @@ document.getElementById("questions").addEventListener("click", (e) => {
                     return response.json();
                 })
                 .then(() => {
-                    // Remove the question from the UI
+                    
                     questionItem.remove();
                 })
                 .catch((error) => {
@@ -46,7 +45,6 @@ document.getElementById("questions").addEventListener("click", (e) => {
                     alert("Failed to delete question. Please try again.");
                 });
         } else {
-            // If questionId is 0, simply remove it from the UI
             questionItem.remove();
         }
     }

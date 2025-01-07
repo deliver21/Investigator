@@ -77,7 +77,7 @@ namespace Investigator.Areas.Admin.Controllers
         [IsBlockedAuthorize]
         [HttpPost("save")]
 
-        public async Task<IActionResult> SaveForm([FromBody] FormDto form)
+        public IActionResult SaveForm([FromBody] FormDto form)
         {
             if (form == null) return BadRequest("Invalid form data.");
             

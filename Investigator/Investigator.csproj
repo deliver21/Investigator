@@ -28,8 +28,6 @@
 
   <ItemGroup>
     <Folder Include="Resources\Areas\Admin\Views\Form\" />
-    <Folder Include="Resources\Areas\Admin\Views\User\" />
-    <Folder Include="Resources\Areas\Admin\Views\Template\" />
     <Folder Include="Resources\Areas\Admin\Views\Tag\" />
   </ItemGroup>
 

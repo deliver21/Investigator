@@ -1,5 +1,8 @@
 ﻿let questionId = 0;
 var dataTable;
+var manageQuestions = document.getElementById("manageQuestions").value;
+var editTemplateHeader = document.getElementById("editTemplateHeader").value;
+var deleteTemplate = document.getElementById("deleteTemplate").value;
 $(document).ready(function () {
     var url = window.location.search;
     if (url.includes("allTemplate")) {
@@ -10,7 +13,8 @@ $(document).ready(function () {
     }
 });
 
-function loadDataTable(status) {
+function loadDataTable(status) {    
+    
     dataTable = $('#tblData').DataTable({
         "responsive": true,
         "ajax": { url: '/admin/template/getall?status='+status },
@@ -22,13 +26,13 @@ function loadDataTable(status) {
                 "render": function (data) {
                     return `<div class="w-50 btn-group" role="group" style="font-size:12px;">
                                     <a id="templateField" href="/Admin/Template/ManageQuestions?id=${data}" class="btn btn-primary mx-2 rounded-1">
-                                        <i class="bi bi-pencil-square"></i> <span style="font-size:12px"> Manage questions</span>
+                                        <i class="bi bi-pencil-square"></i> <span style="font-size:12px"> ${manageQuestions} </span>
                                     </a>
                                      <a id="templateField" href="/Admin/Template/Upsert?id=${data}" class="btn btn-success mx-2 rounded-1">
-                                        <i class="bi bi-pencil-square"></i> <span style="font-size:12px"> Edit template header </span>
+                                        <i class="bi bi-pencil-square"></i> <span style="font-size:12px"> ${editTemplateHeader} </span>
                                     </a>
                                    <a id="templateField" onClick=Delete('/Admin/Template/Delete?id=${data}') class="btn btn-danger mx-2 rounded-1">
-                                        <i class="bi bi-trash-fill"></i> <span style="font-size:12px">Delete Template</span>
+                                        <i class="bi bi-trash-fill"></i> <span style="font-size:12px"> ${deleteTemplate} </span>
                                     </a>
                              </div>`
                 },

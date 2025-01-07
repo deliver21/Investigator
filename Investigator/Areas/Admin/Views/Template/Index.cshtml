@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Template list";
 }
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
 @{
     var status = Context.Request.Query["status"];
     var ownTemplate = "text-primary";
@@ -16,16 +17,19 @@
     }
 
 }
+<input type="hidden" id="manageQuestions" value="@ViewBag.ManageQuestions" />
+<input type="hidden" id="editTemplateHeader" value="@ViewBag.EditTemplateHeader" />
+<input type="hidden" id="deleteTemplate" value="@ViewBag.DeleteTemplate" />
 <div class="card shadow border-0 mb-5 mt-2">
     <div class="card-header bg-primary bg-gradient ml-0">
         <div class="row">
             <div class="col-4"></div>
             <div class="col-lg-4 col-sm-6 text-center pt-2">
-                <h3 class="text-white">Templates List</h3>
+                <h3 class="text-white">@localizer["Templateslist"]</h3>
             </div>
             <div class="col-lg-4 col-sm-6 text-end  pt-2">
                 <a asp-controller="Template" asp-action="Upsert" class="btn btn-dark rounded-1">
-                    <i class="bi bi-plus-circle"></i>  Create Template
+                    <i class="bi bi-plus-circle"></i>  @localizer["Createtemplate"]
                 </a>
             </div>
         </div>
@@ -39,12 +43,12 @@
                 <ul class="list-group list-group-horizontal-sm">
                     <a style="text-decoration:none ;" asp-area="Admin" asp-controller="Template" asp-action="Index" asp-route-status="allTemplate">
                     <li class="list-group-item @allTemplate" style="text-decoration:none ;max-height:35px; font-size:15px">
-                           All
+                            @localizer["All"]
                        </li>
                     </a>
                     <a style="text-decoration:none;" asp-area="Admin" asp-controller="Template" asp-action="Index" asp-route-status="ownTemplate">
                     <li class="list-group-item @ownTemplate" style="text-decoration:none ;max-height:35px; font-size:15px">
-                           my Template
+                            @localizer["Mytemplate"]
                        </li>
                     </a>
                 </ul>
@@ -54,8 +58,8 @@
             <table id="tblData" class="table table-bordered table-striped table-hover" style="width:100%; overflow:auto">
                 <thead>
                     <tr>
-                        <th>Title</th>
-                        <th>Topic</th>
+                        <th>@localizer["Title"]</th>
+                        <th>@localizer["Topic"]</th>
                         <th></th>
                     </tr>
                 </thead>
