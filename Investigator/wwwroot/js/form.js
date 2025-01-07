@@ -126,50 +126,43 @@ questionsDiv.addEventListener("drop", (e) => {
 
 document.getElementById('save-form').addEventListener('click', function () {
     console.log("We got inside");
-    const form = {
-        formId: parseInt(document.querySelector('[name="formId"]').value || "0"),
-        title: document.querySelector('.card-title').innerText.trim(),
-        description: document.querySelector('.card-body p').innerHTML.trim(),
-        templateId: parseInt(document.querySelector('[name="templateId"]').value || "0"),
-        creatorId: document.querySelector('[name="creatorId"]').value || "",
-        questions: []
-    };
-    if (form.questions.length > 0) {
-        console.log("The questions are collected");
-    }
 
+    const formData = new FormData();
+
+    formData.append('formId', parseInt(document.querySelector('[name="formId"]').value || "0"));
+    formData.append('title', document.querySelector('.card-title').innerText.trim());
+    formData.append('description', document.querySelector('.card-body p').innerHTML.trim());
+    formData.append('templateId', parseInt(document.querySelector('[name="templateId"]').value || "0"));
+    formData.append('creatorId', document.querySelector('[name="creatorId"]').value || "");
+
+    
     const questionElements = document.querySelectorAll('.question-item');
     questionElements.forEach((questionElement, index) => {
-        const questionId = parseInt(questionElement.dataset.questionId || "0"); 
+        const questionId = parseInt(questionElement.dataset.questionId || "0");
         const text = questionElement.querySelector('input[name^="questions"]').value.trim();
         const type = questionElement.querySelector('input[type="text"],textarea,select,input[type="checkbox"]')?.type || "Unknown";
         const isOptional = questionElement.querySelector('.toggle-required').innerText.includes("Mark Required") ? false : true;
 
-        const options = [];
-        questionElement.querySelectorAll('.form-check-input').forEach(optionElement => {
-            const optionText = optionElement.nextElementSibling.innerText.trim();
-            const optionId = parseInt(optionElement.id || "0"); 
-            options.push({ optionId, text: optionText });
-        });
+        formData.append(`questions[${index}].questionId`, questionId);
+        formData.append(`questions[${index}].text`, text);
+        formData.append(`questions[${index}].type`, type);
+        formData.append(`questions[${index}].order`, index + 1);
+        formData.append(`questions[${index}].isOptional`, isOptional);
 
-        form.questions.push({
-            questionId,
-            text,
-            type,
-            order: index + 1,
-            isOptional,
-            options
+        questionElement.querySelectorAll('.form-check-input').forEach((optionElement, optionIndex) => {
+            const optionText = optionElement.nextElementSibling.innerText.trim();
+            const optionId = parseInt(optionElement.id || "0");
+
+            formData.append(`questions[${index}].options[${optionIndex}].optionId`, optionId);
+            formData.append(`questions[${index}].options[${optionIndex}].text`, optionText);
         });
     });
 
-    console.log("Collected Form Data: ", JSON.stringify(form));
+    console.log("Collected Form Data: ", formData);
 
-    fetch('/Form/save', {
+    fetch('/save', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(form)
+        body: formData
     })
         .then(response => {
             if (!response.ok) {
@@ -185,4 +178,5 @@ document.getElementById('save-form').addEventListener('click', function () {
             console.error("Error saving form: ", error);
             alert("Failed to save the form. Please try again.");
         });
+
 });

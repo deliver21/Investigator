@@ -23,6 +23,9 @@
             <p class="text-center">
                 @(Model != null ? Html.Raw(Model.Description) : "")
             </p>
+            <input name="formId" value="@Model.FormId" hidden>
+            <input name="templateId" value="@Model.TemplateId" hidden>
+            <input name="creatorId" value="@Model.CreatorId" hidden >
         </div>
     </div>
     <div id="questions-list" class="list-group">
@@ -67,7 +70,7 @@
         }
     </div>
     <button id="add-question" class="btn btn-primary">Add Question</button>
-    <button id="save-form" class="btn btn-success">Save Form</button>
+    <button id="save-form" type="submit"  class="btn btn-success" >Save Form</button>
 </div>
 @section Scripts{
     <script src="~/js/form.js"></script>
