@@ -1,16 +1,17 @@
 ﻿@model Template
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
 @{
     IEnumerable<SelectListItem> visibilities = new List<SelectListItem>()
     {
         new SelectListItem{Value = "0" , Text = "Public"},
-        new SelectListItem{Value = "1" , Text = "Restricted"}
+        new SelectListItem{Value = "1" , Text = localizer["Restricted"].Value}
     };
 }
 <div class="card shadow border-0 mb-5 mt-1 pt-1">
     <div class="card-header bg-primary bg-gradient ml-0 py-3">
         <div class="row">
             <div class="col-12 text-center">
-                <h2 class="text-white">@(Model != null ? "Update" : "Create") Template</h2>
+                <h2 class="text-white">@(Model != null ? localizer["Updatetemplate"] : localizer["Createtemplate"])</h2>
             </div>
         </div>        
     </div>
@@ -34,7 +35,7 @@
                         </div>
                         <div class="mb-3 form-floating col-12 bg-white">
                             <select asp-for="Topic" asp-items="@ViewBag.TopicList" class="form-select border-0 shadow ps-lg-2">
-                                <option disabled selected>---Select Topic---</option>
+                                <option disabled selected>---@localizer["Selecttopic"]---</option>
                             </select>
                             <span asp-validation-for="Topic" class="text-danger"></span>
                         </div>
@@ -43,12 +44,12 @@
                             <textarea data-bs-theme="light" asp-for="Description" class="form-control border-0 shadow ps-lg-4"></textarea>
                         </div>
                         <div class="mb-3 form-floating col-12">
-                            <input type="file" name="file" placeholder="" class="form-control border-0 shadow ps-lg-4" />
-                            <label asp-for="ImageId" class="ms-2"></label>
+                            <input type="file" name="file" placeholder="@localizer["Chooseimage"]" class="form-control border-0 shadow ps-lg-4" />
+                            <label asp-for="ImageId" class="ms-2">@localizer["Templateimage"]</label>
                         </div>
                         <div class="mb-3 form-floating col-12">
                             <select asp-for="Visibility" asp-items="@visibilities" class="form-select border-0 shadow ps-lg-4">
-                                <option disabled selected>----Set Visibility----</option>
+                                <option disabled selected>----@localizer["Setvisibility"]----</option>
                             </select>
                             <label asp-for="Visibility" class="ms-2"></label>
                             <span asp-validation-for="Visibility" class="text-danger"></span>
@@ -56,13 +57,13 @@
                         <div class="row pt-2">
                             <div class="col-3 col-md-3">
                                 <button type="submit" class="btn btn-primary bg-info rounded-1" style="width:150px">
-                                    @(Model != null ? "Update" : "Create")
+                                    @(Model != null ? localizer["Update"] : localizer["Create"])
                                 </button>
                             </div>
                             <div class="col-6"></div>
                             <div class="col-3 col-md-3 text-end">
                                 <a asp-controller="Template" asp-action="Index" class="btn btn-primary rounded-1">
-                                    Back to list
+                                    @localizer["Backtolist"]
                                 </a>
                             </div>
                         </div>

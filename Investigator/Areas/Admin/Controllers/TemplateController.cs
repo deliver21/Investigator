@@ -45,9 +45,9 @@ namespace Investigator.Areas.Admin.Controllers
         public IActionResult Upsert(int ? id)
         {
             var topicList = new List<SelectListItem>()
-            { new SelectListItem{Text=SD.EducationTopic,Value = SD.EducationTopic},
-              new SelectListItem{Text=SD.PersonalTopic,Value = SD.PersonalTopic},
-              new SelectListItem{Text=SD.ProfessionalTopic,Value = SD.ProfessionalTopic}
+            { new SelectListItem{Text = SD.EducationTopic, Value = SD.EducationTopic},
+              new SelectListItem{Text = _localizer["Personal"].Value, Value = SD.PersonalTopic},
+              new SelectListItem{Text = _localizer["Professional"].Value, Value = SD.ProfessionalTopic}
             };
             ViewBag.TopicList = topicList;
             Template template = new();

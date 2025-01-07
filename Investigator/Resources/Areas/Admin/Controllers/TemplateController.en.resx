@@ -126,4 +126,10 @@
   <data name="Managequestions" xml:space="preserve">
     <value>Manage questions</value>
   </data>
+  <data name="Personal" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="Professional" xml:space="preserve">
+    <value>Professional</value>
+  </data>
 </root>

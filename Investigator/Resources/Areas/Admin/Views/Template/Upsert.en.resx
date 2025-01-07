@@ -117,19 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Deletetemplate" xml:space="preserve">
-    <value>Supprimez le template</value>
+  <data name="Backtolist" xml:space="preserve">
+    <value>Back to list</value>
   </data>
-  <data name="Edittemplateheader" xml:space="preserve">
-    <value>Editez l'entête</value>
+  <data name="Chooseimage" xml:space="preserve">
+    <value>Choose an image</value>
   </data>
-  <data name="Managequestions" xml:space="preserve">
-    <value>Gerez les questions</value>
+  <data name="Create" xml:space="preserve">
+    <value>Create</value>
   </data>
-  <data name="Personal" xml:space="preserve">
-    <value>Personnel</value>
+  <data name="Createtemplate" xml:space="preserve">
+    <value>Create Template</value>
   </data>
-  <data name="Professional" xml:space="preserve">
-    <value>Professionel</value>
+  <data name="Restricted" xml:space="preserve">
+    <value>Restricted</value>
+  </data>
+  <data name="Selecttopic" xml:space="preserve">
+    <value>Select Topic</value>
+  </data>
+  <data name="Setvisibility" xml:space="preserve">
+    <value>Set Visibility</value>
+  </data>
+  <data name="Templateimage" xml:space="preserve">
+    <value>Template Image</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="Updatetemplate" xml:space="preserve">
+    <value>Update Template</value>
   </data>
 </root>
