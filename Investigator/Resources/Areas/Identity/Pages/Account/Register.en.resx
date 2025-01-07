@@ -117,28 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="By" xml:space="preserve">
-    <value>By</value>
+  <data name="Adminportal" xml:space="preserve">
+    <value>Admin Portal</value>
   </data>
-  <data name="Contentmanagement" xml:space="preserve">
-    <value>Content Management</value>
+  <data name="Confirmpassword" xml:space="preserve">
+    <value>Confirm Password</value>
   </data>
-  <data name="Createuser" xml:space="preserve">
-    <value>Create User</value>
+  <data name="Fullname" xml:space="preserve">
+    <value>Full Name</value>
   </data>
-  <data name="Home" xml:space="preserve">
-    <value>Home</value>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
   </data>
-  <data name="Privacy" xml:space="preserve">
-    <value>Privacy</value>
+  <data name="Selectrole" xml:space="preserve">
+    <value>Select Role</value>
   </data>
-  <data name="Search" xml:space="preserve">
-    <value>Search</value>
-  </data>
-  <data name="Searchtemplates" xml:space="preserve">
-    <value>Search templates</value>
-  </data>
-  <data name="Usermanagement" xml:space="preserve">
-    <value>User Management</value>
+  <data name="Signup" xml:space="preserve">
+    <value>Sign up</value>
   </data>
 </root>

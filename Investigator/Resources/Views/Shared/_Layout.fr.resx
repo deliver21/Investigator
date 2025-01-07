@@ -135,6 +135,9 @@
   <data name="Search" xml:space="preserve">
     <value>Recherche</value>
   </data>
+  <data name="Searchtemplates" xml:space="preserve">
+    <value>Cherchez des templates</value>
+  </data>
   <data name="Usermanagement" xml:space="preserve">
     <value>Gestion d'utilisateurs</value>
   </data>

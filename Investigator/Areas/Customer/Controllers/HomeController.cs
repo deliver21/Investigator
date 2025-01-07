@@ -27,7 +27,6 @@ namespace Investigator.Controllers
 
         public IActionResult Index()
         {
-            IndexCulture();
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             string ? userId = null;
             if (claimsIdentity.Claims.Any())
@@ -49,10 +48,6 @@ namespace Investigator.Controllers
                 templates = templates.Where(u => u.Title.ToUpper().Contains(query.ToUpper()) || u.Description.ToUpper().Contains(query.ToUpper()));
             }            
             return View(templates);
-        }
-        private void IndexCulture()
-        {
-            ViewData["CreateTemplate"] = _localizer["CreateTemplate"];
         }
         
         [HttpPost]

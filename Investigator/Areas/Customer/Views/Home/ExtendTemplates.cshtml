@@ -1,14 +1,15 @@
 ﻿@model IEnumerable<Template>
 @using Investigator.Utilities;
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
 @section Stylesheets {
     <link href="~/css/template.css" rel="stylesheet" />
 }
 <a class="m-1 mb-4 p-2 px-2 text-start text-center btn btn-sm btn-outline-info rounded-1" asp-area="Customer" asp-controller="Home" asp-action="Index">
-                <i class="bi bi-arrow-bar-left"></i> Back
+                <i class="bi bi-arrow-bar-left"></i> @localizer["Back"]
  </a>
 
 @if (Model.Any(u => u.Topic == SD.PersonalTopic))    {
-    <div class="row"><h6 class="fs-5">@SD.PersonalTopic</h6></div>
+    <div class="row"><h6 class="fs-5">@localizer[SD.PersonalTopic]</h6></div>
 <div class="d-flex flex-wrap gap-3">
     <div class="row mb-4">
         @foreach (var template in Model.Where(u => u.Topic == SD.PersonalTopic))
@@ -22,7 +23,7 @@
                         <a asp-area="Admin" asp-controller="Form" asp-action="Generate"
                    asp-route-templateId="@template.TemplateId"
                    class="btn btn-info rounded-1 p-2 py-1" style="font-size: 9px;">
-                            Try it
+                                @localizer["Tryit"]
                         </a>
                     </div>
                     <div class="col text-end">
@@ -43,7 +44,7 @@
 
 @if (Model.Any(u => u.Topic == SD.EducationTopic))
 {
-    <div class="row"><h6 class="fs-5">@SD.EducationTopic</h6></div>
+    <div class="row"><h6 class="fs-5">@localizer[SD.EducationTopic]</h6></div>
 <div class="d-flex flex-wrap gap-3">
     <div class="row mb-4 mt-2">
         @foreach (var template in Model.Where(u => u.Topic == SD.EducationTopic))
@@ -57,7 +58,7 @@
                         <a asp-area="Admin" asp-controller="Form" asp-action="Generate"
                    asp-route-templateId="@template.TemplateId"
                    class="btn btn-info rounded-1 p-2 py-1" style="font-size: 9px;">
-                            Try it
+                            @localizer["Tryit"]
                         </a>
                     </div>
                     <div class="col text-end">
@@ -78,7 +79,7 @@
 
 @if (Model.Any(u => u.Topic == SD.ProfessionalTopic))
 {
-    <div class="row"><h6 class="fs-5">@SD.ProfessionalTopic</h6></div>
+    <div class="row"><h6 class="fs-5">@localizer[SD.ProfessionalTopic]</h6></div>
 <div class="d-flex flex-wrap gap-3">
     <div class="row text-start mb-3 mt-2">
         @foreach (var template in Model.Where(u => u.Topic == SD.ProfessionalTopic))
@@ -92,7 +93,7 @@
                         <a asp-area="Admin" asp-controller="Form" asp-action="Generate"
                    asp-route-templateId="@template.TemplateId"
                    class="btn btn-info rounded-1 p-2 py-1" style="font-size: 9px;">
-                            Try it
+                                @localizer["Tryit"]
                         </a>
                     </div>
                     <div class="col text-end">

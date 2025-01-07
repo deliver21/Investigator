@@ -117,25 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="By" xml:space="preserve">
-    <value>Par</value>
+  <data name="Back" xml:space="preserve">
+    <value>Back</value>
   </data>
-  <data name="Contentmanagement" xml:space="preserve">
-    <value>Gestion des contenus</value>
+  <data name="Education" xml:space="preserve">
+    <value>Education</value>
   </data>
-  <data name="CreateTemplate" xml:space="preserve">
-    <value>Créer un modele</value>
+  <data name="Personal" xml:space="preserve">
+    <value>Personal</value>
   </data>
-  <data name="Home" xml:space="preserve">
-    <value>Accueil</value>
+  <data name="Professional" xml:space="preserve">
+    <value>Professional</value>
   </data>
-  <data name="Privacy" xml:space="preserve">
-    <value>Confidentialité</value>
-  </data>
-  <data name="Signin" xml:space="preserve">
-    <value>Se Connecter</value>
-  </data>
-  <data name="Usermanagement" xml:space="preserve">
-    <value>Gestionnaire d'utilisateurs</value>
+  <data name="Tryit" xml:space="preserve">
+    <value>Try it</value>
   </data>
 </root>

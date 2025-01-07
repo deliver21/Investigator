@@ -11,12 +11,12 @@
         <div class="col">
             <a asp-area="Customer" asp-controller="Home" asp-action="ExtendTemplates"
                class="btn btn-primary rounded-1 display-6">
-                Template Gallery <i class="bi bi-arrows-expand"></i>
+                @localizer["Templategallery"] <i class="bi bi-arrows-expand"></i>
             </a>
         </div>
     </div>
     <div class="row">
-        <h6 class="fs-5">Create Template</h6>
+        <h6 class="fs-5">@localizer["Createtemplate"]</h6>
         <div class="d-flex flex-wrap gap-3">
             <div class="card card-menu text-center shadow-sm">
                 <a asp-area="Admin" asp-controller="Template" asp-action="Upsert"
@@ -26,7 +26,7 @@
                         <div class="text-primary mt-5 display-4">
                             <i class="bi bi-clipboard2-plus"></i>
                         </div>
-                        <p class="card-text text-decoration-none">Blank Template</p>
+                        <p class="card-text text-decoration-none">@localizer["Blanktemplate"]</p>
                     </div>
                 </a>
             </div>
@@ -41,7 +41,7 @@
                             <a asp-area="Admin" asp-controller="Form" asp-action="Generate"
                            asp-route-templateId="@template.TemplateId"
                            class="btn btn-info rounded-1 p-2 py-1" style="font-size: 9px;">
-                                Try it
+                                @localizer["Tryit"]
                             </a>
                         </div>
                         <div class="col text-end">
@@ -62,7 +62,7 @@
 <section class="recentForm bg-light p-3 m-3">
     <div class="container-fluid" style="min-height: 250px;">
         <div class="row">
-            <h5 class="fs-5">Recent Forms</h5>
+            <h5 class="fs-5">@localizer["Recentforms"]</h5>
             @foreach (var form in Model.Form)
             {
                 <div class="col-12 col-sm-6 col-md-4 p-2">
