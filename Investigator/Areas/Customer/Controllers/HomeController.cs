@@ -23,7 +23,7 @@ namespace Investigator.Controllers
             _logger = logger;
             _localizer= localizer;
             _unit = unit;
-        }
+        } 
 
         public IActionResult Index()
         {
@@ -36,14 +36,14 @@ namespace Investigator.Controllers
             }
             TemplateVM = new()
             {
-                Template = _unit.Template.GetAll(u => u.Visibility == 0, "Questions").Take(5),
+                Template = _unit.Template.GetAll(u => u.Visibility == 0, "Questions").OrderByDescending(u => u.Point).Take(5),
                 Form = userId != null ? _unit.Form.GetAll(u => u.CreatorId == userId) : new List<Form>()
             };
             return View(TemplateVM);
         }
         public IActionResult ExtendTemplates(string? query)
         {
-            IEnumerable<Template> templates = _unit.Template.GetAll(u => u.Visibility == 0, "Questions");
+            IEnumerable<Template> templates = _unit.Template.GetAll(u => u.Visibility == 0, "Questions").OrderByDescending(u => u.Point);
             if (!string.IsNullOrEmpty(query))
             {
                 templates = templates.Where(u => u.Title.ToUpper().Contains(query.ToUpper()) || u.Description.ToUpper().Contains(query.ToUpper()));
@@ -52,10 +52,6 @@ namespace Investigator.Controllers
         }
         private void IndexCulture()
         {
-            ViewData["WelcomeTo"] = _localizer["WelcomeTo"];
-            ViewData["ASoftwareToQuestion"] = _localizer["ASoftwareToQuestion"];
-            ViewData["UsersOnTheInternet"] = _localizer["UsersOnTheInternet"];
-            ViewData["Signin"] = _localizer["Signin"];
             ViewData["CreateTemplate"] = _localizer["CreateTemplate"];
         }
         

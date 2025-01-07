@@ -36,6 +36,7 @@ namespace Investigator.Models
         public ApplicationUser Creator { get; set; } = null!;
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public DateTime? ModifiedDate { get; set; }
+        public int Point { get; set; } = 0;
         public ICollection<TemplateTag> Tags { get; set; } = new List<TemplateTag>();
         public ICollection<Question> Questions { get; set; } = new List<Question>();
         public ICollection<Like> Likes { get; set; } = new List<Like>();

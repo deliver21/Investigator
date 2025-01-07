@@ -80,29 +80,65 @@ namespace Investigator.Areas.Admin.Controllers
         public async Task<IActionResult> SaveForm([FromBody] FormDto form)
         {
             if (form == null) return BadRequest("Invalid form data.");
-            // Save Form
+            
             var newForm = _mapper.Map<Form>(form);
-
-            _unit.Form.Add(newForm);
-            _unit.Save();
+            if(form.TemplateId != 0)
+            {
+                _unit.Form.Add(newForm);
+                var template = _unit.Template.Get(u => u.TemplateId == form.TemplateId);
+                if(template != null)
+                {
+                    template.Point += 1;
+                    _unit.Template.Update(template);
+                }
+                _unit.Save();
+            }
+           
 
             // Save Questions
             foreach (var questionDto in form.Questions)
             {
                 var newQuestion = _mapper.Map<Question>(questionDto);
-
-                _unit.Question.Add(newQuestion);
+                if(newQuestion.QuestionId == 0)
+                {
+                    _unit.Question.Add(newQuestion);
+                }
+                else
+                {
+                    _unit.Question.Update(newQuestion);
+                }                
                 _unit.Save();
 
                 // Save Options
-                foreach (var optionDto in questionDto.Options)
+                foreach (var option in questionDto.Options)
                 {
-                    var newOption = new QuestionOption
+                    if(option.QuestionId == 0) 
                     {
-                        Text = optionDto.Text,
-                        QuestionId = newQuestion.QuestionId
-                    };
-                    _unit.QuestionOption.Add(newOption);
+                        if(questionDto.QuestionId != 0)
+                        {
+                            option.QuestionId = questionDto.QuestionId;
+                        }
+                        else
+                        {
+                            int questionId = _unit.Question.Get(u => u.Text == questionDto.Text && u.Order == questionDto.Order).QuestionId;
+                            if(questionId > 0)
+                            {
+                                option.QuestionId = questionId;
+                            }
+                        }                        
+                    }
+                    if(option.QuestionId != 0)
+                    {
+                        if(option.OptionId == 0)
+                        {
+                            _unit.QuestionOption.Add(option);
+                        }
+                        else
+                        {
+                            _unit.QuestionOption.Update(option);
+                        }
+                    }
+                    _unit.Save();
                 }
             }
 

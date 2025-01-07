@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Investigator.Models
@@ -15,6 +16,7 @@ namespace Investigator.Models
         public int QuestionId { get; set; }
 
         [ForeignKey(nameof(QuestionId))]
+        [ValidateNever]
         public Question Question { get; set; }
     }
 }

@@ -125,6 +125,7 @@ questionsDiv.addEventListener("drop", (e) => {
 });
 
 document.getElementById('save-form').addEventListener('click', function () {
+    console.log("We got inside");
     const form = {
         formId: parseInt(document.querySelector('[name="formId"]').value || "0"),
         title: document.querySelector('.card-title').innerText.trim(),
@@ -133,6 +134,9 @@ document.getElementById('save-form').addEventListener('click', function () {
         creatorId: document.querySelector('[name="creatorId"]').value || "",
         questions: []
     };
+    if (form.questions.length > 0) {
+        console.log("The questions are collected");
+    }
 
     const questionElements = document.querySelectorAll('.question-item');
     questionElements.forEach((questionElement, index) => {
