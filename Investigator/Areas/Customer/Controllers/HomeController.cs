@@ -36,8 +36,20 @@ namespace Investigator.Controllers
             TemplateVM = new()
             {
                 Template = _unit.Template.GetAll(u => u.Visibility == 0, "Questions").OrderByDescending(u => u.Point).Take(5),
-                Form = userId != null ? _unit.Form.GetAll(u => u.CreatorId == userId) : new List<Form>()
+                Form = userId != null ? _unit.Form.GetAll(u => u.CreatorId == userId, "Template").ToList() : new List<Form>()
             };
+            if(TemplateVM.Form.Any())
+            {
+                for(int i = 0; i < TemplateVM.Form.Count(); i++)
+                {
+                    var id = TemplateVM.Form[i].TemplateId;
+                    TemplateVM.Form[i].Template = _unit.Template.Get(u => u.TemplateId == id);  
+                    if(TemplateVM.Form[i].Template == null)
+                    {
+                        TemplateVM.Form[i].Template = new();
+                    }
+                }
+            }
             return View(TemplateVM);
         }
         public IActionResult ExtendTemplates(string? query)

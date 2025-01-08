@@ -42,6 +42,7 @@
                                 </a>
                                 <ul class="dropdown-menu">                                    
                                     <li><a class="dropdown-item" asp-area="Admin" asp-controller="Template" asp-action="Index">Templates</a></li>
+                                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="Form" asp-action="Index">@localizer["Forms"]</a></li>
                                     @if (User.IsInRole(SD.AdminRole))
                                     {
                                         <li><a class="dropdown-item" asp-area="Admin" asp-controller="Tag" asp-action="Index">Tags</a></li>

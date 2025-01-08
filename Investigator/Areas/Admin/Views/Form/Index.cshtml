@@ -1,0 +1,67 @@
+﻿@model IEnumerable<Form>
+@{
+    ViewData["Title"] = "Form list";
+}
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+@{
+    var status = Context.Request.Query["status"];
+    var ownForm = "text-primary";
+    var allForm = "text-primary";
+    if (status == "allForm")
+    {
+        allForm = "active text-white bg-primary";
+    }
+    else
+    {
+        ownForm = "active text-white bg-primary";
+    }
+
+}
+<input type="hidden" id="manageQuestions" value="@ViewBag.ManageQuestions" />
+<input type="hidden" id="editFormHeader" value="@ViewBag.EditFormHeader" />
+<input type="hidden" id="deleteForm" value="@ViewBag.DeleteForm" />
+<div class="card shadow border-0 mb-5 mt-2">
+    <div class="card-header bg-primary bg-gradient ml-0">
+        <div class="row">
+            <div class="col-4"></div>
+            <div class="col-lg-4 col-sm-6 text-center pt-2">
+                <h3 class="text-white">@localizer["Formslist"]</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body">
+        @if (User.IsInRole(SD.AdminRole))
+        {
+            <div class="d-flex justify-content-between pb-5 pt-2">
+                <span></span>
+                <ul class="list-group list-group-horizontal-sm">
+                    <a style="text-decoration:none ;" asp-area="Admin" asp-controller="Form" asp-action="Index" asp-route-status="allForm">
+                    <li class="list-group-item @allForm" style="text-decoration:none ;max-height:35px; font-size:15px">
+                            @localizer["All"]
+                    </li>
+                    </a>
+                    <a style="text-decoration:none;" asp-area="Admin" asp-controller="Template" asp-action="Index" asp-route-status="ownTemplate">
+                    <li class="list-group-item @ownForm" style="text-decoration:none ;max-height:35px; font-size:15px">
+                            @localizer["Myform"]
+                    </li>
+                    </a>
+                </ul>
+            </div>
+        }
+        <div class="table-responsive">
+            <table id="tblData" class="table table-bordered table-striped table-hover" style="width:100%; overflow:auto">
+                <thead>
+                    <tr>
+                        <th>@localizer["Title"]</th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/formManager.js"></script>
+}

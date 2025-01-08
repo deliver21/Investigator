@@ -22,7 +22,7 @@ namespace Investigator.Models
         [ForeignKey(nameof(CreatorId))]
         [ValidateNever]
         public ApplicationUser Creator { get; set; }
-        public string FillerId { get; set; }
+        public string ? FillerId { get; set; }
 
         [ForeignKey(nameof(FillerId))]
         [ValidateNever]

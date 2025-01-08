@@ -10,7 +10,7 @@
     <div class="row text-white text-end">
         <div class="col">
             <a asp-area="Customer" asp-controller="Home" asp-action="ExtendTemplates"
-               class="btn btn-primary rounded-1 display-6">
+               class="btn btn-primary rounded-1 display-6 mb-4">
                 @localizer["Templategallery"] <i class="bi bi-arrows-expand"></i>
             </a>
         </div>
@@ -46,8 +46,7 @@
                         </div>
                         <div class="col text-end">
                             <a class="btn btn-primary rounded-circle p-2 py-1"
-                           asp-area="Customer" asp-controller="Home"
-                           asp-action="GetDetails" asp-route-templateId="@template.TemplateId"
+                           href="#"
                            title="Template Details">
                                 <i class="bi bi-info-circle"></i>
                             </a>
@@ -70,12 +69,10 @@
                         <img src="@(Model != null ? $"https://drive.google.com/thumbnail?id={form.Template.ImageId}" : "https://via.placeholder.com/1200x300")"
                          class="card-img-top" alt="Recent Form">
                         <div class="card-body">
-                            <p class="card-text">@form.Title - Response Form</p>
+                            <p class="card-text">@form.Title</p>
                             <div class="text-end">
                                 <a class="btn btn-primary rounded-circle p-2 py-1"
-                               asp-area="Customer" asp-controller="Home"
-                               asp-action="GetDetails" asp-route-templateId="@form.FormId"
-                               title="Template Details">
+                               href="#">
                                     <i class="bi bi-info-circle"></i>
                                 </a>
                             </div>

@@ -8,7 +8,6 @@ namespace Investigator.Models
     {
         [Key]
         public int QuestionId { get; set; }
-        [Required]
         public int ? TemplateId { get; set; }
         [ForeignKey(nameof(TemplateId))]
         [ValidateNever]

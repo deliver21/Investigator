@@ -126,6 +126,9 @@
   <data name="Createuser" xml:space="preserve">
     <value>Créer un utilisateur</value>
   </data>
+  <data name="Forms" xml:space="preserve">
+    <value>Formulaires</value>
+  </data>
   <data name="Home" xml:space="preserve">
     <value>Accueil</value>
   </data>

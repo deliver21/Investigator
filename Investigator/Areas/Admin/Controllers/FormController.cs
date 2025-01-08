@@ -11,19 +11,37 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.Localization;
 
 namespace Investigator.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class FormController : Controller
     {
+        private readonly IHtmlLocalizer<FormController> _localizer;
         private readonly IUnitOfWork _unit;
         private readonly IMapper _mapper;
-        public FormController(IUnitOfWork unit, IMapper mapper)
+        public FormController(IUnitOfWork unit, IMapper mapper, IHtmlLocalizer<FormController> localizer)
         {
             _unit = unit;
             _mapper = mapper;
+            _localizer = localizer;
         }
+
+        [Authorize]
+        [IsBlockedAuthorize]
+        public IActionResult Index(string? status)
+        {
+            LocalizeFormTable();
+            return View();
+        }
+        private void LocalizeFormTable()
+        {
+            ViewBag.ManageQuestions = _localizer["Managequestions"];
+            ViewBag.EditFormHeader = _localizer["Editformheader"];
+            ViewBag.DeleteTemplate = _localizer["Deleteform"];
+        }
+
         [Authorize]
         [IsBlockedAuthorize]
         public IActionResult Generate(int? templateId, FormDto? formData)
@@ -75,13 +93,33 @@ namespace Investigator.Areas.Admin.Controllers
             return RedirectToAction(nameof(Generate));
         }
         #region API's Calls
+
+        [Authorize]
+        [IsBlockedAuthorize]
+        [HttpGet]
+        public IActionResult GetAll(string status)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            List<Form> forms = new List<Form>();
+
+            if (status == "allForms" && User.IsInRole(SD.AdminRole))
+            {
+                forms = _unit.Form.GetAll().ToList();
+            }
+            else
+            {
+                forms = _unit.Form.GetAll(u => u.CreatorId == userId, null).ToList();
+            }
+            return Json(new { data = forms });
+        }
+
         [Authorize]
         [IsBlockedAuthorize]
         [HttpPost("save")]
-
         public IActionResult SaveForm([FromForm] FormDto form)
         {
-            form.Description = "sdfsfsdfadf";
+            form.Description = _unit.Template.Get(u => u.TemplateId == form.TemplateId).Description;
             if (form == null) return BadRequest("Invalid form data.");
 
             var newForm = _mapper.Map<Form>(form);
@@ -97,8 +135,6 @@ namespace Investigator.Areas.Admin.Controllers
                 _unit.Save();
             }
 
-
-            // Save Questions
             foreach (var questionDto in form.Questions)
             {
                 var newQuestion = _mapper.Map<Question>(questionDto);
@@ -147,6 +183,22 @@ namespace Investigator.Areas.Admin.Controllers
 
             _unit.Save();
             return Ok(new { message = "Form saved successfully." });
+        }
+
+        [HttpDelete]
+        public IActionResult Delete(int? id)
+        {
+            Form formToDelete = _unit.Form.Get(u => u.FormId == id);
+            if (formToDelete == null)
+            {
+                return Json(new { success = false, message = "Error while deleting" });
+            }
+            else
+            {
+                _unit.Form.Remove(formToDelete);
+                _unit.Save();
+            }
+            return Json(new { success = true, message = "Delete successfully performed" });
         }
     }
     #endregion

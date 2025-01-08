@@ -37,7 +37,7 @@ namespace Investigator.Data
 
             modelBuilder.Entity<Question>()
                 .HasOne(q => q.Template).WithMany()
-                .HasForeignKey(q => q.TemplateId).OnDelete(DeleteBehavior.Restrict);
+                .HasForeignKey(q => q.TemplateId).OnDelete(DeleteBehavior.Restrict).IsRequired(false);
 
             modelBuilder.Entity<Question>()
                .HasOne(q => q.Form).WithMany()
@@ -49,7 +49,7 @@ namespace Investigator.Data
 
             modelBuilder.Entity<Form>()
                 .HasOne(f => f.Filler).WithMany()
-                .HasForeignKey(f => f.FillerId).OnDelete(DeleteBehavior.Restrict);
+                .HasForeignKey(f => f.FillerId).OnDelete(DeleteBehavior.Restrict).IsRequired(false);
 
             modelBuilder.Entity<Form>()
                 .HasOne(f => f.Creator).WithMany()

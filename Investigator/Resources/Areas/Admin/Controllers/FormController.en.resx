@@ -117,31 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="By" xml:space="preserve">
-    <value>By</value>
+  <data name="Deleteform" xml:space="preserve">
+    <value>Delete form</value>
   </data>
-  <data name="Contentmanagement" xml:space="preserve">
-    <value>Content Management</value>
+  <data name="Editformheader" xml:space="preserve">
+    <value>Edit form header</value>
   </data>
-  <data name="Createuser" xml:space="preserve">
-    <value>Create User</value>
-  </data>
-  <data name="Forms" xml:space="preserve">
-    <value>Forms</value>
-  </data>
-  <data name="Home" xml:space="preserve">
-    <value>Home</value>
-  </data>
-  <data name="Privacy" xml:space="preserve">
-    <value>Privacy</value>
-  </data>
-  <data name="Search" xml:space="preserve">
-    <value>Search</value>
-  </data>
-  <data name="Searchtemplates" xml:space="preserve">
-    <value>Search templates</value>
-  </data>
-  <data name="Usermanagement" xml:space="preserve">
-    <value>User Management</value>
+  <data name="Managequestions" xml:space="preserve">
+    <value>Manage questions</value>
   </data>
 </root>
