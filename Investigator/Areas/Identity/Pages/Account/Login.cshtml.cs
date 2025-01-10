@@ -114,7 +114,7 @@ namespace Investigator.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                var userToUpdate = _unit.ApplicationUser.Get(u => u.UserName == Input.Email,null,true);
+                var userToUpdate = await _unit.ApplicationUser.Get(u => u.UserName == Input.Email,null,true);
                 if (userToUpdate != null && userToUpdate.IsBlocked)
                 {
                     ModelState.AddModelError(string.Empty, "Sorry , you have been blocked");

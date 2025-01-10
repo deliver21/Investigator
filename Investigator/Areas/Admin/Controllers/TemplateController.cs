@@ -42,7 +42,7 @@ namespace Investigator.Areas.Admin.Controllers
         }
         [Authorize]
         [IsBlockedAuthorize]
-        public IActionResult Upsert(int ? id)
+        public async Task<IActionResult> Upsert(int ? id)
         {
             var topicList = new List<SelectListItem>()
             { new SelectListItem{Text = SD.EducationTopic, Value = SD.EducationTopic},
@@ -53,11 +53,12 @@ namespace Investigator.Areas.Admin.Controllers
             Template template = new();
             if (id != 0)
             {
-                template = _unit.Template.Get(u => u.TemplateId == id);
+                template = await _unit.Template.Get(u => u.TemplateId == id);
             }
             return View(template);
         }
         [Authorize]
+        [IsBlockedAuthorize]
         [HttpPost]
         public IActionResult Upsert(Template template, IFormFile ? file)
         {
@@ -72,7 +73,7 @@ namespace Investigator.Areas.Admin.Controllers
             }
             else
             {
-                var previousPicture = _unit.Template.Get(u => u.TemplateId == template.TemplateId).ImageId;
+                var previousPicture = _unit.Template.Get(u => u.TemplateId == template.TemplateId).GetAwaiter().GetResult().ImageId;
                 if (file != null)
                 {
                     bool response = false;
@@ -94,9 +95,9 @@ namespace Investigator.Areas.Admin.Controllers
             _unit.Save();            
             return RedirectToAction("Index");
         }
-        public IActionResult ManageQuestions(int id)
+        public async Task<IActionResult> ManageQuestions(int id)
         {
-            var template = _unit.Template.Get(u => u.TemplateId == id, includeProperties : "Questions");
+            var template = await _unit.Template.Get(u => u.TemplateId == id, includeProperties : "Questions");
             template.Questions = new List<Question>();
             template.Questions = _unit.Question.GetAll(u => u.TemplateId == template.TemplateId).ToList();
             return View(template);
@@ -125,9 +126,9 @@ namespace Investigator.Areas.Admin.Controllers
         }
 
         [HttpDelete]
-        public IActionResult Delete(int ? id)
+        public async Task <IActionResult> Delete(int ? id)
         {
-            Template templateToDelete = _unit.Template.Get(u => u.TemplateId == id);
+            Template templateToDelete = await _unit.Template.Get(u => u.TemplateId == id);
             if(templateToDelete == null)
             {
                 return Json(new { success = false, message = "Error while deleting" });
@@ -145,9 +146,9 @@ namespace Investigator.Areas.Admin.Controllers
         }
 
         [HttpPost("SaveQuestions/{templateId:int}")]
-        public IActionResult SaveQuestions(int templateId, [FromBody] IEnumerable<QuestionDto> questions)
+        public async Task<IActionResult> SaveQuestions(int templateId, [FromBody] IEnumerable<QuestionDto> questions)
         {
-            if (_unit.Template.Get(t => t.TemplateId == templateId).TemplateId == 0)
+            if (_unit.Template.Get(t => t.TemplateId == templateId).GetAwaiter().GetResult().TemplateId == 0)
                 return NotFound(new { message = "Template not found." });
             try
             {
@@ -157,7 +158,7 @@ namespace Investigator.Areas.Admin.Controllers
                     {
                         var questionToSave = _mapper.Map<Question>(question);
                         questionToSave.TemplateId = templateId;
-                        _unit.Question.Add(questionToSave);
+                        await _unit.Question.Add(questionToSave);
                     }
                     else
                     {
@@ -177,11 +178,17 @@ namespace Investigator.Areas.Admin.Controllers
             
         }
         [HttpDelete("DeleteQuestion/{questionId:int}")]
-        public IActionResult DeleteQuestion(int ? questionId)
+        public async Task<IActionResult> DeleteQuestion(int ? questionId)
         {
-            if(questionId == null) return NotFound(new {message = "Question not found."});
-            var question = _unit.Question.Get(u => u.QuestionId == questionId);
-            if (question == null) return NotFound(new { message = "Question not found." });
+            if (questionId == null)
+            {
+                return NotFound(new { message = "Question not found." });
+            }
+            var question = await _unit.Question.Get(u => u.QuestionId == questionId);
+            if (question == null)
+            {
+                return NotFound(new { message = "Question not found." });
+            }
             _unit.Question.Remove(question);
             _unit.Save();
             return Ok("Question is successfully deleted");

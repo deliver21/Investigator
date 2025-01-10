@@ -15,9 +15,9 @@ namespace Investigator.Repository
             _context= context;
             _dbSet = _context.Set<T>();
         }
-        public void Add(T entity)
+        public async Task Add(T entity)
         {
-            _dbSet.Add(entity);
+           await _dbSet.AddAsync(entity);
         }
         public void Remove(T entity)
         {
@@ -27,7 +27,7 @@ namespace Investigator.Repository
         {
             _dbSet.RemoveRange(enitities);   
         }
-        public T Get(Expression<Func<T, bool>>? filter, string ? includeProperties = null, bool track = false)
+        public async Task<T> Get(Expression<Func<T, bool>>? filter, string ? includeProperties = null, bool track = false)
         {
             IQueryable<T> query;
             query = track ? _dbSet : _dbSet.AsNoTracking();
@@ -42,7 +42,7 @@ namespace Investigator.Repository
                     query.Include(includeProperty);
                 }
             }
-            return query.FirstOrDefault();
+            return await query.FirstOrDefaultAsync();
         }
         public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter, string? includeProperties = null, bool track = false)
         {

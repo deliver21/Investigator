@@ -18,5 +18,20 @@
         public const string PersonalTopic = "Personal";
         public const string ProfessionalTopic = "Professional";
 
+        public static string UserManagerAPIBase { get; set; }
+
+        //Token Key
+        public static string tokenCookie = "JWTToken";
+
+        //Http Verbs for APiType
+        public enum ApiType
+        {
+            GET,
+            POST,
+            PUT,
+            DELETE,
+            HEAD
+        }
+
     }
 }

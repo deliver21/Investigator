@@ -24,6 +24,7 @@ builder.Services.AddRazorPages()
     .AddViewLocalization();
 
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {

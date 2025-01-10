@@ -25,7 +25,7 @@ namespace Investigator.Controllers
             _unit = unit;
         } 
 
-        public IActionResult Index()
+        public async Task <IActionResult> Index()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             string ? userId = null;
@@ -43,7 +43,7 @@ namespace Investigator.Controllers
                 for(int i = 0; i < TemplateVM.Form.Count(); i++)
                 {
                     var id = TemplateVM.Form[i].TemplateId;
-                    TemplateVM.Form[i].Template = _unit.Template.Get(u => u.TemplateId == id);  
+                    TemplateVM.Form[i].Template = await _unit.Template.Get(u => u.TemplateId == id);  
                     if(TemplateVM.Form[i].Template == null)
                     {
                         TemplateVM.Form[i].Template = new();

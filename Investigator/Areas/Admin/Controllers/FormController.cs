@@ -30,7 +30,7 @@ namespace Investigator.Areas.Admin.Controllers
 
         [Authorize]
         [IsBlockedAuthorize]
-        public IActionResult Index(string? status)
+        public IActionResult Index(string ? status)
         {
             LocalizeFormTable();
             return View();
@@ -44,11 +44,11 @@ namespace Investigator.Areas.Admin.Controllers
 
         [Authorize]
         [IsBlockedAuthorize]
-        public IActionResult Generate(int? templateId, FormDto? formData)
+        public async Task<IActionResult> Generate(int? templateId, FormDto? formData)
         {
             formData = JsonConvert.DeserializeObject<FormDto>(Convert.ToString(TempData["formData"]));
             if (formData != null && formData.Template != null) return View(formData);
-            var templateForm = _unit.Template.Get(u => u.TemplateId == templateId);
+            var templateForm = await _unit.Template.Get(u => u.TemplateId == templateId);
             if (templateForm == null)
             {
                 return Redirect($"/Customer/Home/Index");
@@ -71,26 +71,6 @@ namespace Investigator.Areas.Admin.Controllers
             }
             var formDto = _mapper.Map<FormDto>(form);
             return View(formDto);
-        }
-        [Authorize]
-        [IsBlockedAuthorize]
-        public IActionResult EditHeader(string? formData)
-        {
-            if (string.IsNullOrEmpty(formData)) Redirect($"/Customer/Home/Index");
-            var formDataDto = JsonConvert.DeserializeObject<FormDto>(formData);
-            return View(formDataDto);
-        }
-
-        [HttpPost]
-        public IActionResult EditHeader(FormDto? formData)
-        {
-            if (formData == null) Redirect($"/Customer/Home/Index");
-            var questions = JsonConvert.DeserializeObject<List<QuestionDto>>(Convert.ToString(TempData["questiontemp"]));
-            var template = JsonConvert.DeserializeObject<Template>(Convert.ToString(TempData["templatetemp"]));
-            if (questions.Any()) formData.Questions = questions;
-            if (template != null) formData.Template = template;
-            TempData["formData"] = JsonConvert.SerializeObject(formData);
-            return RedirectToAction(nameof(Generate));
         }
         #region API's Calls
 
@@ -117,16 +97,16 @@ namespace Investigator.Areas.Admin.Controllers
         [Authorize]
         [IsBlockedAuthorize]
         [HttpPost("save")]
-        public IActionResult SaveForm([FromForm] FormDto form)
+        public async Task<IActionResult> SaveForm([FromForm] FormDto form)
         {
-            form.Description = _unit.Template.Get(u => u.TemplateId == form.TemplateId).Description;
+            form.Description = _unit.Template.Get(u => u.TemplateId == form.TemplateId).GetAwaiter().GetResult().Description;
             if (form == null) return BadRequest("Invalid form data.");
 
             var newForm = _mapper.Map<Form>(form);
             if (form.TemplateId != 0)
             {
                 _unit.Form.Add(newForm);
-                var template = _unit.Template.Get(u => u.TemplateId == form.TemplateId);
+                var template = await _unit.Template.Get(u => u.TemplateId == form.TemplateId);
                 if (template != null)
                 {
                     template.Point += 1;
@@ -159,7 +139,8 @@ namespace Investigator.Areas.Admin.Controllers
                         }
                         else
                         {
-                            int questionId = _unit.Question.Get(u => u.Text == questionDto.Text && u.Order == questionDto.Order).QuestionId;
+                            int questionId = _unit.Question.Get(u => u.Text == questionDto.Text && u.Order == questionDto.Order).
+                                GetAwaiter().GetResult().QuestionId;
                             if (questionId > 0)
                             {
                                 option.QuestionId = questionId;
@@ -186,9 +167,9 @@ namespace Investigator.Areas.Admin.Controllers
         }
 
         [HttpDelete]
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
-            Form formToDelete = _unit.Form.Get(u => u.FormId == id);
+            Form formToDelete = await _unit.Form.Get(u => u.FormId == id);
             if (formToDelete == null)
             {
                 return Json(new { success = false, message = "Error while deleting" });

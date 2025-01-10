@@ -31,21 +31,8 @@ namespace Investigator.Areas.Admin.Controllers
         {
             return View();
         }
-        private bool IsUserBlockedOrDeleted()
-        {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var userIdNextMove = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            var checkUser = _unit.ApplicationUser.Get(u => u.Id == userIdNextMove);
-            if (checkUser != null)
-            {
-                return checkUser.IsBlocked;
-            }
-
-            return true;
-        }
-
-        #region APIs call
+        #region APIs Calls
         [HttpGet]
         public IActionResult GetAll()
         {
@@ -59,31 +46,43 @@ namespace Investigator.Areas.Admin.Controllers
             }
             return Json(new { data = obj.OrderByDescending(u => u.LastSeen) });
         }
+        [Authorize]
+        [IsBlockedAuthorize]
         [HttpPut]
-        public IActionResult SwitchRole(string? id)
+        public async Task<IActionResult> SwitchRole(string? id)
         {
             IdentityResult result;
-            var userToUpdate = _unit.ApplicationUser.Get(u => u.Id == id,null,true);
-            if (userToUpdate == null) return Json(new { success = false, message = "Error while changing role" });
+            var userToUpdate = await _unit.ApplicationUser.Get(u => u.Id == id,null,true);
+            if (userToUpdate == null)
+            {
+                return Json(new { success = false, message = "Error while changing role" });
+            }
             var oldRole = _userManager.GetRolesAsync(userToUpdate).GetAwaiter().GetResult().FirstOrDefault();
             
             result = oldRole == SD.CustomerRole ? _userManager.AddToRoleAsync(userToUpdate, SD.AdminRole).GetAwaiter().GetResult() 
                 : _userManager.AddToRoleAsync(userToUpdate, SD.CustomerRole).GetAwaiter().GetResult();
-            
-            if (!result.Succeeded) return Json(new { success = false, message = $"An error occured while changing user {userToUpdate.UserName} role" });
-            if(!string.IsNullOrEmpty(oldRole)) result = _userManager.RemoveFromRoleAsync(userToUpdate, oldRole).GetAwaiter().GetResult();
-            if (!result.Succeeded) return Json(new { success = false, message = $"An error occured while changing user {userToUpdate.UserName} role" });
+
+            if (!result.Succeeded)
+            {
+                return Json(new { success = false, message = $"An error occured while changing user {userToUpdate.UserName} role" });
+            }
+            if (!string.IsNullOrEmpty(oldRole))
+            {
+                result = _userManager.RemoveFromRoleAsync(userToUpdate, oldRole).GetAwaiter().GetResult();
+            }
+            if (!result.Succeeded)
+            {
+                return Json(new { success = false, message = $"An error occured while changing user {userToUpdate.UserName} role" });
+            }
             return Json(new { success = true, message = $"a new role is assigned to {userToUpdate.UserName}" });
         }
 
+        
+        [Authorize(Roles = SD.AdminRole)]
+        [IsBlockedAuthorize]
         [HttpPost]
         public async Task<IActionResult> BulkDelete([FromBody] List<string> userIds)
         {
-            if (IsUserBlockedOrDeleted())
-            {
-                await _signInManager.SignOutAsync();
-                return Unauthorized(new { message = "Your account is blocked." });
-            }
             if (userIds == null || !userIds.Any())
             {
                 return BadRequest(new { message = "No users selected for deletion." });
@@ -92,7 +91,7 @@ namespace Investigator.Areas.Admin.Controllers
             {
                 foreach (var userId in userIds)
                 {
-                    var user = _unit.ApplicationUser.Get(u => u.Id == userId);
+                    var user =  await _unit.ApplicationUser.Get(u => u.Id == userId);
                     if (user != null)
                     {
                         _unit.ApplicationUser.Remove(user);
@@ -110,14 +109,9 @@ namespace Investigator.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> BulkLock([FromBody] List<string> ids)
         {
-            if (IsUserBlockedOrDeleted())
-            {
-                await _signInManager.SignOutAsync();
-                return Unauthorized(new { message = "Your account is blocked." });
-            }
             foreach (var id in ids)
             {
-                var user = _unit.ApplicationUser.Get(u => u.Id == id);
+                var user = await _unit.ApplicationUser.Get(u => u.Id == id);
                 if (user != null && !user.IsBlocked)
                 {
                     user.IsBlocked = true; // Set blocked flag
@@ -131,14 +125,9 @@ namespace Investigator.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> BulkUnlock([FromBody] List<string> ids)
         {
-            if (IsUserBlockedOrDeleted())
-            {
-                await _signInManager.SignOutAsync();
-                return Unauthorized(new { message = "Your account is blocked." });
-            }
             foreach (var id in ids)
             {
-                var user = _unit.ApplicationUser.Get(u => u.Id == id);
+                var user = await _unit.ApplicationUser.Get(u => u.Id == id);
                 if (user != null && user.IsBlocked)
                 {
                     user.IsBlocked = false; // Remove blocked flag

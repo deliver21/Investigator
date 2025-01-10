@@ -17,9 +17,9 @@ namespace Investigator.Areas.Admin.Controllers
             return View();
         }
 
-        public IActionResult Upsert(int ? tagId)
+        public async Task<IActionResult> Upsert(int ? tagId)
         {
-            var tag = tagId != 0 ? _unit.TemplateTag.Get(u => u.TagId == tagId) : new Models.TemplateTag();
+            var tag = tagId != 0 ? await _unit.TemplateTag.Get(u => u.TagId == tagId) : new Models.TemplateTag();
             return View(tag);
         }
 
@@ -47,9 +47,9 @@ namespace Investigator.Areas.Admin.Controllers
             return Json(new {data = templateTags});
         }
         [HttpDelete]
-        public IActionResult Delete(int? id)
+        public async Task <IActionResult> Delete(int? id)
         {
-            TemplateTag tagToDelete = _unit.TemplateTag.Get(u => u.TagId == id);
+            TemplateTag tagToDelete = await _unit.TemplateTag.Get(u => u.TagId == id);
             if (tagToDelete == null)
             {
                 return Json(new { success = false, message = "Error while deleting" });
