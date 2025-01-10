@@ -105,6 +105,8 @@ namespace Investigator.Areas.Admin.Controllers
                 return StatusCode(500, new { message = "Error occurred during deletion.", error = ex.Message });
             }
         }
+        [Authorize(Roles = SD.AdminRole)]
+        [IsBlockedAuthorize]
 
         [HttpPost]
         public async Task<IActionResult> BulkLock([FromBody] List<string> ids)
@@ -116,12 +118,14 @@ namespace Investigator.Areas.Admin.Controllers
                 {
                     user.IsBlocked = true; // Set blocked flag
                     _unit.ApplicationUser.Update(user);
+                    _unit.Save();
                 }
             }
-            _unit.Save();
+            
             return Json(new { message = "Selected users have been blocked." });
         }
-
+        [Authorize(Roles = SD.AdminRole)]
+        [IsBlockedAuthorize]
         [HttpPost]
         public async Task<IActionResult> BulkUnlock([FromBody] List<string> ids)
         {

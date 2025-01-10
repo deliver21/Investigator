@@ -1,6 +1,7 @@
 ﻿using Investigator.Data;
 using Investigator.Models;
 using Investigator.Repository.IRepository;
+using Microsoft.EntityFrameworkCore;
 
 namespace Investigator.Repository
 {

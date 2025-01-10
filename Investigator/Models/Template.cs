@@ -29,7 +29,7 @@ namespace Investigator.Models
         public string? ImageId { get; set; }
 
         [Required]
-        public string CreatorId { get; set; }
+        public string ? CreatorId { get; set; }
 
         [ForeignKey(nameof(CreatorId))]
         [ValidateNever]

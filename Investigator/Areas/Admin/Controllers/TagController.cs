@@ -19,7 +19,7 @@ namespace Investigator.Areas.Admin.Controllers
 
         public async Task<IActionResult> Upsert(int ? tagId)
         {
-            var tag = tagId != 0 ? await _unit.TemplateTag.Get(u => u.TagId == tagId) : new Models.TemplateTag();
+            var tag = tagId != 0 ? await _unit.TemplateTag.Get(u => u.TagId == tagId) : new TemplateTag();
             return View(tag);
         }
 

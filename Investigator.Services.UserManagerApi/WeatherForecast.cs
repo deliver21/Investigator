@@ -1,4 +1,4 @@
-namespace Investigator.Services.UserManagerApi
+namespace Investigator.Services.UserManagerAPI
 {
     public class WeatherForecast
     {
