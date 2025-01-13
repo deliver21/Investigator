@@ -4,9 +4,24 @@
 @{
     ViewData["Title"] = localizer["Profile"];
     ViewData["ActivePage"] = ManageNavPages.Index;
+    var data = TempData["user"];
+    var user = JsonConvert.DeserializeObject<ApplicationUser>(Convert.ToString(data));
 }
 
-<h3>@ViewData["Title"]</h3>
+<h3>@ViewData["Title"]
+     @if(user != null && string.IsNullOrEmpty(user.SalesForceUserId))
+     {
+        <a class="text-decorative-none" title="Click this button to get verified to our salesforce service"
+           asp-area="Admin" asp-controller="User" asp-action="VerifyUserToSalesForce" asp-route-userId="@user.Id">
+                <img src="~/Images/not_saved_120.png" style="width:25px; height:25px" />
+        </a>          
+     }
+     else
+     {
+        <img src="~/Images/salesforce_page_120.png" style="width:30x;height:30px" 
+        title="Your account is verified in our salesforce service"/>         
+     }
+</h3>
 <partial name="_StatusMessage" for="StatusMessage" />
 <div class="row">
     <div class="col-md-6">
@@ -21,7 +36,7 @@
                 <label asp-for="Input.PhoneNumber" class="form-label"></label>
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
-            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">@localizer["Save"]</button>
+            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary rounded-1 p-3">@localizer["Save"]</button>
         </form>
     </div>
 </div>

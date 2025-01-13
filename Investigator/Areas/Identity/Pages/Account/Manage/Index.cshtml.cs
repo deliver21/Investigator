@@ -4,11 +4,14 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Investigator.Repository.IRepository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Newtonsoft.Json;
 
 namespace Investigator.Areas.Identity.Pages.Account.Manage
 {
@@ -16,13 +19,16 @@ namespace Investigator.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private IUnitOfWork _unit;
 
         public IndexModel(
             UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
+            SignInManager<IdentityUser> signInManager,
+            IUnitOfWork unit)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _unit = unit;
         }
 
         /// <summary>
@@ -80,7 +86,14 @@ namespace Investigator.Areas.Identity.Pages.Account.Manage
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            if(claimsIdentity.Claims.Any())
+            {
+                var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var userFromDb = await _unit.ApplicationUser.Get(u => u.Id == userId);
+                TempData["user"] = JsonConvert.SerializeObject(userFromDb);
+            }
+            
             await LoadAsync(user);
             return Page();
         }

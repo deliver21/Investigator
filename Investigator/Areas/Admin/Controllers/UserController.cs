@@ -3,6 +3,7 @@ using Investigator.Data;
 using Investigator.Models;
 using Investigator.Repository.IRepository;
 using Investigator.Services;
+using Investigator.Services.IServices;
 using Investigator.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -17,12 +18,12 @@ namespace Investigator.Areas.Admin.Controllers
     public class UserController : Controller
     {
         private readonly IUnitOfWork _unit;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly ISalesForceService _salesForce;
         private readonly UserManager<IdentityUser> _userManager;
-        public UserController(IUnitOfWork unit, SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager) 
+        public UserController(IUnitOfWork unit, ISalesForceService salesForce, UserManager<IdentityUser> userManager) 
         {
             _unit = unit;
-            _signInManager = signInManager;
+            _salesForce = salesForce;
             _userManager = userManager;
         }
         [Authorize]
@@ -30,6 +31,26 @@ namespace Investigator.Areas.Admin.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+        public async Task<IActionResult> VerifyUserToSalesForce(string ? userId)
+        {
+            if(!string.IsNullOrEmpty(userId))
+            {
+                var user = await _unit.ApplicationUser.Get(u => u.Id == userId,null, true);
+                if(user != null)
+                {
+                    var sucess = await _salesForce.CreateUserToSalesForce(user);
+                    if(sucess)
+                    {
+                        TempData["success"] = "The account is successfully verified to salesForce";
+                    }
+                    else
+                    {
+                        TempData["error"] = "Error occured while verifying the account to salesForce\nTry one more time";
+                    }
+                }
+            }
+            return Redirect($"/Identity/Account/Manage");
         }
 
         #region APIs Calls
