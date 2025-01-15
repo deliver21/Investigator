@@ -43,6 +43,11 @@
                                 <ul class="dropdown-menu">                                    
                                     <li><a class="dropdown-item" asp-area="Admin" asp-controller="Template" asp-action="Index">Templates</a></li>
                                     <li><a class="dropdown-item" asp-area="Admin" asp-controller="Form" asp-action="Index">@localizer["Forms"]</a></li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Support" asp-action="Index">
+                                            <img src="~/Images/Icon/jira.png" style="width:10x;height:10px"/> Tickets 
+                                         </a>
+                                    </li>
                                     @if (User.IsInRole(SD.AdminRole))
                                     {
                                         <li><a class="dropdown-item" asp-area="Admin" asp-controller="Tag" asp-action="Index">Tags</a></li>
@@ -68,11 +73,15 @@
     </header>
     <div class="container">
         <main role="main" class="mt-0 mb-2">
-            <partial name="_Notification" />
+            @if (User.Identity.IsAuthenticated)
+            {
+                <partial name="_JiraHelpPartial" model="SD.AppBaseUrl+@currentUrl" />
+            }
+            <partial name="_Notification"/>            
             @RenderBody()
         </main>
     </div>
-    <footer class="border-top footer text-muted text-center">
+    <footer class="border-top footer text-muted text-center mt-3">
         <div class="container">
             &copy; 2025 - <i class="bi bi-binoculars-fill"></i> Investigator @localizer["By"] MateCode
         </div>

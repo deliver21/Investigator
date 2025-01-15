@@ -1,7 +1,6 @@
-﻿using Google.Apis.Drive.v3.Data;
-using Investigator.Models;
+﻿using Investigator.Models.DTOs;
 
-namespace Investigator.Models.DTO
+namespace Investigator.Models.DTOs
 {
     public class FormDto
     {

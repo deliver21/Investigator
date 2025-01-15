@@ -24,11 +24,11 @@ namespace Investigator.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Upsert(TemplateTag tag)
+        public async Task<IActionResult> Upsert(TemplateTag tag)
         {
             if (tag.TagId == 0)
             {
-                _unit.TemplateTag.Add(tag);
+                await _unit.TemplateTag.Add(tag);
             }
             else
             {

@@ -1,6 +1,7 @@
 ﻿@model Template
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
 @{
+    TempData["TemplateTitle"] = Model != null ? Convert.ToString(Model.Title) : string.Empty;
     IEnumerable<SelectListItem> visibilities = new List<SelectListItem>()
     {
         new SelectListItem{Value = "0" , Text = "Public"},
@@ -90,4 +91,5 @@
             ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
         });
     </script>
+    <partial name="_ValidationScriptsPartial" />
 }

@@ -2,6 +2,8 @@
 {
     public class SD
     {
+        public static string AppBaseUrl { get; set; }
+
         public static string privateVisibility = "Private";
         public static string publicVisibility = "Public";
         public static string restrictedVisibility = "Restricted";
@@ -22,16 +24,6 @@
 
         //Token Key
         public static string tokenCookie = "JWTToken";
-
-        //Http Verbs for APiType
-        public enum ApiType
-        {
-            GET,
-            POST,
-            PUT,
-            DELETE,
-            HEAD
-        }
 
     }
 }

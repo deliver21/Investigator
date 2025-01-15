@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Investigator.Models;
-using Investigator.Models.DTO;
+using Investigator.Models.DTOs;
 using Investigator.Repository.IRepository;
 using Investigator.Services;
 using Investigator.Utilities;
@@ -102,64 +102,65 @@ namespace Investigator.Areas.Admin.Controllers
             form.Description = _unit.Template.Get(u => u.TemplateId == form.TemplateId).GetAwaiter().GetResult().Description;
             if (form == null) return BadRequest("Invalid form data.");
 
-            var newForm = _mapper.Map<Form>(form);
             if (form.TemplateId != 0)
             {
-                _unit.Form.Add(newForm);
+                await _unit.Form.Add(_mapper.Map<Form>(form));
                 var template = await _unit.Template.Get(u => u.TemplateId == form.TemplateId);
                 if (template != null)
                 {
                     template.Point += 1;
                     _unit.Template.Update(template);
                 }
-                _unit.Save();
             }
 
             foreach (var questionDto in form.Questions)
             {
-                var newQuestion = _mapper.Map<Question>(questionDto);
-                if (newQuestion.QuestionId == 0)
+                if (questionDto.QuestionId == 0)
                 {
-                    _unit.Question.Add(newQuestion);
+                   await _unit.Question.Add(_mapper.Map<Question>(questionDto));
                 }
                 else
                 {
-                    _unit.Question.Update(newQuestion);
+                    _unit.Question.Update(_mapper.Map<Question>(questionDto));
                 }
                 _unit.Save();
 
                 // Save Options
-                foreach (var option in questionDto.Options)
+                if(questionDto.Type == SD.checkBoxType && questionDto.Options.Any())
                 {
-                    if (option.QuestionId == 0)
+                    foreach (var option in questionDto.Options)
                     {
-                        if (questionDto.QuestionId != 0)
+                        if (option.QuestionId == 0)
                         {
-                            option.QuestionId = questionDto.QuestionId;
-                        }
-                        else
-                        {
-                            int questionId = _unit.Question.Get(u => u.Text == questionDto.Text && u.Order == questionDto.Order).
-                                GetAwaiter().GetResult().QuestionId;
-                            if (questionId > 0)
+                            if (questionDto.QuestionId != 0)
                             {
-                                option.QuestionId = questionId;
+                                option.QuestionId = questionDto.QuestionId;
+                            }
+                            else
+                            {
+                                int questionId = _unit.Question.Get(u => u.Text == questionDto.Text && u.Order == questionDto.Order).
+                                    GetAwaiter().GetResult().QuestionId;
+                                if (questionId > 0)
+                                {
+                                    option.QuestionId = questionId;
+                                }
                             }
                         }
-                    }
-                    if (option.QuestionId != 0)
-                    {
-                        if (option.OptionId == 0)
+                        if (option.QuestionId != 0)
                         {
-                            _unit.QuestionOption.Add(option);
+                            if (option.OptionId == 0)
+                            {
+                                await _unit.QuestionOption.Add(_mapper.Map<QuestionOption>(option));
+                            }
+                            else
+                            {
+                                _unit.QuestionOption.Update(_mapper.Map<QuestionOption>(option));
+                            }
                         }
-                        else
-                        {
-                            _unit.QuestionOption.Update(option);
-                        }
+                        _unit.Save();
                     }
-                    _unit.Save();
                 }
+                
             }
 
             _unit.Save();

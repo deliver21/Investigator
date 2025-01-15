@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Investigator.Models;
-using Investigator.Models.DTO;
+using Investigator.Models.DTOs;
+using Investigator.Models.ViewModels;
 using Investigator.Repository.IRepository;
 using Investigator.Services;
 using Investigator.Services.IServices;
@@ -19,7 +20,9 @@ namespace Investigator.Areas.Admin.Controllers
         private readonly IHtmlLocalizer<TemplateController> _localizer;
         private readonly IUnitOfWork _unit;
         private readonly IFileSaver _fileSaver;
-        private IMapper _mapper;       
+        private IMapper _mapper;
+        [BindProperty]
+        public TemplateDetailsVM TemplateDetails { get; set; }
         public TemplateController(IUnitOfWork unit, IFileSaver fileSaver, IMapper mapper, IHtmlLocalizer<TemplateController> localizer) 
         {
             _unit = unit;
@@ -60,7 +63,7 @@ namespace Investigator.Areas.Admin.Controllers
         [Authorize]
         [IsBlockedAuthorize]
         [HttpPost]
-        public IActionResult Upsert(Template template, IFormFile ? file)
+        public async Task<IActionResult> Upsert(Template template, IFormFile ? file)
         {
             if (template.TemplateId == 0)
             {
@@ -68,7 +71,7 @@ namespace Investigator.Areas.Admin.Controllers
                 template.CreatorId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
                 template.CreatedDate = DateTime.Now;
                 template.ImageId = file != null ? _fileSaver.UploadFilesToGoogleDrive(file) : "";
-                _unit.Template.Add(template);
+                await _unit.Template.Add(template);
                 TempData["success"] = "Template has successfully been created";
             }
             else
@@ -80,7 +83,7 @@ namespace Investigator.Areas.Admin.Controllers
                     
                     if (!string.IsNullOrEmpty(previousPicture))
                     {
-                        response = _fileSaver.DeleteFileFromGoogleDrive(previousPicture).GetAwaiter().GetResult();
+                        response = await _fileSaver.DeleteFileFromGoogleDrive(previousPicture);
                     }
                     template.ImageId = response ? _fileSaver.UploadFilesToGoogleDrive(file) : "";
                 }
@@ -101,6 +104,20 @@ namespace Investigator.Areas.Admin.Controllers
             template.Questions = new List<Question>();
             template.Questions = _unit.Question.GetAll(u => u.TemplateId == template.TemplateId).ToList();
             return View(template);
+        }
+
+        public async Task<IActionResult> Details(int? templateId)
+        {
+            TemplateDetails = new()
+            {
+                Template = await _unit.Template.Get(u => u.TemplateId == templateId),
+                LikesCount = _unit.Like.GetAll(u => u.TemplateId == templateId).Count(),
+                CommentsCount = _unit.Comment.GetAll(u => u.TemplateId == templateId).Count(),
+                Likes = _unit.Like.GetAll(u => u.TemplateId == templateId),
+                Comments = _unit.Comment.GetAll(u => u.TemplateId == templateId)
+
+            };
+            return View(TemplateDetails);
         }
 
         #region Api's Calls
@@ -162,7 +179,7 @@ namespace Investigator.Areas.Admin.Controllers
                     }
                     else
                     {
-                        if (_unit.Question.Get(u => u.QuestionId == question.QuestionId) == null) continue;
+                        if (await _unit.Question.Get(u => u.QuestionId == question.QuestionId) == null) continue;
                         var questionToSave = _mapper.Map<Question>(question);
                         questionToSave.TemplateId = templateId;
                         _unit.Question.Update(questionToSave); ;

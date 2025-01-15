@@ -1,4 +1,6 @@
-﻿namespace Investigator.Models.DTO
+﻿using Investigator.Models.DTOs;
+
+namespace Investigator.Models.DTOs
 {
     public class QuestionDto
     {
@@ -7,6 +9,6 @@
         public string Type { get; set; }
         public int Order { get; set; }
         public bool IsOptional { get; set; }
-        public ICollection<QuestionOption> Options { get; set; } = new List<QuestionOption>();
+        public ICollection<QuestionOptionDto> Options { get; set; } = new List<QuestionOptionDto>();
     }
 }

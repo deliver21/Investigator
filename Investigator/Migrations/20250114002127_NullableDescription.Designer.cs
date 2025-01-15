@@ -4,6 +4,7 @@ using Investigator.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Investigator.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250114002127_NullableDescription")]
+    partial class NullableDescription
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -96,55 +99,6 @@ namespace Investigator.Migrations
                     b.HasIndex("TemplateId");
 
                     b.ToTable("Forms");
-                });
-
-            modelBuilder.Entity("Investigator.Models.JiraTicket", b =>
-                {
-                    b.Property<int>("TicketId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TicketId"));
-
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CreatedByUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("JiraLink")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PageLink")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Priority")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Summary")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TemplateTitle")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("TicketId");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.HasIndex("CreatedByUserId");
-
-                    b.ToTable("JiraTickets");
                 });
 
             modelBuilder.Entity("Investigator.Models.Like", b =>
@@ -631,21 +585,6 @@ namespace Investigator.Migrations
                     b.Navigation("Template");
                 });
 
-            modelBuilder.Entity("Investigator.Models.JiraTicket", b =>
-                {
-                    b.HasOne("Investigator.Models.ApplicationUser", null)
-                        .WithMany("JiraTickets")
-                        .HasForeignKey("ApplicationUserId");
-
-                    b.HasOne("Investigator.Models.ApplicationUser", "CreatedByUser")
-                        .WithMany()
-                        .HasForeignKey("CreatedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("CreatedByUser");
-                });
-
             modelBuilder.Entity("Investigator.Models.Like", b =>
                 {
                     b.HasOne("Investigator.Models.ApplicationUser", "ApplicationUser")
@@ -818,11 +757,6 @@ namespace Investigator.Migrations
                     b.Navigation("Likes");
 
                     b.Navigation("Questions");
-                });
-
-            modelBuilder.Entity("Investigator.Models.ApplicationUser", b =>
-                {
-                    b.Navigation("JiraTickets");
                 });
 #pragma warning restore 612, 618
         }

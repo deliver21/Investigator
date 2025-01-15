@@ -1,5 +1,8 @@
 ﻿@model Template
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+@{
+    TempData["TemplateTitle"] = Model.Title;
+}
 <input type="hidden" id="templateId" value="@Model.TemplateId" hidden>
 <div class="container mb-2">
     <a class="m-1 p-2 px-2 text-start text-center btn  btn-sm btn-outline-info" asp-area="Admin" asp-controller="Template" asp-action="Index">

@@ -11,6 +11,7 @@
         public ILikeRepository Like { get; }
         public ITemplateTagRepository TemplateTag { get; }
         public IQuestionOptionRepository QuestionOption { get; }
+        public IJiraTicketRepository JiraTicket { get; }
         void Save();
     }
 }

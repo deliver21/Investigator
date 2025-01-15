@@ -15,7 +15,7 @@ namespace Investigator.Models
         [ValidateNever]
         public Template ? Template { get; set; }
         public  string Title { get; set; }  
-        public string Description { get; set; }
+        public string ? Description { get; set; }
         [Required]
         public string CreatorId { get; set; }
 

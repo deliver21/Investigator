@@ -21,17 +21,18 @@ function loadDataTable(status) {
             {
                 data: "formId",
                 "render": function (data) {
-                    return `<div class="w-50 btn-group" role="group" style="font-size:12px;">
-                                    <a id="templateField" href="#" class="btn btn-primary mx-2 rounded-1">
-                                        <i class="bi bi-pencil-square"></i> <span style="font-size:12px"> ${manageQuestions} </span>
-                                    </a>
-                                     <a id="templateField" href="#" class="btn btn-success mx-2 rounded-1">
-                                        <i class="bi bi-pencil-square"></i> <span style="font-size:12px"> ${editFormHeader} </span>
-                                    </a>
-                                   <a id="templateField" onClick=Delete('/Admin/Form/Delete?id=${data}') class="btn btn-danger mx-2 rounded-1">
-                                        <i class="bi bi-trash-fill"></i> <span style="font-size:12px"> ${deleteForm} </span>
-                                    </a>
-                             </div>`
+                    return
+                    `<div class="w-50 btn-group" role="group" style="font-size:12px;">
+                           <a id="templateField" href="#" class="btn btn-primary mx-2 rounded-1">
+                               <i class="bi bi-pencil-square"></i> <span style="font-size:12px"> ${manageQuestions} </span>
+                           </a>
+                            <a id="templateField" href="#" class="btn btn-success mx-2 rounded-1">
+                               <i class="bi bi-pencil-square"></i> <span style="font-size:12px"> ${editFormHeader} </span>
+                           </a>
+                          <a id="templateField" onClick=Delete('/Admin/Form/Delete?id=${data}') class="btn btn-danger mx-2 rounded-1">
+                               <i class="bi bi-trash-fill"></i> <span style="font-size:12px"> ${deleteForm} </span>
+                           </a>
+                    </div>`
                 },
                 "width": "65%"
             }

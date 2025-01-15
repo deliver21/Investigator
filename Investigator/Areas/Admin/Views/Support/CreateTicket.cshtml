@@ -1,0 +1,62 @@
+﻿@model JiraTicketDto
+@{
+    IEnumerable<SelectListItem> priorities = new List<SelectListItem>()
+    {
+        new SelectListItem{Value = "High" , Text = "High"},
+        new SelectListItem{Value = "Medium" , Text = "Medium"},
+        new SelectListItem{Value = "Low" , Text = "Low"}
+    };
+    ViewBag.PriorityList = priorities;
+}
+<div class="card shadow border-0 mb-5 mt-1 pt-1">
+    <div class="card-header bg-primary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white">Create Ticket in Jira</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body mb-3 pt-4">
+        <form method="post">
+            <div class=row>
+                <div class="col-12">
+                    <div class="border p-2 mt-4">
+                        <div asp-validation-summary="All" class="text-danger-emphasis"></div>
+                        <div class="mb-3 form-floating col-12 bg-white">
+                            <input asp-for="Summary" class="form-control border-0 shadow ps-lg-2" />
+                            <label asp-for="Summary" class="p-0"></label>
+                            <span asp-validation-for="Summary" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3 form-floating col-12 bg-white">
+                            <select asp-for="Priority" asp-items="@ViewBag.PriorityList" class="form-select border-0 shadow ps-lg-2">
+                                <option disabled selected>---Select Priority---</option>
+                            </select>
+                            <span asp-validation-for="Priority" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3 form-floating col-12 bg-white">
+                            <input asp-for="PageLink" class="form-control border-0 shadow ps-lg-2" readonly />
+                            <label asp-for="PageLink" class="p-0"> </label>
+                            <span asp-validation-for="PageLink" class="text-danger"></span>
+                        </div>
+                        <div class="row pt-2">
+                            <div class="col-3 col-md-3">
+                                <button type="submit" class="btn btn-primary bg-info rounded-1" style="width:150px">
+                                    Create
+                                </button>
+                            </div>
+                            <div class="col-6"></div>
+                            <div class="col-3 col-md-3 text-end">
+                                <a asp-controller="Support" asp-action="Index" class="btn btn-primary rounded-1">
+                                    Back
+                                </a>
+                            </div>
+                        </div>
+                    </div>                    
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

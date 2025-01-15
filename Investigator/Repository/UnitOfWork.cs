@@ -15,6 +15,7 @@ namespace Investigator.Repository
         public ILikeRepository Like { get; private set; }
         public ITemplateTagRepository TemplateTag { get; private set; }
         public IQuestionOptionRepository QuestionOption { get; private set; }
+        public IJiraTicketRepository JiraTicket { get; private set; }
         public UnitOfWork(AppDbContext context) 
         {    
             _context = context;
@@ -27,10 +28,16 @@ namespace Investigator.Repository
             Like = new LikeRepository(_context);
             TemplateTag = new TemplateTagRepository(_context);
             QuestionOption = new QuestionOptionRepository(_context);
+            JiraTicket = new JiraTicketRepository(_context);
         }
         public void Save()
         {
-            _context.SaveChanges();
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch(Exception ex) { Console.WriteLine(ex.Message); }
+            
         }
     }
 }

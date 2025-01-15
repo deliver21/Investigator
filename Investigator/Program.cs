@@ -13,6 +13,7 @@ using AutoMapper;
 using Investigator.Models;
 using Microsoft.AspNetCore.Authorization;
 using Investigator.DbInitializer;
+using Investigator.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,8 @@ builder.Services.AddRazorPages()
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
+
+SD.AppBaseUrl = builder.Configuration["AppUrls:AppBaseUrl"];
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
@@ -74,6 +77,8 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IFileSaver, FileSaver>();
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddScoped<ISalesForceService, SalesForceService>();
+builder.Services.AddScoped<ITokenProvider, TokenProvider>();
+builder.Services.AddScoped<IJiraService, JiraService>();
 
 IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper); 

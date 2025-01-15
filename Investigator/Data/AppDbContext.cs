@@ -19,10 +19,13 @@ namespace Investigator.Data
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Like> Likes { get; set; }
         public DbSet<QuestionOption> QuestionOptions { get; set; }
+        public DbSet<JiraTicket> JiraTickets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<JiraTicket>().HasOne(j => j.CreatedByUser).WithMany()
+                .HasForeignKey(f => f.CreatedByUserId).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<TemplateTag>()
                 .HasKey(t => t.TagId);
 

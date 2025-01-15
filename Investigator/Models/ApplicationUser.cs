@@ -15,5 +15,8 @@ namespace Investigator.Models
         public string Interval { get; set; }
         [NotMapped]
         public string Role { get; set; }
+        public string? ApiToken { get; set; }
+
+        public ICollection<JiraTicket> JiraTickets { get; set; } = new List<JiraTicket>();
     }
 }
