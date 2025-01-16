@@ -20,8 +20,7 @@
         <div class="d-flex flex-wrap gap-3">
             <div class="card card-menu text-center shadow-sm">
                 <a asp-area="Admin" asp-controller="Template" asp-action="Upsert"
-                   class="text-decorative-none d-flex align-items-center justify-content-center"
-                   style="height: 400px;">
+                   class="text-decorative-none d-flex align-items-center justify-content-center" style="height: 400px;">
                     <div class="card-body">
                         <div class="text-primary mt-5 display-4">
                             <i class="bi bi-clipboard2-plus"></i>
@@ -46,7 +45,7 @@
                         </div>
                         <div class="col text-end">
                             <a class="btn btn-primary rounded-circle p-2 py-1"
-                           href="#"
+                           asp-area="Admin" asp-controller="Template" asp-action="Details" asp-route-templateId="@template.TemplateId"
                            title="Template Details">
                                 <i class="bi bi-info-circle"></i>
                             </a>
@@ -70,12 +69,19 @@
                          class="card-img-top" alt="Recent Form">
                         <div class="card-body">
                             <p class="card-text">@form.Title</p>
-                            <div class="text-end">
-                                <a class="btn btn-primary rounded-circle p-2 py-1"
-                               href="#">
-                                    <i class="bi bi-info-circle"></i>
-                                </a>
-                            </div>
+                            <div class ="row mt-2">
+                                <div class="col text-start">
+                                    <a class="btn btn-primary rounded-circle p-2 py-1" asp-area="Admin" asp-controller="Form"
+                                   asp-action="FillForm" asp-route-formId="@form.FormId" target="_blank" title="fill the form">
+                                        <i class="bi bi-clipboard-check-fill"></i>
+                                    </a>
+                                </div>
+                                <div class="col text-end">
+                                    <a class="btn btn-primary rounded-circle p-2 py-1" href="#" title="form details">
+                                        <i class="bi bi-info-circle"></i>
+                                    </a>
+                                </div>
+                            </div>                            
                         </div>
                     </div>
                 </div>

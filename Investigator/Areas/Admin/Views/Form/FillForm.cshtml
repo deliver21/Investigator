@@ -1,0 +1,18 @@
+﻿@model Form
+@{
+    ViewData["Title"] = "Form Filler";
+}
+<input type="hidden" id="templateId" value="@Model.TemplateId" hidden>
+<div class="container mb-2">
+    <div class="card">
+        <img src="@(Model != null ? $"https://drive.google.com/thumbnail?id={Model.Template.ImageId}" : "https://via.placeholder.com/1200x300")"
+             class="card-img-top" alt="Event Image" style="max-height:100px; object-fit: cover;">
+        <div class="card-body">
+            <h3 class="card-title text-center"> @Model.Title </h3>
+            <hr>
+            <p class="text-center">
+                @(Model != null ? Html.Raw(Model.Description) : "")
+            </p>
+        </div>
+    </div>
+</div>

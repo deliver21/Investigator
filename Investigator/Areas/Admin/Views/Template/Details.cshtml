@@ -1,1 +1,147 @@
 ﻿@model TemplateDetailsVM
+@{
+    string? userId = Convert.ToString(TempData["userId"]);
+    if(string.IsNullOrEmpty(userId))
+    {
+        userId = "";
+    }
+}
+<div class="row"> 
+    <div class="col-3">
+        <a class="m-1 p-2 px-2 text-start text-center btn btn-sm btn-outline-info rounded-1" asp-area="Customer" asp-controller="Home" asp-action="Index">
+            <i class="bi bi-arrow-bar-left"></i> Back
+        </a>
+    </div>      
+</div>
+<div class="card shadow border-0 mb-5 mt-1 pt-1">
+    <div class="card-header bg-primary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white">Template Details</h2>
+            </div>
+        </div>        
+    </div>
+    <div class="card-body pt-4">
+        <div class="row">
+            <div class="col-2 mt-4">
+                <div class="row">
+                    <img src="@(Model != null ? $"https://drive.google.com/thumbnail?id={Model.Template.ImageId}" : "~/Images/pharmacy-post-banner-background.jpg")"
+                         width="100%" style="border-radius:5px; border:1px solid #bbb9b9" />
+                </div>
+                <div class="d-flex flex-row">
+                    <div class="p-2">
+                        <div class="d-flex flex-row-reverse">
+                            <div class="p-2 bd-highlight">  
+                                @Model.Template.Creator.DisplayName                                
+                            </div>
+                            <div class="p-2 bd-highlight">
+                                <i class="bi bi-person-check-fill"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-2">
+                        <div class="d-flex flex-row-reverse">
+                            <div class="p-2 bd-highlight">                                
+                                @Model.Template.CreatedDate
+                            </div>
+                            <div class="p-2 bd-highlight">
+                                <i class="bi bi-calendar-check-fill"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 <div class="d-flex flex-row">
+                     <div class="p-2">
+                         <div class="d-flex flex-row-reverse">
+                             <div class="p-2 bd-highlight">
+                                 <a class="text-decorative-none" asp-area="Admin" asp-controller="Template" 
+                                 asp-action="LikeTemplate" asp-route-templateId="@Model.Template.TemplateId">
+                                     @if(Model.Likes.Any(u => u.LikerId == userId))
+                                     {
+                                         <i class="bi bi-hand-thumbs-up-fill"></i>
+                                         
+                                     }else{
+                                         <i class="bi bi-hand-thumbs-up"></i>
+                                     }                                   
+                                 </a>                                
+                             </div>
+                             <div class="p-2 bd-highlight">
+                                 @Model.LikesCount
+                             </div>
+                         </div>
+                     </div>
+                     <div class="p-2">
+                         <div class="d-flex flex-row-reverse">
+                             <div class="p-2 bd-highlight">
+                                 <a class="text-decorative-none" href="#">
+                                     <i class="bi bi-chat-left-text"></i>
+                                 </a>
+                             </div>
+                             <div class="p-2 bd-highlight">
+                                 @Model.CommentsCount
+                             </div>
+                         </div>
+                     </div>
+                    <a asp-area="Admin" asp-controller="Form" asp-action="Generate" asp-route-templateId="@Model.Template.TemplateId"
+                       class="btn btn-info rounded-1 p-2 py-1" style="font-size: 9px;">
+                       Try it
+                    </a>
+                 </div>  
+            </div>
+            <div class="col-10 text-center">
+                 <h3 class="card-title text-center">
+                    @(Model != null && !string.IsNullOrEmpty(Model.Template.Title) ? Model.Template.Title : "Empty title") – Template
+                 </h3>
+                <hr>
+                <p class="text-center">
+                    @(Model != null ? Html.Raw(Model.Template.Description) : "")
+                </p>
+                <div id="questions-list" class="list-group">
+                    @foreach (var question in Model.Template.Questions.OrderBy(q => q.Order))
+                    {
+                        <div class="question-item list-group-item m-1" data-question-id="@question.QuestionId">
+                            <input type="text" name="questions[@question.QuestionId].text" value="@question.Text"
+                               placeholder="Question text" class="form-control mb-2 font-weight-bold" readonly>
+                            <div class="response-container">
+                                @switch (question.Type)
+                                {
+                                    case "SingleLine":
+                                        <input type="text" class="form-control mb-1" placeholder="Response text" required="@(!question.IsOptional)" />
+                                        break;
+                                    case "MultiLine":
+                                        <textarea class="form-control mb-1" placeholder="Response text" required="@(!question.IsOptional)"></textarea>
+                                        break;
+                                    case "Integer":
+                                        <input type="number" class="form-control mb-1" placeholder="Response text" required="@(!question.IsOptional)" />
+                                        break;
+                                    case "CheckBox":
+                                      <div class="form-check">                                           
+                                          <div class="new-options my-1" data-question-id="@question.QuestionId">
+                                               <input class="form-check-input" type="checkbox" id="Option1">
+                                               <input class="form-control form-check-label" type="text" value="Option 1" 
+                                               data-option-id="Option1" style="display: inline-block; width: auto; margin-left: 10px;" readonly/>
+                                          </div>
+                                          <div class="new-options my-1" data-question-id="@question.QuestionId">                                                
+                                              <input class="form-check-input" type="checkbox" id="Option2">
+                                              <input class="form-control form-check-label" type="text" value="Option 2"
+                                              data-option-id="Option2" style="display: inline-block; width: auto; margin-left: 10px;" readonly />
+                                          </div>
+                                      </div>
+
+                                      break;
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="row text-center">
+                    <div class="col-12 text-center">
+                        <button id="login-submit" type="submit" class="w-50 btn btn-lg btn-primary rounded-1 p-3" disabled>
+                            <i class="bi bi-binoculars-fill"></i> Submit
+                        </button>
+                    </div>                    
+                </div>                
+            </div>
+        </div>
+    </div>
+</div>

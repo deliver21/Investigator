@@ -28,7 +28,7 @@
                     </div>
                     <div class="col text-end">
                         <a class="btn btn-primary rounded-circle p-2 py-1"
-                       href="#"
+                       asp-area="Admin" asp-controller="Template" asp-action="Details" asp-route-templateId="@template.TemplateId"
                    title="Template Details">
                             <i class="bi bi-info-circle"></i>
                         </a>
@@ -62,7 +62,7 @@
                     </div>
                     <div class="col text-end">
                         <a class="btn btn-primary rounded-circle p-2 py-1"
-                       href="#"
+                       asp-area="Admin" asp-controller="Template" asp-action="Details" asp-route-templateId="@template.TemplateId"
                    title="Template Details">
                             <i class="bi bi-info-circle"></i>
                         </a>
@@ -73,7 +73,6 @@
     </div>
 </div>
 }
-
 
 @if (Model.Any(u => u.Topic == SD.ProfessionalTopic))
 {
@@ -89,14 +88,15 @@
                 <div class="row mt-4">
                     <div class="col text-start">
                         <a asp-area="Admin" asp-controller="Form" asp-action="Generate"
-                   asp-route-templateId="@template.TemplateId"
-                   class="btn btn-info rounded-1 p-2 py-1" style="font-size: 9px;">
+                         asp-route-templateId="@template.TemplateId"
+                         class="btn btn-info rounded-1 p-2 py-1" style="font-size: 9px;">
+
                                 @localizer["Tryit"]
                         </a>
                     </div>
                     <div class="col text-end">
                         <a class="btn btn-primary rounded-circle p-2 py-1"
-                       href="#">
+                         asp-area="Admin" asp-controller="Template" asp-action="Details" asp-route-templateId="@template.TemplateId">
                             <i class="bi bi-info-circle"></i>
                         </a>
                     </div>

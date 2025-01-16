@@ -41,6 +41,15 @@ namespace Investigator.Areas.Admin.Controllers
             ViewBag.EditFormHeader = _localizer["Editformheader"];
             ViewBag.DeleteTemplate = _localizer["Deleteform"];
         }
+        [Authorize]
+        [IsBlockedAuthorize]
+        public async Task<IActionResult> FillForm(int formId)
+        {
+            var form = await _unit.Form.Get(u => u.FormId == formId);
+            form.Template = await _unit.Template.Get(u => u.TemplateId == form.TemplateId);
+            if (form == null) return Redirect("/Customer/Home/Index");
+            return View(form);
+        }
 
         [Authorize]
         [IsBlockedAuthorize]

@@ -108,16 +108,63 @@ namespace Investigator.Areas.Admin.Controllers
 
         public async Task<IActionResult> Details(int? templateId)
         {
+            var template = await _unit.Template.Get(u => u.TemplateId == templateId);            
+            if(template == null)
+            {
+                return Redirect($"/Customer/Home/Index");
+            }
+            
+            template.Creator = await _unit.ApplicationUser.Get(u => u.Id == template.CreatorId);
+            template.Questions = _unit.Question.GetAll(u => u.TemplateId == templateId, "QuestionOption").ToList();
             TemplateDetails = new()
             {
-                Template = await _unit.Template.Get(u => u.TemplateId == templateId),
+                Template = template,
                 LikesCount = _unit.Like.GetAll(u => u.TemplateId == templateId).Count(),
                 CommentsCount = _unit.Comment.GetAll(u => u.TemplateId == templateId).Count(),
                 Likes = _unit.Like.GetAll(u => u.TemplateId == templateId),
                 Comments = _unit.Comment.GetAll(u => u.TemplateId == templateId)
-
             };
+
+            var claims = (ClaimsIdentity)User.Identity;
+            if (claims.Claims.Any())
+            {
+                var userId = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
+            }
             return View(TemplateDetails);
+        }
+
+        [Authorize]
+        [IsBlockedAuthorize]
+        public async Task<IActionResult> LikeTemplate(int templateId)
+        {
+            var template = await _unit.Template.Get(u => u.TemplateId == templateId);
+            if(template == null)
+            {
+                return Redirect($"/Customer/Home/Index");
+            }
+            var claims = (ClaimsIdentity) User.Identity;
+
+            if(claims.Claims.Any())
+            {
+                var userId = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var likeToDelete = await _unit.Like.Get(u => u.LikerId == userId);
+                if (likeToDelete == null)
+                {
+                    Like like = new()
+                    {
+                        TemplateId = templateId,
+                        LikerId = userId
+                    };
+                    await _unit.Like.Add(like);
+                }
+                else
+                {
+                    _unit.Like.Remove(likeToDelete);
+                }
+                _unit.Save();
+            }
+            int? passId = templateId;
+            return RedirectToAction(nameof(Details), passId);
         }
 
         #region Api's Calls
@@ -155,7 +202,7 @@ namespace Investigator.Areas.Admin.Controllers
                 _unit.Template.Remove(templateToDelete);
                 if(!string.IsNullOrEmpty(templateToDelete.ImageId))
                 {
-                    _fileSaver.DeleteFileFromGoogleDrive(templateToDelete.ImageId);
+                    await _fileSaver.DeleteFileFromGoogleDrive(templateToDelete.ImageId);
                 }
                 _unit.Save();
             }

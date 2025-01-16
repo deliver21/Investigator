@@ -14,16 +14,17 @@ function loadDataTable() {
             { data: 'status', "width": "25%" },
             {
                 data: "jiraLink",
-                "render": function (data, type, row) {
-                    return
-                    `
-                        <a class="btn btn-info mx-2 rounded-1" href='${row.jiraLink}' target="_blank" title="View on Jira" >
-                             <i class="bi bi-box-arrow-up-right"></i> Visualise ticket
-                        </a>
-                    `
+                render: function (data) {
+                    return data
                 },
                 "width": "20%"
             }
         ]
     });
 }
+
+//<div class="w-75 btn-group" role="group">
+//    < a class="help-link p-2 m-1 rounded-1 shadow border-1" href="${data}" target="_blank" title="View on Jira" >
+//        <img src="~/Images/Icon/jira.png" style="width:15x;height:15px" />
+//    </a >
+//</div>   

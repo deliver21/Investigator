@@ -76,7 +76,7 @@ namespace Investigator.Areas.Admin.Controllers
                 var userId = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
                 tickets = _unit.JiraTicket.GetAll(u => u.CreatedByUserId == userId).ToList();
             }
-            return Json(new { data = tickets});
+            return Json(new { data = tickets.OrderByDescending(u => u.CreatedDate)});
         }
         #endregion
     }
