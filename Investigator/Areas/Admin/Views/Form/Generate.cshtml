@@ -47,9 +47,12 @@
                             <input type="number" class="form-control mb-1" placeholder="Response text" required="@(!question.IsOptional)" />
                             break;
                         case "CheckBox":
-                         <div class="form-check">
-                             <button type="button" class="btn btn-sm btn-secondary mb-1 add-option" data-question-id="@question.QuestionId">Add Option</button>
-                             <div class="new-options my-1" data-question-id="@question.QuestionId">
+                            <div class="form-check">
+                                @{
+                                    var id = question.QuestionId;
+                                }
+                                <button type="button" class="btn btn-sm btn-secondary mb-1 add-option" onclick="addCheckboxOption('.new-options[@id]',@id'))" data-question-id="@question.QuestionId">Add Option</button>
+                             <div class="new-options my-2" data-question-id="@question.QuestionId">
                                  @foreach (var option in question.Options)
                                  {
                                       <input class="form-check-input" type="checkbox" id="@option.OptionId">
@@ -62,7 +65,7 @@
                             break;
                     }
                 </div>
-                <button class="btn btn-sm btn-warning text-start toggle-required">@(question.IsOptional ? "Mark Required" : "Mark Optional")</button>
+                <button class="btn btn-sm btn-warning text-start toggle-required" onclick="toggleRequired(event)">@(question.IsOptional ? "Mark Required" : "Mark Optional")</button>
                 <button type="button" class="btn btn-sm btn-danger text-end m-1 delete-question">
                     <i class="bi bi-file-earmark-x"></i> Delete Question
                 </button>
@@ -76,4 +79,6 @@
     <script src="~/js/form.js"></script>
 }
 
-
+@*div.new-options.my-2*@
+@*'new-5'*@
+@*'.new-options[data-question-id="@question.QuestionId"]','@question.QuestionId*@

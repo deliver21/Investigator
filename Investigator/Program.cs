@@ -14,6 +14,7 @@ using Investigator.Models;
 using Microsoft.AspNetCore.Authorization;
 using Investigator.DbInitializer;
 using Investigator.Utilities;
+using Investigator.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,7 @@ builder.Services.AddRazorPages()
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
+builder.Services.AddSignalR();
 
 SD.AppBaseUrl = builder.Configuration["AppUrls:AppBaseUrl"];
 
@@ -114,6 +116,7 @@ app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocal
 
 app.MapRazorPages();
 
+app.MapHub<TemplateDetailsHub>("/hubs/templateDetails");
 app.MapControllerRoute(
     name: "default",
     pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");

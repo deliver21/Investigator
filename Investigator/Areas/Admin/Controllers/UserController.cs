@@ -128,7 +128,6 @@ namespace Investigator.Areas.Admin.Controllers
         }
         [Authorize(Roles = SD.AdminRole)]
         [IsBlockedAuthorize]
-
         [HttpPost]
         public async Task<IActionResult> BulkLock([FromBody] List<string> ids)
         {

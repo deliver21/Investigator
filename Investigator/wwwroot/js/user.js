@@ -1,5 +1,9 @@
 ﻿var dataTable;
 
+let bulkLock = document.getElementById("bulkLockButton");
+let bulkUnlock = document.getElementById("bulkUnlockButton");
+let bulkDelete = document.getElementById("bulkDeleteButton");
+
 $(document).ready(function () {
     loadDataTable();
 });
@@ -63,7 +67,7 @@ function loadDataTable() {
     });
 }
 
-$(document).on('click', '#bulkDeleteButton', function () {
+bulkDelete.addEventListener('click', function (event) {
     const selectedIds = []; 
     
     $('.row-checkbox:checked').each(function () {
@@ -74,10 +78,9 @@ $(document).on('click', '#bulkDeleteButton', function () {
        
         toastr.warning("No users selected!");
         return;
-    }
-
-    
+    }    
     Delete('/Admin/User/BulkDelete', selectedIds);
+    event.preventDefault();
 });
 function SwitchRole(url) {
     Swal.fire({
@@ -135,7 +138,7 @@ function Delete(url, selectedIds = []) {
 }
 
 
-$(document).on("click", "#bulkLockButton", function () {
+bulkLock.addEventListener("click",function (event) {
     const selectedIds = [];
     $(".row-checkbox:checked").each(function () {
         selectedIds.push($(this).val());
@@ -144,13 +147,12 @@ $(document).on("click", "#bulkLockButton", function () {
     if (selectedIds.length === 0) {
         toastr.warning("No users selected for locking!");
         return;
-    }
-
-  
+    }  
     BulkAction("/Admin/User/BulkLock", selectedIds, "lock");
+    event.preventDefault();
 });
 
-$(document).on("click", "#bulkUnlockButton", function () {
+bulkUnlock.addEventListener("click", function (event) {
     const selectedIds = [];
     $(".row-checkbox:checked").each(function () {
         selectedIds.push($(this).val());
@@ -159,10 +161,9 @@ $(document).on("click", "#bulkUnlockButton", function () {
     if (selectedIds.length === 0) {
         toastr.warning("No users selected for unlocking!");
         return;
-    }
-
-    
+    }    
     BulkAction("/Admin/User/BulkUnlock", selectedIds, "unlock");
+    event.preventDefault();
 });
 
 function BulkAction(url, selectedIds, actionName) {

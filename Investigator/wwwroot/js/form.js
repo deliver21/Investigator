@@ -148,8 +148,8 @@ document.getElementById('save-form').addEventListener('click', function () {
         formData.append(`questions[${index}].type`, type);
         formData.append(`questions[${index}].order`, index + 1);
         formData.append(`questions[${index}].isOptional`, isOptional);
-
-        questionElement.querySelectorAll('.form-check-input').forEach((optionElement, optionIndex) => {
+        
+        questionElement.querySelectorAll('.form-check-input').forEach((checkBoxOption,optionElement, optionIndex) => {
             const optionText = optionElement.nextElementSibling.innerText.trim();
             const optionId = parseInt(optionElement.id || "0");
 
