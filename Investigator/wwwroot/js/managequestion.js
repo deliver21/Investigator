@@ -1,4 +1,5 @@
 ﻿let questionId = 0;
+const baseUrl = document.getElementById("baseUrl");
 // Add new question dynamically
 document.getElementById("addQuestion").addEventListener("click", () => {
     const questionsDiv = document.getElementById("questions");
@@ -109,7 +110,12 @@ document.getElementById("saveQuestions").addEventListener("click", () => {
         if (!response.ok) throw new Error("Failed to save questions.");
         return response.json();
     })
-    .then((data) => toastr.success(data.message || "Questions saved successfully!"))
+        .then(            
+            (data) => {
+                window.location = baseUrl + "/Template/Index";
+                toastr.success(data.message || "Questions saved successfully!");
+            }
+        )
     .catch((error) => {
         console.error("Error:", error);
         toastr.error("An error occurred while saving questions.");

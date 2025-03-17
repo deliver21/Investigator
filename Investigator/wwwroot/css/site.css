@@ -33,6 +33,12 @@ body {
     text-decoration: line-through;
     opacity: 1;
 }
+.card-menu:hover {
+    -webkit-box-shadow: -18px 3px 108px -65px rgba(0,0,0,0.75);
+    -moz-box-shadow: -18px 3px 108px -65px rgba(0,0,0,0.75);
+    box-shadow: -18px 3px 108px -65px rgba(0,0,0,0.75);
+    transition: 0.5s;
+}
 card-menu-body {
     object-fit: cover
 }

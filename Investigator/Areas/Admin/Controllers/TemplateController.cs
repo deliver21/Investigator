@@ -103,6 +103,7 @@ namespace Investigator.Areas.Admin.Controllers
             var template = await _unit.Template.Get(u => u.TemplateId == id, includeProperties : "Questions");
             template.Questions = new List<Question>();
             template.Questions = _unit.Question.GetAll(u => u.TemplateId == template.TemplateId).ToList();
+            TempData["baseUrl"] = SD.AppBaseUrl;
             return View(template);
         }
 

@@ -1,5 +1,6 @@
 ﻿const questionsList = document.getElementById('questions-list');
 const addQuestionButton = document.getElementById('add-question');
+const baseUrl = document.getElementById("baseUrl");
 
 let questionCounter = document.querySelectorAll('.question-item').length + 1;
 
@@ -8,6 +9,7 @@ function createQuestionElement() {
     const questionItem = document.createElement('div');
     questionItem.className = 'question-item list-group-item m-1';
     questionItem.setAttribute('data-question-id', questionId);
+    questionItem.setAttribute('data-question-type', "SingleLine");
     questionItem.setAttribute('dragabble', 'true');
 
     questionItem.innerHTML = `
@@ -42,18 +44,22 @@ function handleQuestionTypeChange(event, questionItem) {
     switch (event.target.value) {
         case 'SingleLine':
             responseContainer.innerHTML = '<input type="text" class="form-control mb-1" placeholder="Response text" required>';
+            questionItem.setAttribute('data-question-type', "SingleLine");
             break;
         case 'MultiLine':
             responseContainer.innerHTML = '<textarea class="form-control mb-1" placeholder="Response text" required></textarea>';
+            questionItem.setAttribute('data-question-type', "MultiLine");
             break;
         case 'Integer':
             responseContainer.innerHTML = '<input type="number" class="form-control mb-1" placeholder="Response text" required>';
+            questionItem.setAttribute('data-question-type', "Integer");
             break;
         case 'CheckBox':
             responseContainer.innerHTML = `
                 <button type="button" class="btn btn-sm btn-secondary mb-1 add-option" data-question-id="${questionItem.getAttribute('data-question-id')}">Add Option</button>
                 <div class="new-options my-2" data-question-id="${questionItem.getAttribute('data-question-id')}"></div>
             `;
+            questionItem.setAttribute('data-question-type', "CheckBox");
             document.getElementById('questions-list').addEventListener('click', function (e) {
                 if (e.target && e.target.classList.contains('add-option')) {
                     const button = e.target;
@@ -140,7 +146,7 @@ document.getElementById('save-form').addEventListener('click', function () {
     questionElements.forEach((questionElement, index) => {
         const questionId = parseInt(questionElement.dataset.questionId || "0");
         const text = questionElement.querySelector('input[name^="questions"]').value.trim();
-        const type = questionElement.querySelector('input[type="text"],textarea,select,input[type="checkbox"]')?.type || "Unknown";
+        const type = questionElement.dataset.questionType || "Unknown";
         const isOptional = questionElement.querySelector('.toggle-required').innerText.includes("Mark Required") ? false : true;
 
         formData.append(`questions[${index}].questionId`, questionId);
@@ -148,17 +154,21 @@ document.getElementById('save-form').addEventListener('click', function () {
         formData.append(`questions[${index}].type`, type);
         formData.append(`questions[${index}].order`, index + 1);
         formData.append(`questions[${index}].isOptional`, isOptional);
-        
-        questionElement.querySelectorAll('.form-check-input').forEach((checkBoxOption,optionElement, optionIndex) => {
-            const optionText = optionElement.nextElementSibling.innerText.trim();
-            const optionId = parseInt(optionElement.id || "0");
 
-            formData.append(`questions[${index}].options[${optionIndex}].optionId`, optionId);
-            formData.append(`questions[${index}].options[${optionIndex}].text`, optionText);
-        });
+        // Handle options for CheckBox type
+        if (type === 'CheckBox') {
+            questionElement.querySelectorAll('.form-check-input').forEach((optionElement, optionIndex) => {
+                const optionText = optionElement.nextElementSibling.value.trim(); // Use .value, not innerText
+                const optionId = parseInt(optionElement.dataset.optionId || "0");
+
+                formData.append(`questions[${index}].options[${optionIndex}].optionId`, optionId);
+                formData.append(`questions[${index}].options[${optionIndex}].optionId`, questionId);
+                formData.append(`questions[${index}].options[${optionIndex}].text`, optionText);
+            });
+        }
     });
 
-    console.log("Collected Form Data: ", formData);
+    /*console.log("Collected Form Data: ", formData);*/
 
     fetch('/save', {
         method: 'POST',
@@ -171,12 +181,12 @@ document.getElementById('save-form').addEventListener('click', function () {
             return response.json();
         })
         .then(data => {
-            alert(data.message || 'Form saved successfully!');
-            console.log("API Response: ", data);
+            window.location = baseUrl + "/Form/Index";
+            toastr.success(data.message || "Form saved successfully!");
         })
         .catch(error => {
             console.error("Error saving form: ", error);
-            alert("Failed to save the form. Please try again.");
+            toastr.error("An error occurred while saving the form.");
         });
 
 });

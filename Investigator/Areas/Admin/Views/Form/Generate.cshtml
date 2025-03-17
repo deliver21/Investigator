@@ -3,6 +3,7 @@
     ViewData["Title"] = "Generate form";
     string? serializeData = JsonConvert.SerializeObject(Model);
 }
+<input type="hidden" id="baseUrl" value="@TempData["baseUrl"]" hidden>
 <div class="form-container">
     <div class="row pt-2">
         <div class="col-3 col-md-3">
@@ -31,7 +32,7 @@
     <div id="questions-list" class="list-group">
         @foreach (var question in Model.Questions.OrderBy(q => q.Order))
         {
-            <div class="question-item list-group-item m-1" data-question-id="@question.QuestionId">
+            <div class="question-item list-group-item m-1" data-question-id="@question.QuestionId" data-question-type="@question.Type">
                 <input type="text" name="questions[@question.QuestionId].text" value="@question.Text"
                    placeholder="Question text" class="form-control mb-2 font-weight-bold" required>
                 <div class="response-container">
@@ -41,17 +42,17 @@
                             <input type="text" class="form-control mb-1" placeholder="Response text" required="@(!question.IsOptional)" />
                             break;
                         case "MultiLine":
-                            <textarea class="form-control mb-1" placeholder="Response text" required="@(!question.IsOptional)"></textarea>
+                            <textarea name="MultiLine" class="form-control mb-1" placeholder="Response text" required="@(!question.IsOptional)"></textarea>
                             break;
                         case "Integer":
-                            <input type="number" class="form-control mb-1" placeholder="Response text" required="@(!question.IsOptional)" />
+                            <input type="number" min="0" class="form-control mb-1" placeholder="0" required="@(!question.IsOptional)" />
                             break;
                         case "CheckBox":
                             <div class="form-check">
                                 @{
                                     var id = question.QuestionId;
                                 }
-                                <button type="button" class="btn btn-sm btn-secondary mb-1 add-option" onclick="addCheckboxOption('.new-options[@id]',@id'))" data-question-id="@question.QuestionId">Add Option</button>
+                                <button type="button" name="CheckBox" class="btn btn-sm btn-secondary mb-1 add-option" onclick="addCheckboxOption('.new-options[@id]',@id'))" data-question-id="@question.QuestionId">Add Option</button>
                              <div class="new-options my-2" data-question-id="@question.QuestionId">
                                  @foreach (var option in question.Options)
                                  {

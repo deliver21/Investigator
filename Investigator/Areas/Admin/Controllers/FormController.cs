@@ -108,6 +108,7 @@ namespace Investigator.Areas.Admin.Controllers
         [HttpPost("save")]
         public async Task<IActionResult> SaveForm([FromForm] FormDto form)
         {
+            TempData["baseUrl"] = SD.AppBaseUrl;
             form.Description = _unit.Template.Get(u => u.TemplateId == form.TemplateId).GetAwaiter().GetResult().Description;
             if (form == null) return BadRequest("Invalid form data.");
 
@@ -189,7 +190,7 @@ namespace Investigator.Areas.Admin.Controllers
                 _unit.Form.Remove(formToDelete);
                 _unit.Save();
             }
-            return Json(new { success = true, message = "Delete successfully performed" });
+            return Json(new { success = true, message = "Deletion successfully performed" });
         }
     }
     #endregion

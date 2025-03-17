@@ -3,6 +3,7 @@
 @{
     TempData["TemplateTitle"] = Model.Title;
 }
+<input type="hidden" id="baseUrl" value="@TempData["baseUrl"]" hidden>
 <input type="hidden" id="templateId" value="@Model.TemplateId" hidden>
 <div class="container mb-2">
     <a class="m-1 p-2 px-2 text-start text-center btn btn-sm btn-outline-info rounded-1" asp-area="Admin" asp-controller="Template" asp-action="Index">
