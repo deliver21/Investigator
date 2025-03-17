@@ -12,29 +12,43 @@ $(document).ready(function () {
 });
 
 function loadDataTable(status) {
-
     dataTable = $('#tblData').DataTable({
         "responsive": true,
         "ajax": { url: '/admin/form/getall?status=' + status },
         "columns": [
-            { data: 'title', "width": "35%" },
+            { data: 'title', "width": "40%" },
             {
                 data: "formId",
                 "render": function (data) {
-                    return
-                    `<div class="w-50 btn-group" role="group" style="font-size:12px;">
-                           <a id="templateField" href="#" class="btn btn-primary mx-2 rounded-1">
-                               <i class="bi bi-pencil-square"></i> <span style="font-size:12px"> ${manageQuestions} </span>
-                           </a>
-                            <a id="templateField" href="#" class="btn btn-success mx-2 rounded-1">
-                               <i class="bi bi-pencil-square"></i> <span style="font-size:12px"> ${editFormHeader} </span>
-                           </a>
-                          <a id="templateField" onClick=Delete('/Admin/Form/Delete?id=${data}') class="btn btn-danger mx-2 rounded-1">
-                               <i class="bi bi-trash-fill"></i> <span style="font-size:12px"> ${deleteForm} </span>
-                           </a>
+                    return `<div class="w-75 btn-group text-center" role="group">
+                           <a id="templateField" href="#" class="btn btn-info mx-2 rounded-1" title="${manageQuestions}">
+                               <i class="bi bi-info-circle-fill"></i> 
+                           </a>                                     
                     </div>`
                 },
-                "width": "65%"
+                "width": "20%"
+            },
+            {
+                data: "formId",
+                "render": function (data) {
+                    return `<div class="w-75 btn-group text-center" role="group">
+                           <a id="templateField" href="#" class="btn btn-success mx-2 rounded-1" title="${manageQuestions}">
+                               <i class="bi bi-pencil-square"></i>
+                           </a>                                    
+                    </div>`
+                },
+                "width": "20%"
+            },
+            {
+                data: "formId",
+                "render": function (data) {
+                    return `<div class="w-75 btn-group text-center" role="group">
+                           <a id="templateField" onClick="Delete('/Admin/Form/Delete?id=${data}')" class="btn btn-danger mx-2 rounded-1" title="${deleteForm}">
+                               <i class="bi bi-trash-fill"></i>
+                           </a>                                  
+                    </div>`
+                },
+                "width": "20%"
             }
         ]
     });

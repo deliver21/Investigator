@@ -39,7 +39,7 @@ namespace Investigator.Areas.Admin.Controllers
         {
             ViewBag.ManageQuestions = _localizer["Managequestions"];
             ViewBag.EditFormHeader = _localizer["Editformheader"];
-            ViewBag.DeleteTemplate = _localizer["Deleteform"];
+            ViewBag.DeleteForm = _localizer["Deleteform"];
         }
         [Authorize]
         [IsBlockedAuthorize]
@@ -47,6 +47,7 @@ namespace Investigator.Areas.Admin.Controllers
         {
             var form = await _unit.Form.Get(u => u.FormId == formId);
             form.Template = await _unit.Template.Get(u => u.TemplateId == form.TemplateId);
+            form.Questions = _unit.Question.GetAll(u => u.FormId == formId).ToList();
             if (form == null) return Redirect("/Customer/Home/Index");
             return View(form);
         }
@@ -83,10 +84,10 @@ namespace Investigator.Areas.Admin.Controllers
         }
         #region API's Calls
 
+        [HttpGet]
         [Authorize]
         [IsBlockedAuthorize]
-        [HttpGet]
-        public IActionResult GetAll(string status)
+        public async Task <IActionResult> GetAll(string status)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -177,19 +178,24 @@ namespace Investigator.Areas.Admin.Controllers
             return Ok(new { message = "Form saved successfully." });
         }
 
+        [Authorize]
+        [IsBlockedAuthorize]
         [HttpDelete]
         public async Task<IActionResult> Delete(int? id)
         {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             Form formToDelete = await _unit.Form.Get(u => u.FormId == id);
             if (formToDelete == null)
             {
                 return Json(new { success = false, message = "Error while deleting" });
             }
-            else
+            if(formToDelete.CreatorId != userId || !User.IsInRole(SD.AdminRole))
             {
+                return Json(new { success = false, message = "Error while deleting" });
+            }
                 _unit.Form.Remove(formToDelete);
                 _unit.Save();
-            }
             return Json(new { success = true, message = "Deletion successfully performed" });
         }
     }
