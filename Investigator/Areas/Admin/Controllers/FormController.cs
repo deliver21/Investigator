@@ -93,7 +93,7 @@ namespace Investigator.Areas.Admin.Controllers
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             List<Form> forms = new List<Form>();
 
-            if (status == "allForms" && User.IsInRole(SD.AdminRole))
+            if (status == "allForm" && User.IsInRole(SD.AdminRole))
             {
                 forms = _unit.Form.GetAll().ToList();
             }
