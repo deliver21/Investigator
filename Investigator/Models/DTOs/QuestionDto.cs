@@ -9,6 +9,7 @@ namespace Investigator.Models.DTOs
         public string Type { get; set; }
         public int Order { get; set; }
         public bool IsOptional { get; set; }
+        public int FormId { get; set; }
         public ICollection<QuestionOptionDto> Options { get; set; } = new List<QuestionOptionDto>();
     }
 }

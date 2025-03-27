@@ -48,11 +48,8 @@
                             <input type="number" min="0" class="form-control mb-1" placeholder="0" required="@(!question.IsOptional)" />
                             break;
                         case "CheckBox":
-                            <div class="form-check">
-                                @{
-                                    var id = question.QuestionId;
-                                }
-                                <button type="button" name="CheckBox" class="btn btn-sm btn-secondary mb-1 add-option" onclick="addCheckboxOption('.new-options[@id]',@id'))" data-question-id="@question.QuestionId">Add Option</button>
+                            <div class="form-check">                               
+                                <button type="button" class="btn btn-sm btn-secondary mb-1 add-option" onclick="addCheckboxOption('.new-options[@question.QuestionId]',@question.QuestionId'))" data-question-id="@question.QuestionId">Add Option</button>
                              <div class="new-options my-2" data-question-id="@question.QuestionId">
                                  @foreach (var option in question.Options)
                                  {
@@ -61,7 +58,7 @@
                                       data-option-id="@option.OptionId" style="display: inline-block; width: auto; margin-left: 10px;" />
                                  }
                              </div>
-                         </div>                         
+                         </div>                      
                          
                             break;
                     }
@@ -79,7 +76,3 @@
 @section Scripts{
     <script src="~/js/form.js"></script>
 }
-
-@*div.new-options.my-2*@
-@*'new-5'*@
-@*'.new-options[data-question-id="@question.QuestionId"]','@question.QuestionId*@

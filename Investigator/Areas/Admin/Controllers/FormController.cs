@@ -47,7 +47,14 @@ namespace Investigator.Areas.Admin.Controllers
         {
             var form = await _unit.Form.Get(u => u.FormId == formId);
             form.Template = await _unit.Template.Get(u => u.TemplateId == form.TemplateId);
-            form.Questions = _unit.Question.GetAll(u => u.FormId == formId).ToList();
+            form.Questions = _unit.Question.GetAll(u => u.FormId == formId || u.TemplateId == form.TemplateId).ToList();
+            foreach(var question in form.Questions)
+            {
+                if(question.Type == SD.checkBoxType)
+                {
+                    question.Options = _unit.QuestionOption.GetAll(u => u.QuestionId == question.QuestionId).ToList();
+                }
+            }
             if (form == null) return Redirect("/Customer/Home/Index");
             return View(form);
         }
@@ -122,12 +129,16 @@ namespace Investigator.Areas.Admin.Controllers
                     template.Point += 1;
                     _unit.Template.Update(template);
                 }
+                _unit.Save();
             }
+
+            var createdFormId = _unit.Form.Get(u => u.CreatedDate == form.CreatedDate).Id;
 
             foreach (var questionDto in form.Questions)
             {
                 if (questionDto.QuestionId == 0)
                 {
+                    questionDto.FormId = createdFormId;
                    await _unit.Question.Add(_mapper.Map<Question>(questionDto));
                 }
                 else

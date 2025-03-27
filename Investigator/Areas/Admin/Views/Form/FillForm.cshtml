@@ -1,11 +1,21 @@
-﻿@model Form
+﻿@using Microsoft.AspNetCore.Identity;
+@model Form
+@inject UserManager<IdentityUser> UserManager
 @{
     ViewData["Title"] = "Form Filler";
 }
 <input type="hidden" id="templateId" value="@Model.TemplateId" hidden>
 <div class="container mb-2">
+    <div class="row pt-2">
+        <div class="col-3 col-md-3">
+            <a class="m-1 p-2 px-2 text-start text-center btn btn-sm btn-outline-info rounded-1" asp-area="Customer" asp-controller="Home" asp-action="Index">
+                <i class="bi bi-arrow-bar-left"></i> Back
+            </a>
+        </div>
+        <div class="col-6"></div>
+    </div>
     <div class="card">
-        <img src="@(Model != null ? $"https://drive.google.com/thumbnail?id={Model.Template.ImageId}" : "https://via.placeholder.com/1200x300")"
+        <img src="@(Model != null ? $"https://drive.google.com/thumbnail?id={Model.Template.ImageId}" : "~/Images/pharmacy-post-banner-background.jpg")"
              class="card-img-top" alt="Event Image" style="max-height:100px; object-fit: cover;">
         <div class="card-body">
             <h3 class="card-title text-center"> @Model.Title </h3>
@@ -13,6 +23,57 @@
             <p class="text-center">
                 @(Model != null ? Html.Raw(Model.Description) : "")
             </p>
+            <input name="formId" value="@Model.FormId" hidden>
+
+            <div class="row d-flex m-1 p-2 text-start">
+                <span class="h-50 text-info"> Contributor : </span>
+                <input type="button" disabled value="@UserManager.GetUserName(User)"/>
+            </div>            
+        </div>
+    </div>
+    <div id="questions-list" class="list-group">
+        @foreach (var question in Model.Questions.OrderBy(q => q.Order))
+        {
+            <div class="question-item list-group-item m-1" data-question-id="@question.QuestionId" data-question-type="@question.Type">
+                <label name="questions[@question.QuestionId].text" value="@question.Text" class="form-control text-start mb-2 font-weight-bold">
+                    @question.Text
+                </label>
+                <div class="response-container">
+                    @switch (question.Type)
+                    {
+                        case "SingleLine":
+                            <input type="text" class="form-control mb-1" placeholder="Response text" required="@(!question.IsOptional)" />
+                            break;
+                        case "MultiLine":
+                            <textarea name="MultiLine" class="form-control mb-1" placeholder="Response text" required="@(!question.IsOptional)"></textarea>
+                            break;
+                        case "Integer":
+                            <input type="number" min="0" class="form-control mb-1" placeholder="0" required="@(!question.IsOptional)" />
+                            break;
+                        case "CheckBox":
+                            <div class="form-check">
+                                @foreach (var option in question.Options)
+                                {
+                                    <div class="form-check text-start ps-2 ms-3"> 
+                                        <input class="form-check-input" type="checkbox" value="@option.OptionId" id="@option.OptionId">
+                                        <label class="form-check-label" for="@option.OptionId">
+                                            @option.Text
+                                        </label>
+                                    </div>
+                                }                                
+                            </div>
+
+                            break;
+                    }
+                </div>
+            </div>
+        }
+    </div>
+    <div class="row text-center">
+        <div class="col-12 text-center">
+            <button id="login-submit" type="submit" class="w-50 btn btn-lg btn-primary rounded-1 p-3" disabled="@(string.IsNullOrEmpty(UserManager.GetUserName(User)) ? true : false)">
+                <i class="bi bi-binoculars-fill"></i> Submit
+            </button>
         </div>
     </div>
 </div>

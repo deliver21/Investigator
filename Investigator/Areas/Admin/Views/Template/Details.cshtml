@@ -1,4 +1,6 @@
-﻿@model TemplateDetailsVM
+﻿@using Microsoft.AspNetCore.Identity;
+@model TemplateDetailsVM
+@inject UserManager<IdentityUser> UserManager
 @{
     string? userId = Convert.ToString(TempData["userId"]);
     if(string.IsNullOrEmpty(userId))
@@ -24,72 +26,56 @@
     </div>
     <div class="card-body pt-4">
         <div class="row">
-            <div class="col-2 mt-4">
-                <div class="row">
+            <div class="col-12 col-md-3 mt-4">
+                <div class="row mb-3">
                     <img src="@(Model != null ? $"https://drive.google.com/thumbnail?id={Model.Template.ImageId}" : "https://via.placeholder.com/1200x300")"
-                         width="100%" style="border-radius:5px; border:1px solid #bbb9b9" />
+                         class="img-fluid rounded border border-secondary" alt="Template Image" />
                 </div>
-                <div class="d-flex flex-row">
-                    <div class="p-2">
-                        <div class="d-flex flex-row-reverse">
-                            <div class="p-2 bd-highlight">  
-                                @Model.Template.Creator.DisplayName                                
-                            </div>
-                            <div class="p-2 bd-highlight">
-                                <i class="bi bi-person-check-fill"></i>
-                            </div>
-                        </div>
+
+                <!-- Creator & Date Info -->
+                <div class="d-flex justify-content-between mb-2">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-person-check-fill me-1"></i>
+                        <span class="text-muted" style="font-size: 12px;">
+                            @Model.Template.Creator.DisplayName
+                        </span>
                     </div>
-                    <div class="p-2">
-                        <div class="d-flex flex-row-reverse">
-                            <div class="p-2 bd-highlight">                                
-                                @Model.Template.CreatedDate
-                            </div>
-                            <div class="p-2 bd-highlight">
-                                <i class="bi bi-calendar-check-fill"></i>
-                            </div>
-                        </div>
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-calendar-check-fill me-1"></i>
+                        <span class="text-muted" style="font-size: 12px;">
+                            @Model.Template.CreatedDate
+                        </span>
                     </div>
                 </div>
-                 <div class="d-flex flex-row">
-                     <div class="p-2">
-                         <div class="d-flex flex-row-reverse">
-                             <div class="p-2 bd-highlight">
-                                 <a class="text-decorative-none" asp-area="Admin" asp-controller="Template" 
-                                 asp-action="LikeTemplate" asp-route-templateId="@Model.Template.TemplateId">
-                                     @if(Model.Likes.Any(u => u.LikerId == userId))
-                                     {
-                                         <i class="bi bi-hand-thumbs-up-fill"></i>
-                                         
-                                     }else{
-                                         <i class="bi bi-hand-thumbs-up"></i>
-                                     }                                   
-                                 </a>                                
-                             </div>
-                             <div class="p-2 bd-highlight" id="templateLikeCount">
-                                 @Model.LikesCount
-                             </div>
-                         </div>
-                     </div>
-                     <div class="p-2">
-                         <div class="d-flex flex-row-reverse">
-                             <div class="p-2 bd-highlight">
-                                 <a class="text-decorative-none" href="#">
-                                     <i class="bi bi-chat-left-text"></i>
-                                 </a>
-                             </div>
-                             <div class="p-2 bd-highlight" id="templateCommentCount"> 
-                                 @Model.CommentsCount
-                             </div>
-                         </div>
-                     </div>
-                    <a asp-area="Admin" asp-controller="Form" asp-action="Generate" asp-route-templateId="@Model.Template.TemplateId"
-                       class="btn btn-info rounded-1 p-2 py-1" style="font-size: 9px;">
-                       Try it
+
+                <!-- Like & Comment Section -->
+                <div class="d-flex justify-content-between mb-2">
+                    <a class="text-decoration-none" asp-area="Admin" asp-controller="Template" asp-action="LikeTemplate" asp-route-templateId="@Model.Template.TemplateId">
+                        @if (Model.Likes.Any(u => u.LikerId == userId))
+                        {
+                            <i class="bi bi-hand-thumbs-up-fill"></i>
+                        }
+                        else
+                        {
+                            <i class="bi bi-hand-thumbs-up"></i>
+                        }
+                        <span id="templateLikeCount" class="badge bg-secondary">@Model.LikesCount</span>
                     </a>
-                 </div>  
+
+                    <a class="text-decoration-none" href="#">
+                        <i class="bi bi-chat-left-text"></i>
+                        <span id="templateCommentCount" class="badge bg-secondary">@Model.CommentsCount</span>
+                    </a>
+                </div>
+
+                <!-- Try It Button -->
+                <a asp-area="Admin" asp-controller="Form" asp-action="Generate" asp-route-templateId="@Model.Template.TemplateId"
+                   class="btn btn-info w-100 rounded-1 p-2" style="font-size: 12px;">
+                    Try it
+                </a>
             </div>
-            <div class="col-10 text-center">
+
+            <div class="col-12 text-center">
                  <h3 class="card-title text-center">
                     @(Model != null && !string.IsNullOrEmpty(Model.Template.Title) ? Model.Template.Title : "Empty title") – Template
                  </h3>
@@ -100,9 +86,10 @@
                 <div id="questions-list" class="list-group">
                     @foreach (var question in Model.Template.Questions.OrderBy(q => q.Order))
                     {
-                        <div class="question-item list-group-item m-1" data-question-id="@question.QuestionId">
-                            <input type="text" name="questions[@question.QuestionId].text" value="@question.Text"
-                               placeholder="Question text" class="form-control mb-2 font-weight-bold" readonly>
+                        <div class="question-item list-group-item m-1 form-group" data-question-id="@question.QuestionId">                            
+                            <label name="questions[@question.QuestionId].text" value="@question.Text" class="form-control text-start mb-2 font-weight-bold">
+                                @question.Text
+                            </label>
                             <div class="response-container">
                                 @switch (question.Type)
                                 {
@@ -113,22 +100,23 @@
                                         <textarea class="form-control mb-1" placeholder="Response text" required="@(!question.IsOptional)"></textarea>
                                         break;
                                     case "Integer":
-                                        <input type="number" class="form-control mb-1" placeholder="Response text" required="@(!question.IsOptional)" />
+                                        <input type="number" min="1" max="125" class="form-control mb-1" placeholder="1" required="@(!question.IsOptional)" />
                                         break;
                                     case "CheckBox":
-                                      <div class="form-check">                                           
-                                          <div class="new-options my-1" data-question-id="@question.QuestionId">
-                                               <input class="form-check-input" type="checkbox" id="Option1">
-                                               <input class="form-control form-check-label" type="text" value="Option 1" 
-                                               data-option-id="Option1" style="display: inline-block; width: auto; margin-left: 10px;" readonly/>
-                                          </div>
-                                          <div class="new-options my-1" data-question-id="@question.QuestionId">                                                
-                                              <input class="form-check-input" type="checkbox" id="Option2">
-                                              <input class="form-control form-check-label" type="text" value="Option 2"
-                                              data-option-id="Option2" style="display: inline-block; width: auto; margin-left: 10px;" readonly />
-                                          </div>
+
+                                      <div class="form-check text-start ps-2 ms-3"> 
+                                          <input class="form-check-input" type="checkbox" value="" id="Option1">
+                                          <label class="form-check-label" for="defaultCheck1">
+                                              option 1
+                                          </label>
                                       </div>
 
+                                      <div class="form-check text-start ms-3 ps-2">
+                                          <input class="form-check-input" type="checkbox" value="" id="Option2">
+                                          <label class="form-check-label" for="defaultCheck2">
+                                              option 2
+                                          </label>
+                                      </div>
                                       break;
                                 }
                             </div>
@@ -137,7 +125,7 @@
                 </div>
                 <div class="row text-center">
                     <div class="col-12 text-center">
-                        <button id="login-submit" type="submit" class="w-50 btn btn-lg btn-primary rounded-1 p-3" disabled>
+                        <button id="login-submit" type="submit" class="w-50 btn btn-lg btn-primary rounded-1 p-3" disabled="@(string.IsNullOrEmpty(UserManager.GetUserName(User)) ? true : false)">
                             <i class="bi bi-binoculars-fill"></i> Submit
                         </button>
                     </div>                    

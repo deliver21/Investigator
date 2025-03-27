@@ -28,6 +28,7 @@ namespace Investigator.Models
         [ValidateNever]
         public ApplicationUser Filler { get; set; }
         public DateTime SubmissionDate { get; set; }
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public ICollection<Question> Questions { get; set; } = new List<Question>();
     }
 }
