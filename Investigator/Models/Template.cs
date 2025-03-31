@@ -38,7 +38,7 @@ namespace Investigator.Models
         public DateTime? ModifiedDate { get; set; }
         public int Point { get; set; } = 0;
         public ICollection<TemplateTag> Tags { get; set; } = new List<TemplateTag>();
-        public ICollection<Question> Questions { get; set; } = new List<Question>();
+        public ICollection<TemplateQuestion> Questions { get; set; } = new List<TemplateQuestion>();
         public ICollection<Like> Likes { get; set; } = new List<Like>();
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
     }

@@ -47,7 +47,7 @@ namespace Investigator.Areas.Admin.Controllers
         {
             var form = await _unit.Form.Get(u => u.FormId == formId);
             form.Template = await _unit.Template.Get(u => u.TemplateId == form.TemplateId);
-            form.Questions = _unit.Question.GetAll(u => u.FormId == formId || u.TemplateId == form.TemplateId).ToList();
+            form.Questions = _unit.Question.GetAll(u => u.FormId == formId).ToList();
             foreach(var question in form.Questions)
             {
                 if(question.Type == SD.checkBoxType)
@@ -70,21 +70,21 @@ namespace Investigator.Areas.Admin.Controllers
             {
                 return Redirect($"/Customer/Home/Index");
             }
-            templateForm.Questions = _unit.Question.GetAll(u => u.TemplateId == templateForm.TemplateId, null, true).ToList();
+            templateForm.Questions = _unit.TemplateQuestion.GetAll(u => u.TemplateId == templateForm.TemplateId, null, true).ToList();
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             Form form = new()
             {
-                Questions = templateForm.Questions,
+                Questions = _mapper.Map<List<Question>>(templateForm.Questions),
                 TemplateId = templateForm.TemplateId,
                 Template = templateForm,
                 Title = templateForm.Title,
-                Description = templateForm.Description,
-                CreatorId = userId,
+                //Description = templateForm.Description,
+                //CreatorId = userId,
             };
             foreach (var question in templateForm.Questions)
             {
-                question.QuestionId = 0;
+                question.TemplateQuestionId = 0;
             }
             var formDto = _mapper.Map<FormDto>(form);
             return View(formDto);
@@ -104,10 +104,10 @@ namespace Investigator.Areas.Admin.Controllers
             {
                 forms = _unit.Form.GetAll().ToList();
             }
-            else
-            {
-                forms = _unit.Form.GetAll(u => u.CreatorId == userId, null).ToList();
-            }
+            //else
+            //{
+            //    forms = _unit.Form.GetAll(u => u.CreatorId == userId, null).ToList();
+            //}
             return Json(new { data = forms });
         }
 
@@ -201,10 +201,10 @@ namespace Investigator.Areas.Admin.Controllers
             {
                 return Json(new { success = false, message = "Error while deleting" });
             }
-            if(formToDelete.CreatorId != userId || !User.IsInRole(SD.AdminRole))
-            {
-                return Json(new { success = false, message = "Error while deleting" });
-            }
+            //if(formToDelete.CreatorId != userId || !User.IsInRole(SD.AdminRole))
+            //{
+            //    return Json(new { success = false, message = "Error while deleting" });
+            //}
                 _unit.Form.Remove(formToDelete);
                 _unit.Save();
             return Json(new { success = true, message = "Deletion successfully performed" });

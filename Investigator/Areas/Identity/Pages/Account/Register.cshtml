@@ -48,14 +48,14 @@
                 <label asp-for="Input.ConfirmPassword">@localizer["Confirmpassword"]</label>
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
-            @if (User.IsInRole(SD.AdminRole))
-            {
+           @* @if (User.IsInRole(SD.AdminRole))
+            {*@
                 <div class="form-floating mb-3">
                         <select asp-for="Input.Role" asp-items="@Model.Input.RoleList" class="form-select">
                         <option disabled selected>----@localizer["Selectrole"]----</option>
                     </select>
                 </div>
-            }
+           @* }*@
             <button id="registerSubmit" type="submit" class="w-75 btn btn-lg btn-primary rounded-1 p-3"><i class="bi bi-binoculars-fill"></i> @localizer["Signup"]</button>
         </form>
         

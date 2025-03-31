@@ -1,5 +1,5 @@
 ﻿let questionId = 0;
-const baseUrl = document.getElementById("baseUrl");
+const baseUrl = document.getElementById("baseUrl").value;
 // Add new question dynamically
 document.getElementById("addQuestion").addEventListener("click", () => {
     const questionsDiv = document.getElementById("questions");

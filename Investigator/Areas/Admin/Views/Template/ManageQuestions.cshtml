@@ -28,11 +28,11 @@
             {
                 foreach (var question in Model.Questions.OrderBy(q => q.Order))
                 {
-                    <div class="list-group-item m-1" data-question-id="@question.QuestionId" draggable="true">
-                        <input type="hidden" name="questions[@question.QuestionId].id" value="@question.QuestionId">
-                        <input type="text" name="questions[@question.QuestionId].text" value="@question.Text" 
+                    <div class="list-group-item m-1" data-question-id="@question.TemplateQuestionId" draggable="true">
+                        <input type="hidden" name="questions[@question.TemplateQuestionId].id" value="@question.TemplateQuestionId">
+                        <input type="text" name="questions[@question.TemplateQuestionId].text" value="@question.Text" 
                                placeholder="Question text" class="form-control mb-2 font-weight-bold" required>
-                        <select name="questions[@question.QuestionId].type" class="form-select" value="@question.Type">
+                        <select name="questions[@question.TemplateQuestionId].type" class="form-select" value="@question.Type">
                             <option value="SingleLine">Single Line</option>
                             <option value="MultiLine">Multi Line</option>
                             <option value="Integer">Integer</option>

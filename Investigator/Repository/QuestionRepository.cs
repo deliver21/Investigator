@@ -14,7 +14,7 @@ namespace Investigator.Repository
 
         public void Update(Question question)
         {
-            _context.Questions.Update(question);
+            //_context.Questions.Update(question);
         }
     }
 }

@@ -12,6 +12,7 @@
         public ITemplateTagRepository TemplateTag { get; }
         public IQuestionOptionRepository QuestionOption { get; }
         public IJiraTicketRepository JiraTicket { get; }
+        public ITemplateQuestionRepository TemplateQuestion { get; }
         void Save();
     }
 }

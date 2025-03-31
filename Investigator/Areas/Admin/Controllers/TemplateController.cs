@@ -100,9 +100,9 @@ namespace Investigator.Areas.Admin.Controllers
         }
         public async Task<IActionResult> ManageQuestions(int id)
         {
-            var template = await _unit.Template.Get(u => u.TemplateId == id, includeProperties : "Questions");
-            template.Questions = new List<Question>();
-            template.Questions = _unit.Question.GetAll(u => u.TemplateId == template.TemplateId).ToList();
+            var template = await _unit.Template.Get(u => u.TemplateId == id, includeProperties : "TemplateQuestions");
+            template.Questions = new List<TemplateQuestion>();
+            template.Questions = _unit.TemplateQuestion.GetAll(u => u.TemplateId == template.TemplateId).ToList();
             TempData["baseUrl"] = SD.AppBaseUrl;
             return View(template);
         }
@@ -116,7 +116,7 @@ namespace Investigator.Areas.Admin.Controllers
             }
             
             template.Creator = await _unit.ApplicationUser.Get(u => u.Id == template.CreatorId);
-            template.Questions = _unit.Question.GetAll(u => u.TemplateId == templateId, "QuestionOption").ToList();
+            template.Questions = _unit.TemplateQuestion.GetAll(u => u.TemplateId == templateId, "QuestionOption").ToList();
             TemplateDetails = new()
             {
                 Template = template,
@@ -221,19 +221,20 @@ namespace Investigator.Areas.Admin.Controllers
                 {
                     if (question.QuestionId == 0)
                     {
-                        var questionToSave = _mapper.Map<Question>(question);
+                        var questionToSave = _mapper.Map<TemplateQuestion>(question);
                         questionToSave.TemplateId = templateId;
-                        await _unit.Question.Add(questionToSave);
+                        await _unit.TemplateQuestion.Add(questionToSave);
                     }
                     else
                     {
                         if (await _unit.Question.Get(u => u.QuestionId == question.QuestionId) == null) continue;
-                        var questionToSave = _mapper.Map<Question>(question);
+                        var questionToSave = _mapper.Map<TemplateQuestion>(question);
                         questionToSave.TemplateId = templateId;
-                        _unit.Question.Update(questionToSave); ;
+                        _unit.TemplateQuestion.Update(questionToSave); ;
                     }
+                    _unit.Save();
                 }
-                _unit.Save();
+                
                 return Ok(new { message = "Questions saved successfully!" });
             }
             catch

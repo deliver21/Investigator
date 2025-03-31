@@ -16,6 +16,7 @@ namespace Investigator.Repository
         public ITemplateTagRepository TemplateTag { get; private set; }
         public IQuestionOptionRepository QuestionOption { get; private set; }
         public IJiraTicketRepository JiraTicket { get; private set; }
+        public ITemplateQuestionRepository TemplateQuestion { get; private set; }
         public UnitOfWork(AppDbContext context) 
         {    
             _context = context;
@@ -29,6 +30,7 @@ namespace Investigator.Repository
             TemplateTag = new TemplateTagRepository(_context);
             QuestionOption = new QuestionOptionRepository(_context);
             JiraTicket = new JiraTicketRepository(_context);
+            TemplateQuestion = new TemplateQuestionRepository(_context);
         }
         public void Save()
         {
@@ -36,7 +38,10 @@ namespace Investigator.Repository
             {
                 _context.SaveChanges();
             }
-            catch(Exception ex) { Console.WriteLine(ex.Message); }
+            catch(Exception ex) 
+            { 
+                Console.WriteLine(ex.Message); 
+            }
             
         }
     }
