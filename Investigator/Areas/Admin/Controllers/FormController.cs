@@ -84,16 +84,16 @@ namespace Investigator.Areas.Admin.Controllers
             };
             foreach (var question in templateForm.Questions)
             {
-                var questionCopy = new Question()
+                var questionToCopy = new Question()
                 {
                     QuestionId = 0,
                     FormId = 0,
-                    Text= question.Text,
+                    Text = question.Text,
                     Type = question.Type,
                     Order = question.Order,
-                    IsOptional = question.IsOptional,                    
+                    IsOptional = question.IsOptional,
                 };
-                form.Questions.Add(questionCopy);
+                form.Questions.Add(questionToCopy);
             }
             var formDto = _mapper.Map<FormDto>(form);
             return View(formDto);

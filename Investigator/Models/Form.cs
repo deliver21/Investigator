@@ -13,14 +13,16 @@ namespace Investigator.Models
         [ForeignKey(nameof(TemplateId))]
         [ValidateNever]
         public Template ? Template { get; set; }
-        public  string Title { get; set; }  
+        [Required]
+        public  string Title { get; set; }
+        [Required]
         public string ? Description { get; set; }
         [Required]
-        public string CreatorId { get; set; }
+        public string? CreatorId { get; set; }
 
         [ForeignKey(nameof(CreatorId))]
         [ValidateNever]
-        public ApplicationUser Creator { get; set; }        
+        public ApplicationUser? Creator { get; set; }        
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public ICollection<Question> Questions { get; set; } = new List<Question>();
     }
