@@ -33,10 +33,34 @@
                         <input type="text" name="questions[@question.TemplateQuestionId].text" value="@question.Text" 
                                placeholder="Question text" class="form-control mb-2 font-weight-bold" required>
                         <select name="questions[@question.TemplateQuestionId].type" class="form-select" value="@question.Type">
-                            <option value="SingleLine">Single Line</option>
-                            <option value="MultiLine">Multi Line</option>
-                            <option value="Integer">Integer</option>
-                            <option value="CheckBox">CheckBox</option>
+                            @if (question.Type == "MultiLine")
+                            {
+                                <option value="SingleLine">Single Line</option>
+                                <option selected value="MultiLine">Multi Line</option>
+                                <option value="Integer">Integer</option>
+                                <option value="CheckBox">CheckBox</option>
+                            }
+                            @if (question.Type == "Integer")
+                            {
+                                <option value="SingleLine">Single Line</option>
+                                <option value="MultiLine">Multi Line</option>
+                                <option selected value="Integer">Integer</option>
+                                <option value="CheckBox">CheckBox</option>
+                            }
+                            @if (question.Type == "CheckBox")
+                            {
+                                <option value="SingleLine">Single Line</option>
+                                <option value="MultiLine">Multi Line</option>
+                                <option value="Integer">Integer</option>
+                                <option selected value="CheckBox">CheckBox</option>
+                            }
+                            else
+                            {
+                                <option value="SingleLine">Single Line</option>
+                                <option value="MultiLine">Multi Line</option>
+                                <option value="Integer">Integer</option>
+                                <option value="CheckBox">CheckBox</option>
+                            }                            
                         </select> 
                         <button type="button" class="btn btn-sm btn-warning text-start toggle-required">
                             @(question.IsOptional ? "Mark as Required" : "Mark as Optional")

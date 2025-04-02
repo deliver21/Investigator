@@ -21,6 +21,7 @@ namespace Investigator.Data
         public DbSet<Like> Likes { get; set; }
         public DbSet<QuestionOption> QuestionOptions { get; set; }
         public DbSet<JiraTicket> JiraTickets { get; set; }
+        public DbSet<FormFiller> FormFillers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -45,11 +46,11 @@ namespace Investigator.Data
                .HasOne(q => q.Template).WithMany()
                .HasForeignKey(q => q.TemplateId).OnDelete(DeleteBehavior.Cascade);
 
-            //modelBuilder.Entity<Question>()
-            //  .HasOne(q => q.Form)
-            //  .WithMany(f => f.Questions) // Ensure Form has this property
-            //  .HasForeignKey(q => q.FormId)
-            //  .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Question>()
+              .HasOne(q => q.Form)
+              .WithMany(f => f.Questions) // Ensure Form has this property
+              .HasForeignKey(q => q.FormId)
+              .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Form>()
              .HasOne(f => f.Template)
@@ -57,9 +58,9 @@ namespace Investigator.Data
              .HasForeignKey(f => f.TemplateId)
              .OnDelete(DeleteBehavior.SetNull); // Ensure TemplateId is nullable
 
-            //modelBuilder.Entity<Form>()
-            //    .HasOne(f => f.Creator).WithMany()
-            //    .HasForeignKey(f => f.CreatorId).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Form>()
+                .HasOne(f => f.Creator).WithMany()
+                .HasForeignKey(f => f.CreatorId).OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Response>()
                 .HasOne(r => r.Form).WithMany()
@@ -100,6 +101,11 @@ namespace Investigator.Data
             modelBuilder.Entity<QuestionOption>()
                 .HasOne(q => q.Question).WithMany()
                 .HasForeignKey(q => q.QuestionId).OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<FormFiller>()
+                .HasOne(f => f.Form).WithMany()
+                .HasForeignKey(f => f.FormId)
+                .OnDelete(DeleteBehavior.Cascade);
 
         }
     }

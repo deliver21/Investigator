@@ -75,16 +75,25 @@ namespace Investigator.Areas.Admin.Controllers
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             Form form = new()
             {
-                Questions = _mapper.Map<List<Question>>(templateForm.Questions),
+                Questions = new List<Question>(),
                 TemplateId = templateForm.TemplateId,
                 Template = templateForm,
                 Title = templateForm.Title,
-                //Description = templateForm.Description,
-                //CreatorId = userId,
+                Description = templateForm.Description,
+                CreatorId = userId,
             };
             foreach (var question in templateForm.Questions)
             {
-                question.TemplateQuestionId = 0;
+                var questionCopy = new Question()
+                {
+                    QuestionId = 0,
+                    FormId = 0,
+                    Text= question.Text,
+                    Type = question.Type,
+                    Order = question.Order,
+                    IsOptional = question.IsOptional,                    
+                };
+                form.Questions.Add(questionCopy);
             }
             var formDto = _mapper.Map<FormDto>(form);
             return View(formDto);
@@ -104,10 +113,10 @@ namespace Investigator.Areas.Admin.Controllers
             {
                 forms = _unit.Form.GetAll().ToList();
             }
-            //else
-            //{
-            //    forms = _unit.Form.GetAll(u => u.CreatorId == userId, null).ToList();
-            //}
+            else
+            {
+                forms = _unit.Form.GetAll(u => u.CreatorId == userId, null).ToList();
+            }
             return Json(new { data = forms });
         }
 
@@ -117,7 +126,7 @@ namespace Investigator.Areas.Admin.Controllers
         public async Task<IActionResult> SaveForm([FromForm] FormDto form)
         {
             TempData["baseUrl"] = SD.AppBaseUrl;
-            form.Description = _unit.Template.Get(u => u.TemplateId == form.TemplateId).GetAwaiter().GetResult().Description;
+            form.Description =  _unit.Template.Get(u => u.TemplateId == form.TemplateId).GetAwaiter().GetResult().Description;
             if (form == null) return BadRequest("Invalid form data.");
 
             if (form.TemplateId != 0)
@@ -201,10 +210,10 @@ namespace Investigator.Areas.Admin.Controllers
             {
                 return Json(new { success = false, message = "Error while deleting" });
             }
-            //if(formToDelete.CreatorId != userId || !User.IsInRole(SD.AdminRole))
-            //{
-            //    return Json(new { success = false, message = "Error while deleting" });
-            //}
+            if(formToDelete.CreatorId != userId || !User.IsInRole(SD.AdminRole))
+            {
+                return Json(new { success = false, message = "Error while deleting" });
+            }
                 _unit.Form.Remove(formToDelete);
                 _unit.Save();
             return Json(new { success = true, message = "Deletion successfully performed" });

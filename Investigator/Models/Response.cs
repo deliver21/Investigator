@@ -13,13 +13,13 @@ namespace Investigator.Models
 
         [ForeignKey(nameof(FormId))]
         [ValidateNever]
-        public Form Form { get; set; }
+        public Form? Form { get; set; }
         [Required]
         public int QuestionId { get; set; }
 
         [ForeignKey(nameof(QuestionId))]
         [ValidateNever]
-        public Question Question { get; set; }
+        public Question? Question { get; set; }
         [Required]
         public string Answer { get; set; } = string.Empty;
 

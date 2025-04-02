@@ -10,12 +10,17 @@ namespace Investigator.Models
         public int FormId { get; set; }
         public int? TemplateId { get; set; }
 
+        [ForeignKey(nameof(TemplateId))]
+        [ValidateNever]
         public Template ? Template { get; set; }
         public  string Title { get; set; }  
         public string ? Description { get; set; }
-        public string ApplicationUserId { get; set; }
-        public ApplicationUser ApplicationUser { get; set; }
-        public DateTime SubmissionDate { get; set; }
+        [Required]
+        public string CreatorId { get; set; }
+
+        [ForeignKey(nameof(CreatorId))]
+        [ValidateNever]
+        public ApplicationUser Creator { get; set; }        
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public ICollection<Question> Questions { get; set; } = new List<Question>();
     }

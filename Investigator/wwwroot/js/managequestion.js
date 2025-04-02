@@ -112,7 +112,7 @@ document.getElementById("saveQuestions").addEventListener("click", () => {
     })
         .then(            
             (data) => {
-                window.location = baseUrl + "/Template/Index";
+                window.location = baseUrl + "/Template";
                 toastr.success(data.message || "Questions saved successfully!");
             }
         )

@@ -8,7 +8,10 @@ namespace Investigator.Models
     {
         [Key]
         public int QuestionId { get; set; }
-        public int? FormId { get; set; }
+        [Required]
+        public int FormId { get; set; }
+        [ForeignKey(nameof(FormId))]
+        [ValidateNever]
         public Form ? Form { get; set; }
         [Required]
         public string Text { get; set; } = string.Empty;

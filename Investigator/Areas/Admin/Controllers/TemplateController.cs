@@ -221,15 +221,25 @@ namespace Investigator.Areas.Admin.Controllers
                 {
                     if (question.QuestionId == 0)
                     {
-                        var questionToSave = _mapper.Map<TemplateQuestion>(question);
+                        var questionToSave = new TemplateQuestion();
+                        questionToSave.Type = question.Type;
+                        questionToSave.Text = question.Text;
+                        questionToSave.Order = question.Order;
+                        questionToSave.IsOptional = question.IsOptional;
                         questionToSave.TemplateId = templateId;
+
                         await _unit.TemplateQuestion.Add(questionToSave);
                     }
                     else
                     {
                         if (await _unit.Question.Get(u => u.QuestionId == question.QuestionId) == null) continue;
-                        var questionToSave = _mapper.Map<TemplateQuestion>(question);
+                        var questionToSave = new TemplateQuestion();
+                        questionToSave.Type = question.Type;
+                        questionToSave.Text = question.Text;
+                        questionToSave.Order = question.Order;
+                        questionToSave.IsOptional = question.IsOptional;
                         questionToSave.TemplateId = templateId;
+
                         _unit.TemplateQuestion.Update(questionToSave); ;
                     }
                     _unit.Save();

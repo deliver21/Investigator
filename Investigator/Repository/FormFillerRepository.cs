@@ -4,17 +4,17 @@ using Investigator.Repository.IRepository;
 
 namespace Investigator.Repository
 {
-    public class QuestionRepository : Repository<Question>, IQuestionRepository
+    public class FormFillerRepository : Repository<FormFiller>, IFormFillerRepository
     {
         private readonly AppDbContext _context;
-        public QuestionRepository(AppDbContext context) : base(context)
+        public FormFillerRepository(AppDbContext context) : base(context)
         {
             _context = context;
         }
 
-        public void Update(Question question)
+        public void Update(FormFiller formFiller)
         {
-            _context.Questions.Update(question);
+            _context.FormFillers.Update(formFiller);
         }
     }
 }
