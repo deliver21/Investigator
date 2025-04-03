@@ -59,8 +59,11 @@ namespace Investigator.Data
              .OnDelete(DeleteBehavior.SetNull); // Ensure TemplateId is nullable
 
             modelBuilder.Entity<Form>()
-                .HasOne(f => f.Creator).WithMany()
-                .HasForeignKey(f => f.CreatorId).OnDelete(DeleteBehavior.Restrict);
+              .HasOne(f => f.Creator)
+              .WithMany()
+              .HasForeignKey(f => f.CreatorId)
+              .OnDelete(DeleteBehavior.Restrict);
+
 
             modelBuilder.Entity<Response>()
                 .HasOne(r => r.Form).WithMany()
