@@ -1,4 +1,5 @@
-﻿ <a class="m-1 p-2 px-2 text-start text-center btn  btn-sm btn-outline-info" asp-area="Admin" asp-controller="Support" asp-action="Index">
-        <i class="bi bi-arrow-bar-left"></i> Back
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+ <a class="m-1 p-2 px-2 text-start text-center btn  btn-sm btn-outline-info" asp-area="Admin" asp-controller="Support" asp-action="Index">
+    <i class="bi bi-arrow-bar-left"></i> @localizer["Back"]
     </a>
-<p>Ticket successfully created! View it <a href="@ViewBag.TicketUrl" target="_blank">here</a>.</p>
+<p>@localizer["Ticketsuccessfullycreated"]! @localizer["Viewit"] <a href="@ViewBag.TicketUrl" target="_blank">@localizer["here"]</a>.</p>

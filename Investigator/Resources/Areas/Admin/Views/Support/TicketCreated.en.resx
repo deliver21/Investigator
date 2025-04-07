@@ -117,22 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Clickthisbuttontogetverifiedtooursalesforceservice" xml:space="preserve">
-    <value>Cliquez ce boutton pour se faire certifié dans nos services SalesForce</value>
+  <data name="Back" xml:space="preserve">
+    <value>Back</value>
   </data>
-  <data name="Pleasechooseyourusername" xml:space="preserve">
-    <value>Please choose your username.</value>
+  <data name="here" xml:space="preserve">
+    <value>here</value>
   </data>
-  <data name="Pleaseenteryourphonenumber" xml:space="preserve">
-    <value>Entrez s'il vous plait votre numero.</value>
+  <data name="Ticketsuccessfullycreated" xml:space="preserve">
+    <value>Ticket successfully created</value>
   </data>
-  <data name="Profile" xml:space="preserve">
-    <value>Profil</value>
-  </data>
-  <data name="Save" xml:space="preserve">
-    <value>Sauvegardez</value>
-  </data>
-  <data name="Youraccountisverifiedinoursalesforceservice" xml:space="preserve">
-    <value>Votre compte est certifié dans nos services SalesForce</value>
+  <data name="Viewit" xml:space="preserve">
+    <value>View it</value>
   </data>
 </root>

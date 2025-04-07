@@ -276,9 +276,8 @@ namespace Investigator.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TemplateId = table.Column<int>(type: "int", nullable: true),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatorId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    SubmissionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatorId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -289,13 +288,13 @@ namespace Investigator.Migrations
                         column: x => x.CreatorId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Forms_Templates_TemplateId",
                         column: x => x.TemplateId,
                         principalTable: "Templates",
                         principalColumn: "TemplateId",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -384,6 +383,32 @@ namespace Investigator.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FormFillers",
+                columns: table => new
+                {
+                    FormFillerId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Filler = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    FormId = table.Column<int>(type: "int", nullable: false),
+                    SubmissionDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FormFillers", x => x.FormFillerId);
+                    table.ForeignKey(
+                        name: "FK_FormFillers_AspNetUsers_Filler",
+                        column: x => x.Filler,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_FormFillers_Forms_FormId",
+                        column: x => x.FormId,
+                        principalTable: "Forms",
+                        principalColumn: "FormId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Questions",
                 columns: table => new
                 {
@@ -440,11 +465,17 @@ namespace Investigator.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FormId = table.Column<int>(type: "int", nullable: false),
                     QuestionId = table.Column<int>(type: "int", nullable: false),
-                    Answer = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Answer = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FormFillerId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Responses", x => x.ResponseId);
+                    table.ForeignKey(
+                        name: "FK_Responses_FormFillers_FormFillerId",
+                        column: x => x.FormFillerId,
+                        principalTable: "FormFillers",
+                        principalColumn: "FormFillerId");
                     table.ForeignKey(
                         name: "FK_Responses_Forms_FormId",
                         column: x => x.FormId,
@@ -514,6 +545,16 @@ namespace Investigator.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_FormFillers_Filler",
+                table: "FormFillers",
+                column: "Filler");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FormFillers_FormId",
+                table: "FormFillers",
+                column: "FormId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Forms_CreatorId",
                 table: "Forms",
                 column: "CreatorId");
@@ -562,6 +603,11 @@ namespace Investigator.Migrations
                 name: "IX_Questions_FormId",
                 table: "Questions",
                 column: "FormId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Responses_FormFillerId",
+                table: "Responses",
+                column: "FormFillerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Responses_FormId",
@@ -645,6 +691,9 @@ namespace Investigator.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "FormFillers");
 
             migrationBuilder.DropTable(
                 name: "Questions");

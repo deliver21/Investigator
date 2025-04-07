@@ -62,7 +62,7 @@ namespace Investigator.Data
               .HasOne(f => f.Creator)
               .WithMany()
               .HasForeignKey(f => f.CreatorId)
-              .OnDelete(DeleteBehavior.Restrict);
+              .OnDelete(DeleteBehavior.Cascade);
 
 
             modelBuilder.Entity<Response>()

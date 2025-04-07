@@ -663,7 +663,7 @@ namespace Investigator.Migrations
                     b.HasOne("Investigator.Models.ApplicationUser", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Investigator.Models.Template", "Template")
                         .WithMany()

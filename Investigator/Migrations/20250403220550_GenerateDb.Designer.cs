@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Investigator.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250331212500_GenerateDb")]
+    [Migration("20250403220550_GenerateDb")]
     partial class GenerateDb
     {
         /// <inheritdoc />
@@ -73,14 +73,11 @@ namespace Investigator.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatorId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("SubmissionDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int?>("TemplateId")
                         .HasColumnType("int");
@@ -96,6 +93,32 @@ namespace Investigator.Migrations
                     b.HasIndex("TemplateId");
 
                     b.ToTable("Forms");
+                });
+
+            modelBuilder.Entity("Investigator.Models.FormFiller", b =>
+                {
+                    b.Property<int>("FormFillerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FormFillerId"));
+
+                    b.Property<string>("Filler")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("FormId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("SubmissionDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("FormFillerId");
+
+                    b.HasIndex("Filler");
+
+                    b.HasIndex("FormId");
+
+                    b.ToTable("FormFillers");
                 });
 
             modelBuilder.Entity("Investigator.Models.JiraTicket", b =>
@@ -247,6 +270,9 @@ namespace Investigator.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("FormFillerId")
+                        .HasColumnType("int");
+
                     b.Property<int>("FormId")
                         .HasColumnType("int");
 
@@ -254,6 +280,8 @@ namespace Investigator.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ResponseId");
+
+                    b.HasIndex("FormFillerId");
 
                     b.HasIndex("FormId");
 
@@ -638,17 +666,33 @@ namespace Investigator.Migrations
                     b.HasOne("Investigator.Models.ApplicationUser", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Investigator.Models.Template", "Template")
                         .WithMany()
                         .HasForeignKey("TemplateId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Creator");
 
                     b.Navigation("Template");
+                });
+
+            modelBuilder.Entity("Investigator.Models.FormFiller", b =>
+                {
+                    b.HasOne("Investigator.Models.ApplicationUser", "ApllicationUser")
+                        .WithMany()
+                        .HasForeignKey("Filler");
+
+                    b.HasOne("Investigator.Models.Form", "Form")
+                        .WithMany()
+                        .HasForeignKey("FormId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApllicationUser");
+
+                    b.Navigation("Form");
                 });
 
             modelBuilder.Entity("Investigator.Models.JiraTicket", b =>
@@ -717,6 +761,10 @@ namespace Investigator.Migrations
 
             modelBuilder.Entity("Investigator.Models.Response", b =>
                 {
+                    b.HasOne("Investigator.Models.FormFiller", null)
+                        .WithMany("Responses")
+                        .HasForeignKey("FormFillerId");
+
                     b.HasOne("Investigator.Models.Form", "Form")
                         .WithMany()
                         .HasForeignKey("FormId")
@@ -829,6 +877,11 @@ namespace Investigator.Migrations
             modelBuilder.Entity("Investigator.Models.Form", b =>
                 {
                     b.Navigation("Questions");
+                });
+
+            modelBuilder.Entity("Investigator.Models.FormFiller", b =>
+                {
+                    b.Navigation("Responses");
                 });
 
             modelBuilder.Entity("Investigator.Models.Question", b =>

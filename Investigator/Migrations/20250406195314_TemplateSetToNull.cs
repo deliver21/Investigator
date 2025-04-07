@@ -5,38 +5,38 @@
 namespace Investigator.Migrations
 {
     /// <inheritdoc />
-    public partial class RestrictForm : Migration
+    public partial class TemplateSetToNull : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Forms_AspNetUsers_CreatorId",
+                name: "FK_Forms_Templates_TemplateId",
                 table: "Forms");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Forms_AspNetUsers_CreatorId",
+                name: "FK_Forms_Templates_TemplateId",
                 table: "Forms",
-                column: "CreatorId",
-                principalTable: "AspNetUsers",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
+                column: "TemplateId",
+                principalTable: "Templates",
+                principalColumn: "TemplateId",
+                onDelete: ReferentialAction.SetNull);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Forms_AspNetUsers_CreatorId",
+                name: "FK_Forms_Templates_TemplateId",
                 table: "Forms");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Forms_AspNetUsers_CreatorId",
+                name: "FK_Forms_Templates_TemplateId",
                 table: "Forms",
-                column: "CreatorId",
-                principalTable: "AspNetUsers",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.SetNull);
+                column: "TemplateId",
+                principalTable: "Templates",
+                principalColumn: "TemplateId",
+                onDelete: ReferentialAction.Cascade);
         }
     }
 }

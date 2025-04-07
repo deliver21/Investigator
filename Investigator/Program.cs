@@ -42,6 +42,13 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     .AddDefaultTokenProviders()
     .AddDefaultUI();
 
+builder.Services.AddLogging(logging =>
+{
+    logging.ClearProviders();
+    logging.AddConsole();
+    logging.AddDebug();
+});
+
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(100);
@@ -54,6 +61,12 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = $"/Identity/Account/Login";
     options.LogoutPath = $"/Identity/Account/Logout";
     options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+});
+
+builder.Services.AddAuthentication().AddFacebook(option =>
+{
+    option.AppId = SD.AppIdFacebook;
+    option.AppSecret = SD.AppSecretFacebook;
 });
 
 builder.Services.AddLocalization(options =>
@@ -113,7 +126,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
-
+app.UseSession();
 app.MapRazorPages();
 
 app.MapHub<TemplateDetailsHub>("/hubs/templateDetails");

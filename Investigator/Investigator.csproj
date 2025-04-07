@@ -19,6 +19,7 @@
     <PackageReference Include="DeveloperForce.Chatter" Version="2.1.0" />
     <PackageReference Include="DeveloperForce.Force" Version="2.1.0" />
     <PackageReference Include="Google.Apis.Drive.v3" Version="1.68.0.3627" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="7.0.20" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.20" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.20" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.20" />
@@ -38,6 +39,7 @@
 
   <ItemGroup>
     <Folder Include="Hubs\" />
+    <Folder Include="Resources\Areas\Admin\Views\Form\NewFolder\" />
     <Folder Include="wwwroot\lib\microsoft\signalr\dist\browser\" />
   </ItemGroup>
 

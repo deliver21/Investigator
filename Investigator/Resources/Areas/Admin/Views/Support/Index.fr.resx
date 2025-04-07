@@ -117,22 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Clickthisbuttontogetverifiedtooursalesforceservice" xml:space="preserve">
-    <value>Cliquez ce boutton pour se faire certifié dans nos services SalesForce</value>
+  <data name="JiraLink" xml:space="preserve">
+    <value>Lien Jira</value>
   </data>
-  <data name="Pleasechooseyourusername" xml:space="preserve">
-    <value>Please choose your username.</value>
+  <data name="JiraTicketsList" xml:space="preserve">
+    <value>Liste de tickets Jira</value>
   </data>
-  <data name="Pleaseenteryourphonenumber" xml:space="preserve">
-    <value>Entrez s'il vous plait votre numero.</value>
+  <data name="Priority" xml:space="preserve">
+    <value>Priorité</value>
   </data>
-  <data name="Profile" xml:space="preserve">
-    <value>Profil</value>
+  <data name="Status" xml:space="preserve">
+    <value>Statut</value>
   </data>
-  <data name="Save" xml:space="preserve">
-    <value>Sauvegardez</value>
-  </data>
-  <data name="Youraccountisverifiedinoursalesforceservice" xml:space="preserve">
-    <value>Votre compte est certifié dans nos services SalesForce</value>
+  <data name="Summary" xml:space="preserve">
+    <value>Sommaire</value>
   </data>
 </root>

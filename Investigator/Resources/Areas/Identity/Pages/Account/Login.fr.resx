@@ -135,4 +135,7 @@
   <data name="Resendemailconfirmation" xml:space="preserve">
     <value>Renvoyez l'email de confirmation</value>
   </data>
+  <data name="ShowPassword" xml:space="preserve">
+    <value>Montrez le mot de passe</value>
+  </data>
 </root>
