@@ -17,6 +17,7 @@ namespace Investigator.Repository
         public IQuestionOptionRepository QuestionOption { get; private set; }
         public IJiraTicketRepository JiraTicket { get; private set; }
         public ITemplateQuestionRepository TemplateQuestion { get; private set; }
+        public IFormFillerRepository FormFiller { get; private set; }
         public UnitOfWork(AppDbContext context) 
         {    
             _context = context;
@@ -31,6 +32,7 @@ namespace Investigator.Repository
             QuestionOption = new QuestionOptionRepository(_context);
             JiraTicket = new JiraTicketRepository(_context);
             TemplateQuestion = new TemplateQuestionRepository(_context);
+            FormFiller = new FormFillerRepository(_context);
         }
         public void Save()
         {

@@ -123,6 +123,9 @@
   <data name="Editformheader" xml:space="preserve">
     <value>Editez l'entete du formulaire</value>
   </data>
+  <data name="Formanswers" xml:space="preserve">
+    <value>Reponses du formulaire</value>
+  </data>
   <data name="Managequestions" xml:space="preserve">
     <value>Gerez les questions</value>
   </data>

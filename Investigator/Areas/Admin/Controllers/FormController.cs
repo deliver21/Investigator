@@ -12,20 +12,25 @@ using System.Collections.Generic;
 using System;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc.Localization;
+using Investigator.Services.IServices;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Investigator.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Route("Admin/[controller]/[action]")]
     public class FormController : Controller
     {
         private readonly IHtmlLocalizer<FormController> _localizer;
         private readonly IUnitOfWork _unit;
         private readonly IMapper _mapper;
-        public FormController(IUnitOfWork unit, IMapper mapper, IHtmlLocalizer<FormController> localizer)
+        private readonly IFileSaver _fileSaver;
+        public FormController(IUnitOfWork unit, IMapper mapper, IHtmlLocalizer<FormController> localizer, IFileSaver fileSaver)
         {
             _unit = unit;
             _mapper = mapper;
             _localizer = localizer;
+            _fileSaver = fileSaver;
         }
 
         [Authorize]
@@ -40,7 +45,72 @@ namespace Investigator.Areas.Admin.Controllers
             ViewBag.ManageQuestions = _localizer["Managequestions"];
             ViewBag.EditFormHeader = _localizer["Editformheader"];
             ViewBag.DeleteForm = _localizer["Deleteform"];
+            ViewBag.FormAnswers = _localizer["Formanswers"];
         }
+
+        [Authorize]
+        [IsBlockedAuthorize]
+        public async Task<IActionResult> Upsert(int? id)
+        {
+            Form form = new();
+                form = await _unit.Form.Get(u => u.FormId == id);
+            if (form == null) return RedirectToAction(nameof(Index));
+            if(string.IsNullOrEmpty(form.ImageId))
+            {
+                form.ImageId = _unit.Template.Get(u => u.TemplateId == form.TemplateId).GetAwaiter().GetResult().ImageId;
+            }
+            
+            return View(form);
+        }
+        [Authorize]
+        [IsBlockedAuthorize]
+        [HttpPost]
+        public async Task<IActionResult> Upsert(Form form, IFormFile? file)
+        {
+            if (form.FormId == 0)
+            {
+                TempData["success"] = "Form has successfully been created";
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                var previousPicture = _unit.Form.Get(u => u.FormId == form.FormId,null,false).GetAwaiter().GetResult().ImageId;
+                if (file != null)
+                {
+                    bool response = false;
+                    var templateWithImage = _unit.Template.GetAll(u => u.ImageId == previousPicture).Count();
+                    if (templateWithImage == 0 && !string.IsNullOrEmpty(previousPicture))
+                    {
+                        await _fileSaver.DeleteFileFromGoogleDrive(previousPicture);
+                    }
+                    form.ImageId = _fileSaver.UploadFilesToGoogleDrive(file);
+                }
+                else
+                {
+                    form.ImageId = !string.IsNullOrEmpty(previousPicture) ? previousPicture : "";
+                }
+                form.ModifiedDate = DateTime.Now;
+                _unit.Form.Update(form);
+                TempData["success"] = "Form has successfully been updated";
+            }
+            _unit.Save();
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> ManageQuestions(int? id)
+        {
+            var form = await _unit.Form.Get(u => u.TemplateId == id, includeProperties: "Questions");
+            if(form == null || form.FormId == 0) 
+            {
+                TempData["success"] = "Form not found";
+                return RedirectToAction("Index");
+            }
+            form.Questions = new List<Question>();
+            form.Questions = _unit.Question.GetAll(u => u.FormId == form.FormId).ToList();
+            TempData["baseUrl"] = SD.AppBaseUrl;
+            return View(form);
+        }
+
         [Authorize]
         [IsBlockedAuthorize]
         public async Task<IActionResult> FillForm(int formId)
@@ -98,6 +168,15 @@ namespace Investigator.Areas.Admin.Controllers
             var formDto = _mapper.Map<FormDto>(form);
             return View(formDto);
         }
+
+        public async Task<IActionResult> ManageSubmissions(int? id)
+        {
+            Form form = new();
+            form = await _unit.Form.Get(u => u.FormId == id);
+            if (form == null) return RedirectToAction(nameof(Index));
+            IEnumerable<Question> questions = _unit.Question.GetAll(u => u.FormId == form.FormId).OrderBy(u => u.QuestionId).ToList();
+            return View(questions);
+        }
         #region API's Calls
 
         [HttpGet]
@@ -120,13 +199,76 @@ namespace Investigator.Areas.Admin.Controllers
             return Json(new { data = forms });
         }
 
+        [HttpPost]
+        public async Task<IActionResult> SubmitForm([FromForm] FormSubmissionDto submission)
+        {
+            if (submission == null || submission.ParsedAnswers == null)
+                return BadRequest("Invalid submission");
+
+            var responses = new List<Response>();
+            var userName = User.Identity?.Name ?? submission.Filler; // fallback if user not logged in
+
+            foreach (var answer in submission.ParsedAnswers)
+            {
+                var response = new Response
+                {
+                    FormId = submission.FormId,
+                    QuestionId = answer.QuestionId,
+                    Filler = userName,
+                    Answer = answer.Answer
+                };
+                responses.Add(response);
+            }
+
+            // Handle files separately
+            foreach (var file in submission.Files)
+            {
+                var questionIdStr = file.Name.Replace("files_", ""); // assuming field name is files_123
+                if (int.TryParse(questionIdStr, out var questionId))
+                {
+                   var fileId = _fileSaver.UploadFilesToGoogleDrive(file);
+                    responses.Add(new Response
+                    {
+                        FormId = submission.FormId,
+                        QuestionId = questionId,
+                        Filler = userName,
+                        Answer = !String.IsNullOrEmpty(fileId) ? $"https://drive.google.com/thumbnail?id={fileId}" : "" // link to google drive
+                    });
+                }
+            }
+
+            // Save to DB
+            foreach(var response in responses)
+            {
+               await _unit.Response.Add(response);
+            }
+            _unit.Save();
+
+            return Ok(new { message = "Form submitted successfully" });
+        }
+
+
+        [HttpGet]
         [Authorize]
         [IsBlockedAuthorize]
-        [HttpPost("save")]
+        public async Task<IActionResult> GetSubmissions(int ? formId)
+        {
+            Form form = new();
+            form = await _unit.Form.Get(u => u.FormId == formId);
+            if (form == null) return Json(new { success = false, message = "Error while retrieving data" });
+            List<FormFiller> fillers = new List<FormFiller>();
+            fillers = _unit.FormFiller.GetAll(u => u.FormId == form.FormId).ToList();
+            for(int i = 0; i < fillers.Count; i++)
+            {
+                fillers[i].Responses = _unit.Response.GetAll(u => u.Filler == fillers[i].Filler).OrderBy(u => u.QuestionId).ToList();
+            }
+            return Json(new {data = fillers});
+        }
+        [HttpPost]
         public async Task<IActionResult> SaveForm([FromForm] FormDto form)
         {
             TempData["baseUrl"] = SD.AppBaseUrl;
-            form.Description =  _unit.Template.Get(u => u.TemplateId == form.TemplateId).GetAwaiter().GetResult().Description;
+            form.Description = _unit.Template.Get(u => u.TemplateId == form.TemplateId).GetAwaiter().GetResult().Description;
             if (form == null) return BadRequest("Invalid form data.");
 
             if (form.TemplateId != 0)
@@ -197,9 +339,6 @@ namespace Investigator.Areas.Admin.Controllers
             _unit.Save();
             return Ok(new { message = "Form saved successfully." });
         }
-
-        [Authorize]
-        [IsBlockedAuthorize]
         [HttpDelete]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -215,9 +354,78 @@ namespace Investigator.Areas.Admin.Controllers
                 return Json(new { success = false, message = "Error while deleting" });
             }
                 _unit.Form.Remove(formToDelete);
+            var templateWithImage = _unit.Template.GetAll(u => u.ImageId == formToDelete.ImageId).Count();
+            if(templateWithImage == 0 && !string.IsNullOrEmpty(formToDelete.ImageId))
+            {
+                await _fileSaver.DeleteFileFromGoogleDrive(formToDelete.ImageId);
+            }
                 _unit.Save();
+
             return Json(new { success = true, message = "Deletion successfully performed" });
         }
-    }
+
+
+        [HttpPost("SaveQuestions/{formId:int}")]
+        public async Task<IActionResult> SaveQuestions(int formId, [FromBody] IEnumerable<QuestionDto> questions)
+        {
+            if (_unit.Form.Get(t => t.FormId == formId).GetAwaiter().GetResult().FormId == 0)
+                return NotFound(new { message = "Form not found." });
+            try
+            {
+                foreach (var question in questions)
+                {
+                    if (question.QuestionId == 0)
+                    {
+                        var questionToSave = new Question();
+                        questionToSave.Type = question.Type;
+                        questionToSave.Text = question.Text;
+                        questionToSave.Order = question.Order;
+                        questionToSave.IsOptional = question.IsOptional;
+                        questionToSave.FormId = formId;
+
+                        await _unit.Question.Add(questionToSave);
+                    }
+                    else
+                    {
+                        if (_unit.Question.Get(u => u.QuestionId == question.QuestionId).GetAwaiter().GetResult() != null)
+                        {
+                            var questionToSave = new Question();
+                            questionToSave.Type = question.Type;
+                            questionToSave.Text = question.Text;
+                            questionToSave.Order = question.Order;
+                            questionToSave.IsOptional = question.IsOptional;
+                            questionToSave.FormId = formId;
+
+                            _unit.Question.Update(questionToSave);
+                        }
+                    }
+                    _unit.Save();
+                }
+
+                return Ok(new { message = "Questions are successfully saved!" });
+            }
+            catch
+            {
+                return NotFound(new { message = "An error occurred while saving questions." });
+            }
+
+        }
+        [HttpDelete("DeleteQuestion/{questionId:int}")]
+        public async Task<IActionResult> DeleteQuestion(int? questionId)
+        {
+            if (questionId == null)
+            {
+                return NotFound(new { message = "Question not found." });
+            }
+            var question = await _unit.Question.Get(u => u.QuestionId == questionId);
+            if (question == null)
+            {
+                return NotFound(new { message = "Question not found." });
+            }
+            _unit.Question.Remove(question);
+            _unit.Save();
+            return Ok("Question is successfully deleted");
+        }
+    }    
     #endregion
 }

@@ -20,6 +20,9 @@ function createQuestionElement() {
             <option value="MultiLine">Multi Line</option>
             <option value="Integer">Integer</option>
             <option value="CheckBox">Checkbox</option>
+            <option value="Phone">Phone</option>
+            <option value="Date">Date</option>
+            <option value="File">File</option>
         </select>
         <div class="response-container">
             <input type="text" class="form-control mb-1" placeholder="Response text" required>
@@ -31,7 +34,7 @@ function createQuestionElement() {
     `;
 
     questionItem.querySelector('.question-type-selector').addEventListener('change', (e) => handleQuestionTypeChange(e, questionItem));
-    questionItem.querySelector('.toggle-required').addEventListener('click', toggleRequired);
+    /*questionItem.querySelector('.toggle-required').addEventListener('click', toggleRequired);*/
     questionItem.querySelector('.delete-question').addEventListener('click', () => questionItem.remove());
 
     return questionItem;
@@ -78,8 +81,81 @@ function handleQuestionTypeChange(event, questionItem) {
                 }
             });
             break;
+        case "Date":
+            responseContainer.innerHTML = '<input type="date" class="form-control mb-1" placeholder="Select a date" required />';
+            questionItem.setAttribute('data-question-type', "Date");
+            break;
+        //case "Phone":
+        //    responseContainer.innerHTML = `< div class="input-group" >
+        //        < input class="input-group-text" type = "tel" id = "basic-addon1" value = "+375" style = "max-width:25px" >  
+        //                <input type="tel" id="phone" name="phone" maxlength="9" pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+        //                    required disabled value="123456789" placeholder="123-456-789">
+        //                </div>
+        //    `;
+        //    questionItem.setAttribute('data-question-type', "Phone");            
+                    /*break;*/
+
+        case "Phone":
+                responseContainer.innerHTML = `
+            <div class="input-group">
+                <span class="input-group-text" id="basic-addon1">+375</span>
+                <input 
+                    type="tel" 
+                    id="phone" 
+                    name="phone" 
+                    maxlength="9" 
+                    pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}" 
+                    placeholder="123-456-789"
+                    class="form-control"
+                />
+            </div>`;
+               questionItem.setAttribute('data-question-type', "Phone");
+         break;
+
+
+        case "File":
+            responseContainer.innerHTML = `
+              <div class="container-file">
+                  <input type="file" id="file-input" multiple required="@(!question.IsOptional)" />
+                  <label disabled id="label-file" for="file-input" name="questions[@question.QuestionId].text" value="@question.Text" class="form-control text-start mb-2 font-weight-bold">
+                      <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                  </label>
+              </div>
+            `        
+            questionItem.setAttribute('data-question-type', "File");
+            break;
     }
 }
+
+//Delete Question
+document.getElementById("questions-list").addEventListener("click", (e) => {
+    if (e.target.closest(".btn-danger")) {
+        const questionItem = e.target.closest(".list-group-item");
+        const questionId = parseInt(questionItem.dataset.questionId, 10);
+
+        if (questionId > 0) {
+            fetch(`/DeleteQuestion/${questionId}`, {
+                method: "DELETE",
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Failed to delete question.");
+                    }
+                    return response.json();
+                })
+                .then(() => {
+
+                    questionItem.remove();
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                    alert("Failed to delete question. Please try again.");
+                });
+        } else {
+            questionItem.remove();
+        }
+    }
+});
 
 function addCheckboxOption(container, questionId) {
     const optionCount = container.querySelectorAll('.form-check').length + 1;
@@ -102,12 +178,18 @@ function addCheckboxOption(container, questionId) {
     container.appendChild(optionElement);
 }
 
-
-function toggleRequired(event) {
-    const button = event.target;
-    button.textContent = button.textContent.includes('Optional') ? 'Mark Required' : 'Mark Optional';
-}
-
+document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("toggle-required")) {
+        const input = e.target.closest(".list-group-item").querySelector("input[type='text']");
+        if (input.hasAttribute("required")) {
+            input.removeAttribute("required");
+            e.target.textContent = "Mark as Required";
+        } else {
+            input.setAttribute("required", "required");
+            e.target.textContent = "Mark as Optional";
+        }
+    }
+});
 
 addQuestionButton.addEventListener('click', () => {
     const newQuestion = createQuestionElement();
@@ -118,9 +200,11 @@ const questionsDiv = document.getElementById("questions-list");
 questionsDiv.addEventListener("dragstart", (e) => {
     e.dataTransfer.setData("text/plain", e.target.dataset.questionId);
 });
+
 questionsDiv.addEventListener("dragover", (e) => {
     e.preventDefault();
 });
+
 questionsDiv.addEventListener("drop", (e) => {
     e.preventDefault();
     const draggedId = e.dataTransfer.getData("text/plain");
@@ -129,6 +213,25 @@ questionsDiv.addEventListener("drop", (e) => {
         e.target.closest(".list-group-item").before(draggedElement);
     }
 });
+
+//CheckOptionsLenght
+function validateCheckboxQuestions() {
+    let isValid = true;
+    document.querySelectorAll('.question-item[data-question-type="CheckBox"]').forEach(q => {
+        const options = q.querySelectorAll('.new-options input[type="text"]');
+        let filledOptions = 0;
+
+        options.forEach(input => {
+            if (input.value.trim() !== "") filledOptions++;
+        });
+
+        if (filledOptions < 2) {
+            isValid = false;
+        }
+    });
+
+    return isValid;
+}
 
 document.getElementById('save-form').addEventListener('click', function () {
     console.log("We got inside");
@@ -145,8 +248,23 @@ document.getElementById('save-form').addEventListener('click', function () {
     const questionElements = document.querySelectorAll('.question-item');
     questionElements.forEach((questionElement, index) => {
         const questionId = parseInt(questionElement.dataset.questionId || "0");
-        const text = questionElement.querySelector('input[name^="questions"]').value.trim();
+        //Check input
+        let input = questionElement.querySelector('input[name^="questions"]');
+        let text = '';
         const type = questionElement.dataset.questionType || "Unknown";
+        if (input) {
+            text = input.value.trim();
+        } else {
+            // Special handling for "File" type questions
+            if (type === "File") {
+                const label = questionElement.querySelector('label[for="file-input"]');
+                if (label) {
+                    text = label.textContent.trim();
+                }
+            } else {
+                console.warn('Missing question input in element:', questionElement);
+            }
+        }
         const isOptional = questionElement.querySelector('.toggle-required').innerText.includes("Mark Required") ? false : true;
 
         formData.append(`questions[${index}].questionId`, questionId);
@@ -156,7 +274,7 @@ document.getElementById('save-form').addEventListener('click', function () {
         formData.append(`questions[${index}].isOptional`, isOptional);
 
         // Handle options for CheckBox type
-        if (type === 'CheckBox') {
+        if (type == 'CheckBox') {
             questionElement.querySelectorAll('.form-check-input').forEach((optionElement, optionIndex) => {
                 const optionText = optionElement.nextElementSibling.value.trim(); // Use .value, not innerText
                 const optionId = parseInt(optionElement.dataset.optionId || "0");
@@ -165,12 +283,16 @@ document.getElementById('save-form').addEventListener('click', function () {
                 formData.append(`questions[${index}].options[${optionIndex}].optionId`, questionId);
                 formData.append(`questions[${index}].options[${optionIndex}].text`, optionText);
             });
+
         }
     });
+    if (!validateCheckboxQuestions()) {
+        toastr.error("You must have at least 2 options for your questions of type Checkbox");
+        /*e.preventDefault(); */// stop form if invalid
+        return;
+    }
 
-    /*console.log("Collected Form Data: ", formData);*/
-
-    fetch('/save', {
+    fetch('/Admin/Form/SaveForm', {
         method: 'POST',
         body: formData
     })
@@ -181,7 +303,7 @@ document.getElementById('save-form').addEventListener('click', function () {
             return response.json();
         })
         .then(data => {
-            window.location = baseUrl + "/Form/Index";
+            window.location = baseUrl + "/Admin/Form/Index";
             toastr.success(data.message || "Form saved successfully!");
         })
         .catch(error => {

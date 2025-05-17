@@ -8,8 +8,13 @@
         userId = "";
     }
 }
+@section Stylesheets {
+    <link href="~/css/details.css" rel="stylesheet" />
+    <link href="~/css/intlTelInput.css" rel="stylesheet" />
+    <link href="~/css/demo.css" rel="stylesheet" />
+}
 <span id="templateId" hidden>@Model.Template.TemplateId</span>
-<div class="row"> 
+<div class="row mb-2 mt-1 mb-2"> 
     <div class="col-3">
         <a class="m-1 p-2 px-2 text-start text-center btn btn-sm btn-outline-info rounded-1" asp-area="Customer" asp-controller="Home" asp-action="Index">
             <i class="bi bi-arrow-bar-left"></i> Back
@@ -86,10 +91,14 @@
                 <div id="questions-list" class="list-group">
                     @foreach (var question in Model.Template.Questions.OrderBy(q => q.Order))
                     {
-                        <div class="question-item list-group-item m-1 form-group" data-question-id="@question.TemplateQuestionId">                            
-                            <label name="questions[@question.TemplateQuestionId].text" value="@question.Text" class="form-control text-start mb-2 font-weight-bold">
-                                @question.Text
-                            </label>
+                        <div class="question-item list-group-item m-1 form-group" data-question-id="@question.TemplateQuestionId">  
+                            @if(question.Type != "File")
+                            {
+                                <label name="questions[@question.TemplateQuestionId].text" value="@question.Text" class="form-control text-start mb-2 font-weight-bold">
+                                    @question.Text
+                                </label>
+                            }
+                            
                             <div class="response-container">
                                 @switch (question.Type)
                                 {
@@ -103,36 +112,72 @@
                                         <input type="number" min="1" max="125" class="form-control mb-1" placeholder="1" required="@(!question.IsOptional)" />
                                         break;
                                     case "CheckBox":
-
-                                      <div class="form-check text-start ps-2 ms-3"> 
-                                          <input class="form-check-input" type="checkbox" value="" id="Option1">
-                                          <label class="form-check-label" for="defaultCheck1">
-                                              option 1
-                                          </label>
-                                      </div>
-
-                                      <div class="form-check text-start ms-3 ps-2">
-                                          <input class="form-check-input" type="checkbox" value="" id="Option2">
-                                          <label class="form-check-label" for="defaultCheck2">
-                                              option 2
-                                          </label>
-                                      </div>
-                                      break;
+                                          <div class="form-check text-start ps-2 ms-3"> 
+                                              <input class="form-check-input" type="checkbox" value="" id="Option1">
+                                              <label class="form-check-label" for="defaultCheck1">
+                                                  option 1
+                                              </label>
+                                          </div>
+                                          <div class="form-check text-start ms-3 ps-2">
+                                              <input class="form-check-input" type="checkbox" value="" id="Option2">
+                                              <label class="form-check-label" for="defaultCheck2">
+                                                  option 2
+                                              </label>
+                                          </div>
+                                        break;
+                                    case "Date":    
+                                    <input type="date" class="form-control mb-1" placeholder="Select a date" required="@(!question.IsOptional)" />
+                                        break;
+                                    case "Phone":
+                                         <small class="text-info">Format: 123-456-789</small>
+                                        <div class="input-group">
+                                            <input class="input-group-text" type="tel" id="basic-addon1" value="+375" style="max-width:25px">
+                                            <input type="tel" id="phone" name="phone" maxlength="9" pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                             required="@(!question.IsOptional)" placeholder="123-456-789">                                            
+                                        </div>                                        
+                                        break;                                   
+                                    case "File":
+                                    <div class="container-file">
+                                         <input type="file" id="file-input" multiple required="@(!question.IsOptional)" />
+                                         <label id="label-file" for="file-input" name="questions[@question.TemplateQuestionId].text" value="@question.Text" class="form-control text-start mb-2 font-weight-bold">
+                                          <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                                           @question.Text
+                                         </label>                                         
+                                        <div id="num-of-files">No Files Choosen</div>
+                                        <ul id="files-list"></ul>
+                                    </div>
+                                        break;
                                 }
                             </div>
                         </div>
                     }
                 </div>
                 <div class="row text-center">
-                    <div class="col-12 text-center">
-                        <button id="login-submit" type="submit" class="w-50 btn btn-lg btn-primary rounded-1 p-3" disabled="@(string.IsNullOrEmpty(UserManager.GetUserName(User)) ? true : false)">
-                            <i class="bi bi-binoculars-fill"></i> Submit
-                        </button>
-                    </div>                    
-                </div>                
+                     @if(Model.Template.Questions.Count() > 0)
+                     {                         
+                         <div class="col-12 text-center">
+                             <button id="login-submit" type="submit" class="w-50 btn btn-lg btn-primary rounded-1 pt-2 pb-3 m-3" disabled="@(string.IsNullOrEmpty(UserManager.GetUserName(User)) ? true : false)">
+                                 <i class="bi bi-binoculars-fill"></i> Submit
+                             </button>
+                         </div>                         
+                     }
+                     else
+                     {                      
+                         <div class="col-12 text-center">
+                             No questions in this template at the moment.
+                         </div>
+                     }
+                </div>
             </div>
         </div>
     </div>
 </div>
-<script src="~/js/signalr.js"></script>
-<script src="~/js/templateDetails.js"></script>
+@section Scripts{
+    <script src="~/js/signalr.js"></script>
+    <script src="~/js/templateDetails.js"></script>
+    <script src="~/js/intlTelInput.js"></script>
+    <script>
+        var input = document.querySelector("#basic-addon1");
+        window.intlTelInput(input,{});
+    </script>
+}

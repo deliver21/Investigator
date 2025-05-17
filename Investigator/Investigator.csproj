@@ -39,7 +39,6 @@
 
   <ItemGroup>
     <Folder Include="Hubs\" />
-    <Folder Include="Resources\Areas\Admin\Views\Form\NewFolder\" />
     <Folder Include="wwwroot\lib\microsoft\signalr\dist\browser\" />
   </ItemGroup>
 

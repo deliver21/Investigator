@@ -15,6 +15,7 @@ using System.Security.Claims;
 namespace Investigator.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Route("Admin/[controller]/[action]")]
     public class TemplateController : Controller
     {
         private readonly IHtmlLocalizer<TemplateController> _localizer;
@@ -81,7 +82,7 @@ namespace Investigator.Areas.Admin.Controllers
                 {
                     bool response = false;
                     
-                    if (!string.IsNullOrEmpty(previousPicture))
+                    if (!string.IsNullOrEmpty(previousPicture) && _unit.Form.GetAll(u => u.ImageId == previousPicture).Count() > 0)
                     {
                         response = await _fileSaver.DeleteFileFromGoogleDrive(previousPicture);
                     }
@@ -210,7 +211,7 @@ namespace Investigator.Areas.Admin.Controllers
             return Json(new { success = true, message = "Delete successfully performed" });
         }
 
-        [HttpPost("SaveQuestions/{templateId:int}")]
+        [HttpPost("{templateId:int}")]
         public async Task<IActionResult> SaveQuestions(int templateId, [FromBody] IEnumerable<QuestionDto> questions)
         {
             if (_unit.Template.Get(t => t.TemplateId == templateId).GetAwaiter().GetResult().TemplateId == 0)
@@ -232,15 +233,17 @@ namespace Investigator.Areas.Admin.Controllers
                     }
                     else
                     {
-                        if (await _unit.Question.Get(u => u.QuestionId == question.QuestionId) == null) continue;
-                        var questionToSave = new TemplateQuestion();
-                        questionToSave.Type = question.Type;
-                        questionToSave.Text = question.Text;
-                        questionToSave.Order = question.Order;
-                        questionToSave.IsOptional = question.IsOptional;
-                        questionToSave.TemplateId = templateId;
+                        if (_unit.Question.Get(u => u.QuestionId == question.QuestionId).GetAwaiter().GetResult() != null)
+                        {
+                            var questionToSave = new TemplateQuestion();
+                            questionToSave.Type = question.Type;
+                            questionToSave.Text = question.Text;
+                            questionToSave.Order = question.Order;
+                            questionToSave.IsOptional = question.IsOptional;
+                            questionToSave.TemplateId = templateId;
 
-                        _unit.TemplateQuestion.Update(questionToSave); ;
+                            _unit.TemplateQuestion.Update(questionToSave);
+                        }                        
                     }
                     _unit.Save();
                 }
@@ -249,10 +252,11 @@ namespace Investigator.Areas.Admin.Controllers
             }
             catch
             {
-                return NotFound();
+                return NotFound(new { message = "An error occurred while saving questions." });
             }
-            
+
         }
+
         [HttpDelete("DeleteQuestion/{questionId:int}")]
         public async Task<IActionResult> DeleteQuestion(int ? questionId)
         {
@@ -260,12 +264,12 @@ namespace Investigator.Areas.Admin.Controllers
             {
                 return NotFound(new { message = "Question not found." });
             }
-            var question = await _unit.Question.Get(u => u.QuestionId == questionId);
+            var question = await _unit.TemplateQuestion.Get(u => u.TemplateQuestionId == questionId);
             if (question == null)
             {
                 return NotFound(new { message = "Question not found." });
             }
-            _unit.Question.Remove(question);
+            _unit.TemplateQuestion.Remove(question);
             _unit.Save();
             return Ok("Question is successfully deleted");
         }

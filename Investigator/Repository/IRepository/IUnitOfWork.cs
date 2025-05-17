@@ -13,6 +13,7 @@
         public IQuestionOptionRepository QuestionOption { get; }
         public IJiraTicketRepository JiraTicket { get; }
         public ITemplateQuestionRepository TemplateQuestion { get; }
+        public IFormFillerRepository FormFiller { get; }
         void Save();
     }
 }

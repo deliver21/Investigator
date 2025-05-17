@@ -1,6 +1,7 @@
 ﻿var manageQuestions = document.getElementById("manageQuestions").value;
 var editFormHeader = document.getElementById("editFormHeader").value;
 var deleteForm = document.getElementById("deleteForm").value;
+var formAnswers = document.getElementById("formAnswers").value;
 $(document).ready(function () {
     var url = window.location.search;
     if (url.includes("allForm")) {
@@ -21,7 +22,7 @@ function loadDataTable(status) {
                 data: "formId",
                 "render": function (data) {
                     return `<div class="w-75 btn-group text-center" role="group">
-                           <a id="templateField" href="#" class="btn btn-info mx-2 rounded-1" title="${manageQuestions}">
+                           <a id="templateField" href="/Admin/Form/Upsert?id=${data}" class="btn btn-info mx-2 rounded-1" title="${editFormHeader}">
                                <i class="bi bi-info-circle-fill"></i> 
                            </a>                                     
                     </div>`
@@ -32,8 +33,8 @@ function loadDataTable(status) {
                 data: "formId",
                 "render": function (data) {
                     return `<div class="w-75 btn-group text-center" role="group">
-                           <a id="templateField" href="#" class="btn btn-success mx-2 rounded-1" title="${manageQuestions}">
-                               <i class="bi bi-pencil-square"></i>
+                           <a id="templateField" href="#" class="btn btn-secondary mx-2 rounded-1" title="${formAnswers}">
+                               <i class="bi bi-journal-text"></i>
                            </a>                                    
                     </div>`
                 },

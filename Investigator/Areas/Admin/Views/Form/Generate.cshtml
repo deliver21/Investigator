@@ -3,8 +3,13 @@
     ViewData["Title"] = "Generate form";
     string? serializeData = JsonConvert.SerializeObject(Model);
 }
+@section Stylesheets {
+    <link href="~/css/details.css" rel="stylesheet" />
+    <link href="~/css/intlTelInput.css" rel="stylesheet" />
+    <link href="~/css/demo.css" rel="stylesheet" />
+}
 <input type="hidden" id="baseUrl" value="@TempData["baseUrl"]" hidden>
-<div class="form-container">
+<div class="form-container mb-2">
     <div class="row pt-2">
         <div class="col-3 col-md-3">
             <a class="m-1 p-2 px-2 text-start text-center btn btn-sm btn-outline-info rounded-1" asp-area="Customer" asp-controller="Home" asp-action="Index">
@@ -32,9 +37,13 @@
     <div id="questions-list" class="list-group">
         @foreach (var question in Model.Questions.OrderBy(q => q.Order))
         {
-            <div class="question-item list-group-item m-1" data-question-id="@question.QuestionId" data-question-type="@question.Type">
-                <input type="text" name="questions[@question.QuestionId].text" value="@question.Text"
+            <div class="question-item list-group-item mb-1 mt-1" data-question-id="@question.QuestionId" data-question-type="@question.Type">
+                @if(question.Type != "File")
+                {
+                    <input type="text" name="questions[@question.QuestionId].text" value="@question.Text"
                    placeholder="Question text" class="form-control mb-2 font-weight-bold" required>
+                }
+                
                 <div class="response-container">
                     @switch (question.Type)
                     {
@@ -58,21 +67,48 @@
                                       data-option-id="@option.OptionId" style="display: inline-block; width: auto; margin-left: 10px;" />
                                  }
                              </div>
-                         </div>                      
-                         
+                         </div>    
+                            break;
+                        case "Date":
+                            <input type="date" class="form-control mb-1" placeholder="Select a date" required="@(!question.IsOptional)" />
+                            break;
+                        case "Phone":
+                            <div class="input-group">
+                                <input class="input-group-text" type="tel" id="basic-addon1" value="+375" style="max-width:25px">
+                                <input type="tel" id="phone" name="phone" maxlength="9" pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                           required="@(!question.IsOptional)" disabled value="123456789" placeholder="123-456-789">
+                            </div>
+                            break;
+                        case "File":
+                            <div class="container-file">
+                                <input type="file" id="file-input" multiple required="@(!question.IsOptional)" />
+                                <label disabled id="label-file" for="file-input" name="questions[@question.QuestionId].text" value="@question.Text" class="form-control text-start mb-2 font-weight-bold">
+                                    <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                                    @question.Text
+                                </label>
+                            </div>
                             break;
                     }
                 </div>
-                <button class="btn btn-sm btn-warning text-start toggle-required" onclick="toggleRequired(event)">@(question.IsOptional ? "Mark Required" : "Mark Optional")</button>
+                <button class="btn btn-sm btn-warning text-start toggle-required" onclick="toggleRequired(event)">
+                    @(question.IsOptional ? "Mark Required" : "Mark Optional")
+                    </button>
                 <button type="button" class="btn btn-sm btn-danger text-end m-1 delete-question">
                     <i class="bi bi-file-earmark-x"></i> Delete Question
                 </button>
             </div>
         }
     </div>
-    <button id="add-question" class="btn btn-primary">Add Question</button>
-    <button id="save-form" type="submit"  class="btn btn-success" >Save Form</button>
+    <button id="add-question" class="btn btn-primary mt-1 mb-5 pt-2 text-center">Add Question</button>
+    <button id="save-form" type="submit"  class="btn btn-success mt-1 mb-5 pt-2 text-center" >Save Form</button>
 </div>
 @section Scripts{
     <script src="~/js/form.js"></script>
+    <script src="~/js/intlTelInput.js"></script>
+    <script>
+         var input = document.querySelector("#basic-addon1");
+        if (input) {
+            window.intlTelInput(input, {});
+        }
+    </script>
 }

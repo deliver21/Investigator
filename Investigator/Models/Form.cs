@@ -19,6 +19,7 @@ namespace Investigator.Models
 
         [Required]
         public string? Description { get; set; }
+        public string? ImageId { get; set; }
         public string? CreatorId { get; set; }
 
         [ForeignKey(nameof(CreatorId))]
@@ -26,6 +27,7 @@ namespace Investigator.Models
         public ApplicationUser? Creator { get; set; }
 
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+        public DateTime ModifiedDate { get; set; }
         public ICollection<Question> Questions { get; set; } = new List<Question>();
     }
 

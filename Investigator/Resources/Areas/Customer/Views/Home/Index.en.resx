@@ -129,7 +129,7 @@
   <data name="Templategallery" xml:space="preserve">
     <value>Template Gallery</value>
   </data>
-  <data name="Tryit" xml:space="preserve">
-    <value>Try it</value>
+  <data name="Try" xml:space="preserve">
+    <value>Try</value>
   </data>
 </root>

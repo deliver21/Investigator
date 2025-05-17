@@ -4,6 +4,7 @@ using Investigator.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Investigator.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250421182718_NewColumn")]
+    partial class NewColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -273,9 +276,6 @@ namespace Investigator.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Filler")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int?>("FormFillerId")
                         .HasColumnType("int");
 
@@ -286,8 +286,6 @@ namespace Investigator.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ResponseId");
-
-                    b.HasIndex("Filler");
 
                     b.HasIndex("FormFillerId");
 
@@ -769,10 +767,6 @@ namespace Investigator.Migrations
 
             modelBuilder.Entity("Investigator.Models.Response", b =>
                 {
-                    b.HasOne("Investigator.Models.ApplicationUser", "ApllicationUser")
-                        .WithMany()
-                        .HasForeignKey("Filler");
-
                     b.HasOne("Investigator.Models.FormFiller", null)
                         .WithMany("Responses")
                         .HasForeignKey("FormFillerId");
@@ -788,8 +782,6 @@ namespace Investigator.Migrations
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("ApllicationUser");
 
                     b.Navigation("Form");
 

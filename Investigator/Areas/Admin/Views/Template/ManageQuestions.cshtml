@@ -32,35 +32,73 @@
                         <input type="hidden" name="questions[@question.TemplateQuestionId].id" value="@question.TemplateQuestionId">
                         <input type="text" name="questions[@question.TemplateQuestionId].text" value="@question.Text" 
                                placeholder="Question text" class="form-control mb-2 font-weight-bold" required>
-                        <select name="questions[@question.TemplateQuestionId].type" class="form-select" value="@question.Type">
-                            @if (question.Type == "MultiLine")
+                        <select name="questions[@question.TemplateQuestionId].type" class="form-select custom-select custom-select-lg mb-3" value="@question.Type">
+                            @switch(question.Type)
                             {
-                                <option value="SingleLine">Single Line</option>
-                                <option selected value="MultiLine">Multi Line</option>
-                                <option value="Integer">Integer</option>
-                                <option value="CheckBox">CheckBox</option>
-                            }
-                            @if (question.Type == "Integer")
-                            {
-                                <option value="SingleLine">Single Line</option>
-                                <option value="MultiLine">Multi Line</option>
-                                <option selected value="Integer">Integer</option>
-                                <option value="CheckBox">CheckBox</option>
-                            }
-                            @if (question.Type == "CheckBox")
-                            {
-                                <option value="SingleLine">Single Line</option>
-                                <option value="MultiLine">Multi Line</option>
-                                <option value="Integer">Integer</option>
-                                <option selected value="CheckBox">CheckBox</option>
-                            }
-                            else
-                            {
-                                <option value="SingleLine">Single Line</option>
-                                <option value="MultiLine">Multi Line</option>
-                                <option value="Integer">Integer</option>
-                                <option value="CheckBox">CheckBox</option>
-                            }                            
+                                case "MultiLine":
+                                    <option value="SingleLine">Single Line</option>
+                                    <option selected value="MultiLine">Multi Line</option>
+                                    <option value="Integer">Integer</option>
+                                    <option value="CheckBox">CheckBox</option>
+                                    <option value="Phone">Phone</option>
+                                    <option value="Date">Date</option>
+                                    <option value="File">File</option>
+                                    break;
+                                case "Integer":
+                                    <option value="SingleLine">Single Line</option>
+                                    <option value="MultiLine">Multi Line</option>
+                                    <option selected value="Integer">Integer</option>
+                                    <option value="CheckBox">CheckBox</option>
+                                    <option value="Phone">Phone</option>
+                                    <option value="Date">Date</option>
+                                    <option value="File">File</option>
+                                    break;
+                                case "CheckBox":
+                                    <option value="SingleLine">Single Line</option>
+                                    <option value="MultiLine">Multi Line</option>
+                                    <option value="Integer">Integer</option>
+                                    <option selected value="CheckBox">CheckBox</option>
+                                    <option value="Phone">Phone</option>
+                                    <option value="Date">Date</option>
+                                    <option value="File">File</option>
+                                    break;
+                                case "SingleLine":
+                                    <option selected value="SingleLine">Single Line</option>
+                                    <option value="MultiLine">Multi Line</option>
+                                    <option value="Integer">Integer</option>
+                                    <option value="CheckBox">CheckBox</option>
+                                    <option value="Phone">Phone</option>
+                                    <option value="Date">Date</option>
+                                    <option value="File">File</option>
+                                     break;
+                                case "Phone":
+                                    <option value="SingleLine">Single Line</option>
+                                    <option value="MultiLine">Multi Line</option>
+                                    <option value="Integer">Integer</option>
+                                    <option value="CheckBox">CheckBox</option>
+                                    <option selected value="Phone">Phone</option>
+                                    <option value="Date">Date</option>
+                                    <option value="File">File</option>
+                                 break;
+                                case "Date":
+                                    <option value="SingleLine">Single Line</option>
+                                    <option value="MultiLine">Multi Line</option>
+                                    <option value="Integer">Integer</option>
+                                    <option value="CheckBox">CheckBox</option>
+                                    <option value="Phone">Phone</option>
+                                    <option selected value="Date">Date</option>
+                                    <option value="File">File</option>
+                                break;
+                                case "File":
+                                    <option value="SingleLine">Single Line</option>
+                                    <option value="MultiLine">Multi Line</option>
+                                    <option value="Integer">Integer</option>
+                                    <option value="CheckBox">CheckBox</option>
+                                    <option value="Phone">Phone</option>
+                                    <option value="Date">Date</option>
+                                    <option selected value="File">File</option>
+                                    break;
+                            }                           
                         </select> 
                         <button type="button" class="btn btn-sm btn-warning text-start toggle-required">
                             @(question.IsOptional ? "Mark as Required" : "Mark as Optional")
@@ -75,8 +113,8 @@
     </div>
 
     <!-- Add and Save Buttons -->
-    <button id="addQuestion" class="btn btn-info mt-3 rounded-1"><i class="bi bi-file-plus"></i> @localizer["Addquestion"]</button>
-    <button id="saveQuestions" class="btn btn-primary mt-3 rounded-1"><i class="bi bi-floppy"></i> @localizer["Savequestions"]</button>
+    <button id="addQuestion" class="btn btn-info mt-3 mb-3 rounded-1"><i class="bi bi-file-plus"></i> @localizer["Addquestion"]</button>
+    <button id="saveQuestions" class="btn btn-primary mt-3 mb-3 rounded-1"><i class="bi bi-floppy"></i> @localizer["Savequestions"]</button>
 </div>
 
 @section Scripts

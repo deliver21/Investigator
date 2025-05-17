@@ -12,6 +12,9 @@ document.getElementById("addQuestion").addEventListener("click", () => {
                 <option value="MultiLine">Multi Line</option>
                 <option value="Integer">Integer</option>
                 <option value="CheckBox">CheckBox</option>
+                <option value="Phone">Phone</option>
+                <option value="Date">Date</option>
+                <option value="File">File</option>
             </select>
             <button type="button" class="btn btn-sm btn-warning m-1 text-start toggle-required">Mark as Optional</button>            
             <button type="button" class="btn btn-sm btn-danger text-end m-1">
@@ -28,7 +31,7 @@ document.getElementById("questions").addEventListener("click", (e) => {
         const questionId = parseInt(questionItem.dataset.questionId, 10);
 
         if (questionId > 0) {            
-            fetch(`/DeleteQuestion/${questionId}`, {
+            fetch(`/Template/DeleteQuestion/${questionId}`, {
                 method: "DELETE",
             })
                 .then((response) => {
@@ -97,27 +100,27 @@ document.getElementById("saveQuestions").addEventListener("click", () => {
     }));
 
     if (questions.length < 1) {
-        toastr.success("Oops, there are no questions to add to this template.");
+        toastr.warning("Oops, there are no questions to add to this template.");
         return;
     }
 
-    fetch(`/SaveQuestions/${templateId}`, {
+    fetch(`/Admin/Template/SaveQuestions/${templateId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(questions)
     })
-    .then((response) => {
-        if (!response.ok) throw new Error("Failed to save questions.");
-        return response.json();
+        .then((response) => {
+            console.log(response);
+            if (!response.ok) throw new Error("Failed to save questions.");
+            return response.json();
+        }).then((data) => {
+        toastr.success(data.message || "Questions saved successfully!");
+        setTimeout(() => {
+            window.location = baseUrl + "/Admin/Template/Index";
+        }, 1500); // delay so user can see the success toast
     })
-        .then(            
-            (data) => {
-                window.location = baseUrl + "/Template";
-                toastr.success(data.message || "Questions saved successfully!");
-            }
-        )
-    .catch((error) => {
-        console.error("Error:", error);
-        toastr.error("An error occurred while saving questions.");
-    });
+        .catch((error) => {
+            console.error("Error:", error.message);
+            toastr.error("An error occurred while saving questions: " + error.message);
+        });
 });

@@ -123,6 +123,9 @@
   <data name="Editformheader" xml:space="preserve">
     <value>Edit form header</value>
   </data>
+  <data name="Formanswers" xml:space="preserve">
+    <value>Form Answers</value>
+  </data>
   <data name="Managequestions" xml:space="preserve">
     <value>Manage questions</value>
   </data>

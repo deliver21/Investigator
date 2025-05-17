@@ -61,12 +61,12 @@
                 </div>
             </form>
         </section>
-        <section>            
+        <section class="text-center">            
             @{
                 if ((Model.ExternalLogins?.Count ?? 0) > 0)
                 {
-                    <p class="divider-text d-flex pt-3 ">or</p>
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                    <p class="divider-text d-flex pt-3 text-center text-primary"></p>
+                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal text-center">
                         <div>
                             <p>
                                 @foreach (var provider in Model.ExternalLogins!)
