@@ -203,46 +203,71 @@ namespace Investigator.Areas.Admin.Controllers
         public async Task<IActionResult> SubmitForm([FromForm] FormSubmissionDto submission)
         {
             if (submission == null || submission.ParsedAnswers == null)
-                return BadRequest("Invalid submission");
+                return BadRequest("Invalid submission");            
 
             var responses = new List<Response>();
             var userName = User.Identity?.Name ?? submission.Filler; // fallback if user not logged in
 
-            foreach (var answer in submission.ParsedAnswers)
+            if (await _unit.FormFiller.Get(u => u.Filler == userName && u.FormId == submission.FormId) != null)
             {
-                var response = new Response
-                {
-                    FormId = submission.FormId,
-                    QuestionId = answer.QuestionId,
-                    Filler = userName,
-                    Answer = answer.Answer
-                };
-                responses.Add(response);
+                return Unauthorized("You have already submitted to this Form before :)");
             }
 
-            // Handle files separately
-            foreach (var file in submission.Files)
+            try
             {
-                var questionIdStr = file.Name.Replace("files_", ""); // assuming field name is files_123
-                if (int.TryParse(questionIdStr, out var questionId))
+                foreach (var answer in submission.ParsedAnswers)
                 {
-                   var fileId = _fileSaver.UploadFilesToGoogleDrive(file);
-                    responses.Add(new Response
+                    var response = new Response
                     {
                         FormId = submission.FormId,
-                        QuestionId = questionId,
+                        QuestionId = answer.QuestionId,
                         Filler = userName,
-                        Answer = !String.IsNullOrEmpty(fileId) ? $"https://drive.google.com/thumbnail?id={fileId}" : "" // link to google drive
-                    });
-                }
-            }
+                    };
 
-            // Save to DB
-            foreach(var response in responses)
-            {
-               await _unit.Response.Add(response);
+                    if (_unit.Question.Get(u => u.QuestionId == answer.QuestionId).GetAwaiter().GetResult().Type != SD.file)
+                    {
+                        response.Answer = answer.Answer;
+                    }
+                    else
+                    {
+                        foreach (var file in submission.Files)
+                        {
+                            var fileId = _fileSaver.UploadFilesToGoogleDrive(file);
+                            response.Answer += !String.IsNullOrEmpty(fileId) ? $"https://drive.google.com/thumbnail?id={fileId}\n" : "";
+                        }
+                    }
+                    responses.Add(response);
+                }
+
+                // Handle files separately
+                foreach (var file in submission.Files)
+                {
+                    var questionIdStr = file.Name.Replace("files_", ""); // assuming field name is files_123
+                    if (int.TryParse(questionIdStr, out var questionId))
+                    {
+                        var fileId = _fileSaver.UploadFilesToGoogleDrive(file);
+                    }
+                }
+
+                // Save to DB
+                foreach (var response in responses)
+                {
+                    await _unit.Response.Add(response);
+                }
+                _unit.Save();
+                FormFiller filler = new()
+                {
+                    Filler = userName,
+                    FormId = submission.FormId,
+                    SubmissionDate = DateTime.Now,
+                };
+                await _unit.FormFiller.Add(filler);
+                _unit.Save();
             }
-            _unit.Save();
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }            
 
             return Ok(new { message = "Form submitted successfully" });
         }

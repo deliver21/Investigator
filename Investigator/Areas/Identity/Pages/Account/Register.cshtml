@@ -59,11 +59,11 @@
             <button id="registerSubmit" type="submit" class="w-75 btn btn-lg btn-primary rounded-1 p-3"><i class="bi bi-binoculars-fill"></i> @localizer["Signup"]</button>
         </form>
         
-         <section>
+         <section class="text-center">
              
              @if ((Model.ExternalLogins?.Count ?? 0) > 0)
              {
-                 <p class="divider-text d-flex pt-3 text-center">or</p>
+                 <p class="divider-text d-flex pt-3 text-center text-primary"></p>
                 <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
                     <div>
                         <p>

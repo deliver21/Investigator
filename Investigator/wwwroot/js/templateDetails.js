@@ -49,9 +49,11 @@ connectionTemplateDetails.start().then(fullfilled, rejected);
 let fileInput = document.getElementById("file-input");
 let fileList = document.getElementById("files-list");
 let numOfFiles = document.getElementById("num-of-files");
-fileInput.addEventListener("change", () => {
+
+fileInput?.addEventListener("change", () => {
     fileList.innerHTML = "";
-    numOfFiles.textContent = `${fileInput.files.length} File(s) Selected`;
+    numOfFiles.textContent = `${fileInput.files.length} Files Selected`;
+
     for (i of fileInput.files) {
         let reader = new FileReader();
         let listItem = document.createElement("li");

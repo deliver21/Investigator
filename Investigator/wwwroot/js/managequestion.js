@@ -31,23 +31,24 @@ document.getElementById("questions").addEventListener("click", (e) => {
         const questionId = parseInt(questionItem.dataset.questionId, 10);
 
         if (questionId > 0) {            
-            fetch(`/Template/DeleteQuestion/${questionId}`, {
+            fetch(`/Admin/Template/DeleteQuestion/${questionId}`, {
                 method: "DELETE",
             })
-                .then((response) => {
+                .then(response => {
                     if (!response.ok) {
                         throw new Error("Failed to delete question.");
                     }
                     return response.json();
                 })
-                .then(() => {
-                    
+                .then(data => {
                     questionItem.remove();
+                    window.reload();
+                    toastr.success(data.message || "Question is successfully deleted!");
                 })
-                .catch((error) => {
-                    console.error("Error:", error);
-                    alert("Failed to delete question. Please try again.");
-                });
+                 .catch (error => {
+                     console.error("Error : ", error);
+                     toastr.error("Failed to delete question. Please try again.");
+                 });
         } else {
             questionItem.remove();
         }

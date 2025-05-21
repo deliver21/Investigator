@@ -103,11 +103,17 @@ function handleQuestionTypeChange(event, questionItem) {
                     type="tel" 
                     id="phone" 
                     name="phone" 
-                    maxlength="9" 
+                    maxlength="11" 
                     pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}" 
                     placeholder="123-456-789"
-                    class="form-control"
-                />
+                    class="form-control" 
+                  oninput="this.value = this.value
+                                            .replace(/\D/g, '')
+                                            .replace(/(\d{3})(\d{0,3})(\d{0,3})/, function(_, a, b, c) {
+                                              return [a, b, c].filter(Boolean).join('-');
+                                            });
+                                        "
+                />                               
             </div>`;
                questionItem.setAttribute('data-question-type', "Phone");
          break;

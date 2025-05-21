@@ -36,14 +36,14 @@ namespace Investigator.Controllers
             TemplateVM = new()
             {
                 Template = _unit.Template.GetAll(u => u.Visibility == 0, "Questions").OrderByDescending(u => u.Point).Take(5),
-                Form = userId != null ? _unit.Form.GetAll(u => u.CreatorId == userId, "Template").ToList() : new List<Form>()
+                Form = userId != null ? _unit.Form.GetAll(u => u.CreatorId == userId, "Template").OrderByDescending(u => u.FormId).ToList() : new List<Form>()
             };
             if(TemplateVM.Form.Any())
             {
                 for(int i = 0; i < TemplateVM.Form.Count(); i++)
                 {
                     var id = TemplateVM.Form[i].TemplateId;
-                    TemplateVM.Form[i].Template = await _unit.Template.Get(u => u.TemplateId == id);  
+                    TemplateVM.Form[i].Template = await _unit.Template.Get(u => u.TemplateId == id) ?? new Template();  
                     if(TemplateVM.Form[i].Template == null)
                     {
                         TemplateVM.Form[i].Template = new();

@@ -75,8 +75,14 @@
                         case "Phone":
                             <div class="input-group">
                                 <input class="input-group-text" type="tel" id="basic-addon1" value="+375" style="max-width:25px">
-                                <input type="tel" id="phone" name="phone" maxlength="9" pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
-                           required="@(!question.IsOptional)" disabled value="123456789" placeholder="123-456-789">
+                                <input type="tel" id="phone" name="phone" maxlength="11"
+                                 oninput="this.value = this.value
+                                                         .replace(/\D/g, '')
+                                                         .replace(/(\d{3})(\d{0,3})(\d{0,3})/, function(_, a, b, c) {
+                                                           return [a, b, c].filter(Boolean).join('-');
+                                                         });
+                                                     "
+                                 pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}" required="@(!question.IsOptional)" placeholder="123-456-789">
                             </div>
                             break;
                         case "File":
@@ -99,8 +105,8 @@
             </div>
         }
     </div>
-    <button id="add-question" class="btn btn-primary mt-1 mb-5 pt-2 text-center">Add Question</button>
-    <button id="save-form" type="submit"  class="btn btn-success mt-1 mb-5 pt-2 text-center" >Save Form</button>
+    <button id="add-question" class="btn btn-primary mt-1 mb-5 pt-2 text-center"><i class="bi bi-file-earmark-plus"></i> Add Question</button>
+    <button id="save-form" type="submit"  class="btn btn-success mt-1 mb-5 pt-2 text-center" ><i class="bi bi-floppy"></i> Save Form</button>
 </div>
 @section Scripts{
     <script src="~/js/form.js"></script>

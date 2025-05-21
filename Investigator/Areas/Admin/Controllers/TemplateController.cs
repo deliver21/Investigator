@@ -257,7 +257,7 @@ namespace Investigator.Areas.Admin.Controllers
 
         }
 
-        [HttpDelete("DeleteQuestion/{questionId:int}")]
+        [HttpDelete("{questionId:int}")]
         public async Task<IActionResult> DeleteQuestion(int ? questionId)
         {
             if (questionId == null)
