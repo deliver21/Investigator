@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+﻿using Investigator.Utilities;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -20,12 +21,13 @@ namespace Investigator.Models
         [Required]
         public string? Description { get; set; }
         public string? ImageId { get; set; }
-        public string? CreatorId { get; set; }
+        public string? CreatorId { get; set; }        
 
         [ForeignKey(nameof(CreatorId))]
         [ValidateNever]
         public ApplicationUser? Creator { get; set; }
 
+        public string Status { get; set; } = SD.ActiveStatus;
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public DateTime ModifiedDate { get; set; }
         public ICollection<Question> Questions { get; set; } = new List<Question>();

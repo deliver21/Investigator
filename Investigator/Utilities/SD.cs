@@ -28,6 +28,9 @@
         public const string AppIdFacebook = "353431303785337";
         public const string AppSecretFacebook = "1374ec31638332c70d1fed8183616f68";
 
+        //Form Status
+        public const string ActiveStatus = "Active";
+        public const string InactiveStatus = "Inactive";
         //Token Key
         public static string tokenCookie = "JWTToken";
 

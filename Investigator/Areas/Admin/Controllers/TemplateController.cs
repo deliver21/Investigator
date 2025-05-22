@@ -233,9 +233,10 @@ namespace Investigator.Areas.Admin.Controllers
                     }
                     else
                     {
-                        if (_unit.Question.Get(u => u.QuestionId == question.QuestionId).GetAwaiter().GetResult() != null)
+                        if (_unit.TemplateQuestion.Get(u => u.TemplateQuestionId == question.QuestionId).GetAwaiter().GetResult() != null)
                         {
                             var questionToSave = new TemplateQuestion();
+                            questionToSave.TemplateQuestionId = question.QuestionId;
                             questionToSave.Type = question.Type;
                             questionToSave.Text = question.Text;
                             questionToSave.Order = question.Order;

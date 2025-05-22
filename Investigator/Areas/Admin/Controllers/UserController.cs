@@ -55,17 +55,21 @@ namespace Investigator.Areas.Admin.Controllers
 
         #region APIs Calls
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            IEnumerable<ApplicationUser> obj = _unit.ApplicationUser.GetAll();
-            foreach (ApplicationUser user in obj)
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var adminUser = await _unit.ApplicationUser.Get(u => u.Id == userId);
+            List<ApplicationUser> users = _unit.ApplicationUser.GetAll().ToList() ?? new List<ApplicationUser>();
+            users.Remove(adminUser);
+            foreach (ApplicationUser user in users)
             {
                 var formatTime = DateTimeFormat.FormatString(user.LastSeen);
                 user.Interval = $"Last seen {Interval.SetInterval(user.LastSeen)}";
                 user.LastSeen = DateTime.Parse(formatTime);
                 user.Role = _userManager.GetRolesAsync(user).GetAwaiter().GetResult().FirstOrDefault();
             }
-            return Json(new { data = obj.OrderByDescending(u => u.LastSeen) });
+            return Json(new { data = users.OrderByDescending(u => u.LastSeen) });
         }
         [Authorize]
         [IsBlockedAuthorize]

@@ -203,7 +203,11 @@ namespace Investigator.Areas.Admin.Controllers
         public async Task<IActionResult> SubmitForm([FromForm] FormSubmissionDto submission)
         {
             if (submission == null || submission.ParsedAnswers == null)
-                return BadRequest("Invalid submission");            
+                return BadRequest("Invalid submission");
+
+            var checkedForm = await _unit.Form.Get(u => u.FormId == submission.FormId);
+            if (checkedForm == null || checkedForm.Status == SD.InactiveStatus)
+                return NotFound("Form is deleted or is no longer active");
 
             var responses = new List<Response>();
             var userName = User.Identity?.Name ?? submission.Filler; // fallback if user not logged in
@@ -232,21 +236,17 @@ namespace Investigator.Areas.Admin.Controllers
                     {
                         foreach (var file in submission.Files)
                         {
-                            var fileId = _fileSaver.UploadFilesToGoogleDrive(file);
-                            response.Answer += !String.IsNullOrEmpty(fileId) ? $"https://drive.google.com/thumbnail?id={fileId}\n" : "";
+                            foreach(var fi in answer.Answer.Split(","))
+                            {
+                                if(file.FileName == fi.Trim())
+                                {
+                                    var fileId = _fileSaver.UploadFilesToGoogleDrive(file);
+                                    response.Answer += !String.IsNullOrEmpty(fileId) ? $"https://drive.google.com/thumbnail?id={fileId}\n" : "";
+                                }
+                            }                            
                         }
                     }
                     responses.Add(response);
-                }
-
-                // Handle files separately
-                foreach (var file in submission.Files)
-                {
-                    var questionIdStr = file.Name.Replace("files_", ""); // assuming field name is files_123
-                    if (int.TryParse(questionIdStr, out var questionId))
-                    {
-                        var fileId = _fileSaver.UploadFilesToGoogleDrive(file);
-                    }
                 }
 
                 // Save to DB
@@ -298,7 +298,16 @@ namespace Investigator.Areas.Admin.Controllers
 
             if (form.TemplateId != 0)
             {
-                await _unit.Form.Add(_mapper.Map<Form>(form));
+                Form formToSave = new()
+                {
+                    FormId = form.FormId,
+                    Title = form.Title,
+                    Description = form.Description,
+                    TemplateId = form.TemplateId,
+                    CreatedDate = form.CreatedDate,
+                    CreatorId = form.CreatorId ?? User.Identity?.Name
+                };
+                await _unit.Form.Add(formToSave);
                 var template = await _unit.Template.Get(u => u.TemplateId == form.TemplateId);
                 if (template != null)
                 {
@@ -308,18 +317,27 @@ namespace Investigator.Areas.Admin.Controllers
                 _unit.Save();
             }
 
-            var createdFormId = _unit.Form.Get(u => u.CreatedDate == form.CreatedDate).Id;
+            var createdFormId = _unit.Form.Get(u => u.CreatedDate == form.CreatedDate).GetAwaiter().GetResult().FormId;
 
             foreach (var questionDto in form.Questions)
             {
-                if (questionDto.QuestionId == 0)
+                Question questionToSave = new()
                 {
-                    questionDto.FormId = createdFormId;
-                   await _unit.Question.Add(_mapper.Map<Question>(questionDto));
+                    QuestionId = questionDto.QuestionId,
+                    Text = questionDto.Text,
+                    Type = questionDto.Type,
+                    Order = questionDto.Order,
+                    IsOptional = questionDto.IsOptional,
+                    FormId = createdFormId
+                };
+
+                if (questionDto.QuestionId == 0)
+                {                    
+                    await _unit.Question.Add(questionToSave);
                 }
                 else
                 {
-                    _unit.Question.Update(_mapper.Map<Question>(questionDto));
+                    _unit.Question.Update(questionToSave);
                 }
                 _unit.Save();
 
@@ -343,17 +361,19 @@ namespace Investigator.Areas.Admin.Controllers
                                     option.QuestionId = questionId;
                                 }
                             }
-                        }
-                        if (option.QuestionId != 0)
-                        {
+                        }else{
+                            QuestionOption questionOptionToSave = new() 
+                            { 
+                                OptionId = option.OptionId,
+                                Text = option.Text,
+                                QuestionId = option.QuestionId
+                            };
                             if (option.OptionId == 0)
                             {
-                                await _unit.QuestionOption.Add(_mapper.Map<QuestionOption>(option));
-                            }
-                            else
-                            {
-                                _unit.QuestionOption.Update(_mapper.Map<QuestionOption>(option));
-                            }
+                                await _unit.QuestionOption.Add(questionOptionToSave);
+                            }else{
+                                _unit.QuestionOption.Update(questionOptionToSave);
+                             }
                         }
                         _unit.Save();
                     }
@@ -386,7 +406,7 @@ namespace Investigator.Areas.Admin.Controllers
             }
                 _unit.Save();
 
-            return Json(new { success = true, message = "Deletion successfully performed" });
+            return Ok(new { success = true, message = "Deletion successfully performed" });
         }
 
 
