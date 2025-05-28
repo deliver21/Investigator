@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Investigator.Migrations
 {
     /// <inheritdoc />
-    public partial class GenerateDb : Migration
+    public partial class CreateDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -277,8 +277,11 @@ namespace Investigator.Migrations
                     TemplateId = table.Column<int>(type: "int", nullable: true),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ImageId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatorId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -294,7 +297,7 @@ namespace Investigator.Migrations
                         column: x => x.TemplateId,
                         principalTable: "Templates",
                         principalColumn: "TemplateId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -464,6 +467,7 @@ namespace Investigator.Migrations
                     ResponseId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FormId = table.Column<int>(type: "int", nullable: false),
+                    Filler = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     QuestionId = table.Column<int>(type: "int", nullable: false),
                     Answer = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FormFillerId = table.Column<int>(type: "int", nullable: true)
@@ -471,6 +475,11 @@ namespace Investigator.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Responses", x => x.ResponseId);
+                    table.ForeignKey(
+                        name: "FK_Responses_AspNetUsers_Filler",
+                        column: x => x.Filler,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Responses_FormFillers_FormFillerId",
                         column: x => x.FormFillerId,
@@ -545,9 +554,9 @@ namespace Investigator.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FormFillers_Filler",
+                name: "IX_FormFillers_Filler_FormId",
                 table: "FormFillers",
-                column: "Filler");
+                columns: new[] { "Filler", "FormId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_FormFillers_FormId",
@@ -603,6 +612,11 @@ namespace Investigator.Migrations
                 name: "IX_Questions_FormId",
                 table: "Questions",
                 column: "FormId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Responses_Filler",
+                table: "Responses",
+                column: "Filler");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Responses_FormFillerId",

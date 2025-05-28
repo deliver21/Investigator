@@ -1,6 +1,6 @@
 ﻿const questionsList = document.getElementById('questions-list');
 const addQuestionButton = document.getElementById('add-question');
-const baseUrl = document.getElementById("baseUrl");
+const baseUrl = document.getElementById("baseUrl").value;
 
 let questionCounter = document.querySelectorAll('.question-item').length + 1;
 

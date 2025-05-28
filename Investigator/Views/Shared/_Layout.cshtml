@@ -71,6 +71,13 @@
                                      </ul>
                                 </li>
                             }
+                            @if (User.Identity.IsAuthenticated)
+                             {
+                                 <li class="nav-item">
+                                <a class="nav-link text-white " title="My forms submissions" asp-area="Admin" asp-controller="Form" asp-action="GetSubmissionList"><i class="bi bi-journal-text"></i></a>
+                                 </li>
+                             }
+
                         </ul>
                         @if (currentUrl == "/Customer/Home/ExtendTemplates")
                         {

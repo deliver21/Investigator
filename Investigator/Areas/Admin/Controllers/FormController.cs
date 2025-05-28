@@ -14,6 +14,8 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc.Localization;
 using Investigator.Services.IServices;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Investigator.Models.ViewModels;
+using System.Text;
 
 namespace Investigator.Areas.Admin.Controllers
 {
@@ -25,6 +27,8 @@ namespace Investigator.Areas.Admin.Controllers
         private readonly IUnitOfWork _unit;
         private readonly IMapper _mapper;
         private readonly IFileSaver _fileSaver;
+        [BindProperty]
+        public FormFillerVM FormFillers { get; set; }
         public FormController(IUnitOfWork unit, IMapper mapper, IHtmlLocalizer<FormController> localizer, IFileSaver fileSaver)
         {
             _unit = unit;
@@ -77,7 +81,6 @@ namespace Investigator.Areas.Admin.Controllers
                 var previousPicture = _unit.Form.Get(u => u.FormId == form.FormId,null,false).GetAwaiter().GetResult().ImageId;
                 if (file != null)
                 {
-                    bool response = false;
                     var templateWithImage = _unit.Template.GetAll(u => u.ImageId == previousPicture).Count();
                     if (templateWithImage == 0 && !string.IsNullOrEmpty(previousPicture))
                     {
@@ -140,6 +143,7 @@ namespace Investigator.Areas.Admin.Controllers
             {
                 return Redirect($"/Customer/Home/Index");
             }
+            TempData["baseUrl"] = SD.AppBaseUrl;
             templateForm.Questions = _unit.TemplateQuestion.GetAll(u => u.TemplateId == templateForm.TemplateId, null, true).ToList();
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -169,14 +173,39 @@ namespace Investigator.Areas.Admin.Controllers
             return View(formDto);
         }
 
-        public async Task<IActionResult> ManageSubmissions(int? id)
+        [HttpGet]
+        [Authorize]
+        [IsBlockedAuthorize]
+        public async Task<IActionResult> GetSubmissions(int? formId)
         {
-            Form form = new();
-            form = await _unit.Form.Get(u => u.FormId == id);
-            if (form == null) return RedirectToAction(nameof(Index));
-            IEnumerable<Question> questions = _unit.Question.GetAll(u => u.FormId == form.FormId).OrderBy(u => u.QuestionId).ToList();
-            return View(questions);
+            FormFillers = new();
+            FormFillers.Form =  await _unit.Form.Get(u => u.FormId == formId);            
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            if (FormFillers.Form == null || FormFillers.Form.CreatorId != userId)
+            {
+                TempData["error"] = "Error while retrieving data";
+                RedirectToAction(nameof(Index));
+            }
+            FormFillers.Form.Creator = await _unit.ApplicationUser.Get(u => u.Id == FormFillers.Form.CreatorId);
+            if(string.IsNullOrEmpty(FormFillers.Form.ImageId))
+            {
+                FormFillers.Form.ImageId = _unit.Template.Get(u => u.TemplateId == FormFillers.Form.TemplateId).GetAwaiter().GetResult().ImageId ?? "";
+            }
+
+            FormFillers.Questions = _unit.Question.GetAll(u => u.FormId == formId).OrderBy(u => u.QuestionId);            
+
+            List<FormFiller> fillers = new List<FormFiller>();
+            fillers = _unit.FormFiller.GetAll(u => u.FormId == formId).ToList();
+            for (int i = 0; i < fillers.Count; i++)
+            {
+                fillers[i].Responses = _unit.Response.GetAll(u => u.Filler == fillers[i].Filler && u.FormId == formId).OrderBy(u => u.QuestionId).ToList();
+                fillers[i].ApplicationUser = await _unit.ApplicationUser.Get(u => u.Id == fillers[i].Filler) ?? new();
+            }
+            FormFillers.FormFillers = fillers ?? new List<FormFiller>();
+            return View( FormFillers );
         }
+
         #region API's Calls
 
         [HttpGet]
@@ -210,9 +239,10 @@ namespace Investigator.Areas.Admin.Controllers
                 return NotFound("Form is deleted or is no longer active");
 
             var responses = new List<Response>();
-            var userName = User.Identity?.Name ?? submission.Filler; // fallback if user not logged in
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value; // fallback if user not logged in
 
-            if (await _unit.FormFiller.Get(u => u.Filler == userName && u.FormId == submission.FormId) != null)
+            if (await _unit.FormFiller.Get(u => u.Filler == userId && u.FormId == submission.FormId) != null)
             {
                 return Unauthorized("You have already submitted to this Form before :)");
             }
@@ -225,12 +255,20 @@ namespace Investigator.Areas.Admin.Controllers
                     {
                         FormId = submission.FormId,
                         QuestionId = answer.QuestionId,
-                        Filler = userName,
+                        Filler = userId,
                     };
 
                     if (_unit.Question.Get(u => u.QuestionId == answer.QuestionId).GetAwaiter().GetResult().Type != SD.file)
                     {
                         response.Answer = answer.Answer;
+                    }
+                    else if(_unit.Question.Get(u => u.QuestionId == answer.QuestionId).GetAwaiter().GetResult().Type != SD.checkBoxType)
+                    {
+                        foreach (var optionId in answer.Answer.Split(','))
+                        {
+                            var option = _unit.QuestionOption.Get(u => u.OptionId == int.Parse(optionId)).GetAwaiter().GetResult().Text;
+                            response.Answer += $"{option}\n";
+                        }
                     }
                     else
                     {
@@ -241,7 +279,7 @@ namespace Investigator.Areas.Admin.Controllers
                                 if(file.FileName == fi.Trim())
                                 {
                                     var fileId = _fileSaver.UploadFilesToGoogleDrive(file);
-                                    response.Answer += !String.IsNullOrEmpty(fileId) ? $"https://drive.google.com/thumbnail?id={fileId}\n" : "";
+                                    response.Answer += !String.IsNullOrEmpty(fileId) ? $"https://drive.google.com/file/d/{fileId}/view?usp=drivesdk\n" : "";
                                 }
                             }                            
                         }
@@ -257,7 +295,7 @@ namespace Investigator.Areas.Admin.Controllers
                 _unit.Save();
                 FormFiller filler = new()
                 {
-                    Filler = userName,
+                    Filler = userId,
                     FormId = submission.FormId,
                     SubmissionDate = DateTime.Now,
                 };
@@ -272,30 +310,14 @@ namespace Investigator.Areas.Admin.Controllers
             return Ok(new { message = "Form submitted successfully" });
         }
 
-
-        [HttpGet]
-        [Authorize]
-        [IsBlockedAuthorize]
-        public async Task<IActionResult> GetSubmissions(int ? formId)
-        {
-            Form form = new();
-            form = await _unit.Form.Get(u => u.FormId == formId);
-            if (form == null) return Json(new { success = false, message = "Error while retrieving data" });
-            List<FormFiller> fillers = new List<FormFiller>();
-            fillers = _unit.FormFiller.GetAll(u => u.FormId == form.FormId).ToList();
-            for(int i = 0; i < fillers.Count; i++)
-            {
-                fillers[i].Responses = _unit.Response.GetAll(u => u.Filler == fillers[i].Filler).OrderBy(u => u.QuestionId).ToList();
-            }
-            return Json(new {data = fillers});
-        }
         [HttpPost]
         public async Task<IActionResult> SaveForm([FromForm] FormDto form)
         {
             TempData["baseUrl"] = SD.AppBaseUrl;
             form.Description = _unit.Template.Get(u => u.TemplateId == form.TemplateId).GetAwaiter().GetResult().Description;
             if (form == null) return BadRequest("Invalid form data.");
-
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             if (form.TemplateId != 0)
             {
                 Form formToSave = new()
@@ -305,7 +327,7 @@ namespace Investigator.Areas.Admin.Controllers
                     Description = form.Description,
                     TemplateId = form.TemplateId,
                     CreatedDate = form.CreatedDate,
-                    CreatorId = form.CreatorId ?? User.Identity?.Name
+                    CreatorId = userId
                 };
                 await _unit.Form.Add(formToSave);
                 var template = await _unit.Template.Get(u => u.TemplateId == form.TemplateId);
@@ -346,11 +368,17 @@ namespace Investigator.Areas.Admin.Controllers
                 {
                     foreach (var option in questionDto.Options)
                     {
+                        QuestionOption questionOptionToSave = new()
+                        {
+                            OptionId = option.OptionId,
+                            Text = option.Text,                            
+                        };
+
                         if (option.QuestionId == 0)
                         {
                             if (questionDto.QuestionId != 0)
                             {
-                                option.QuestionId = questionDto.QuestionId;
+                                questionOptionToSave.QuestionId = questionDto.QuestionId;
                             }
                             else
                             {
@@ -358,23 +386,16 @@ namespace Investigator.Areas.Admin.Controllers
                                     GetAwaiter().GetResult().QuestionId;
                                 if (questionId > 0)
                                 {
-                                    option.QuestionId = questionId;
+                                    questionOptionToSave.QuestionId = questionId;
                                 }
                             }
-                        }else{
-                            QuestionOption questionOptionToSave = new() 
-                            { 
-                                OptionId = option.OptionId,
-                                Text = option.Text,
-                                QuestionId = option.QuestionId
-                            };
-                            if (option.OptionId == 0)
-                            {
-                                await _unit.QuestionOption.Add(questionOptionToSave);
-                            }else{
-                                _unit.QuestionOption.Update(questionOptionToSave);
-                             }
+                            
+                            await _unit.QuestionOption.Add(questionOptionToSave);
                         }
+                        else{
+                                questionOptionToSave.QuestionId = option.QuestionId;
+                                _unit.QuestionOption.Update(questionOptionToSave);
+                         }                        
                         _unit.Save();
                     }
                 }
@@ -471,6 +492,60 @@ namespace Investigator.Areas.Admin.Controllers
             _unit.Save();
             return Ok("Question is successfully deleted");
         }
-    }    
+
+        [HttpPost("Export")]
+        public async Task<IActionResult> ExportToCvs(int formId)
+        {
+            Form form = await _unit.Form.Get(u => u.FormId == formId);
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            if (form == null || form.CreatorId != userId)
+            {
+                TempData["error"] = "Error while retrieving data";
+                return BadRequest();
+            }
+
+            FormFillers = new()
+            {
+                Questions = _unit.Question.GetAll(u => u.FormId == formId).OrderBy(u => u.QuestionId)
+            };
+
+            List<FormFiller> fillers = new List<FormFiller>();
+            fillers = _unit.FormFiller.GetAll(u => u.FormId == formId).ToList();
+
+            if(fillers.Count == 0)
+            {
+                return NotFound();
+            }
+            for (int i = 0; i < fillers.Count; i++)
+            {
+                fillers[i].Responses = _unit.Response.GetAll(u => u.Filler == fillers[i].Filler && u.FormId == formId).OrderBy(u => u.QuestionId).ToList();
+                fillers[i].ApplicationUser = await _unit.ApplicationUser.Get(u => u.Id == fillers[i].Filler) ?? new();
+            }
+            FormFillers.FormFillers = fillers ?? new List<FormFiller>();
+            var cvs = new StringBuilder();  
+            var header = new StringBuilder();
+            header.AppendJoin(',',"Contributor");
+            foreach (var question in FormFillers.Questions)
+            {
+                header.AppendJoin(',', question.Text);
+            }
+            cvs.AppendLine(header.ToString());
+            foreach(var filler in FormFillers.FormFillers) 
+            {
+                var body = new StringBuilder();
+                body.AppendJoin(',', filler.ApplicationUser.Email);
+                foreach (var response in filler.Responses)
+                {
+                    body.AppendJoin(',', response.Answer);
+                }
+                cvs.AppendLine(body.ToString());
+            }
+
+            return File(Encoding.UTF8.GetBytes(cvs.ToString()), "text/cvs", "submissions.cvs");
+        }
+    }   
+    
+
     #endregion
 }

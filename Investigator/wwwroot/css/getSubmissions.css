@@ -1,0 +1,59 @@
+﻿.review-card {
+    background-color: #f8f9fa;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+
+    .review-card h5 {
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    .review-card p {
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+@media (max-width: 768px) {
+    .review-card h5 {
+        font-size: 1rem;
+    }
+
+    .review-card p {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .table {
+        font-size: 0.9rem;
+    }
+
+    .review-card {
+        padding: 8px;
+    }
+
+        .review-card p {
+            font-size: 0.8rem;
+        }
+}
+
+
+.arrow-icon {
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+    .arrow-icon i {
+        transition: transform 0.3s ease;
+    }

@@ -13,7 +13,7 @@ namespace Investigator.Models
         public string? Filler { get; set;}
         [ForeignKey(nameof(Filler))]
         [ValidateNever]
-        public ApplicationUser? ApllicationUser { get; set; }  
+        public ApplicationUser? ApplicationUser { get; set; }  
         public int FormId { get; set; }
         [ForeignKey(nameof(FormId))]
         [ValidateNever]

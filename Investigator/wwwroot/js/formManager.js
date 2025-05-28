@@ -33,7 +33,7 @@ function loadDataTable(status) {
                 data: "formId",
                 "render": function (data) {
                     return `<div class="w-75 btn-group text-center" role="group">
-                           <a id="templateField" href="#" class="btn btn-secondary mx-2 rounded-1" title="${formAnswers}">
+                           <a id="templateField" href="/Admin/Form/GetSubmissions?formId=${data}" target="_blank" class="btn btn-secondary mx-2 rounded-1" title="${formAnswers}">
                                <i class="bi bi-journal-text"></i>
                            </a>                                    
                     </div>`

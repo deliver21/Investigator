@@ -45,7 +45,6 @@
             const fileInput = input;
             if (fileInput.files.length > 0) {
                 for (let i = 0; i < fileInput.files.length; i++) {
-                    /*formData.append(`files_${questionId}`, fileInput.files[i]);*/
                     formData.append("Files", fileInput.files[i]);
                 }
                 answers.push({
