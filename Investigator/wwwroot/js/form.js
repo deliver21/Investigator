@@ -309,8 +309,8 @@ document.getElementById('save-form').addEventListener('click', function () {
             return response.json();
         })
         .then(data => {
-            window.location = baseUrl + "/Admin/Form/Index";
             toastr.success(data.message || "Form saved successfully!");
+            window.location = baseUrl + "/Admin/Form/Index";            
         })
         .catch(error => {
             console.error("Error saving form: ", error);

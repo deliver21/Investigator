@@ -1,0 +1,62 @@
+﻿@model FormFillerVM
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+
+<div class="container mb-4">
+
+    <div class="row m-1 text-end">
+        <div class="col-2">
+            <a asp-area="Admin" asp-controller="Form" asp-action="GetSubmissionList" title="back to your form submission list" class="m-1 p-2 px-2 text-start text-center btn btn-sm btn-outline-info rounded-1">
+                <i class="bi bi-arrow-bar-left"></i>
+            </a>
+        </div>
+        <div class="col-10">
+            <h3 class="text-white">@localizer["Submissionslist"]</h3>
+        </div>
+        
+    </div>
+    <div class="row border-bottom pb-3">
+        <div class="col-12 col-lg-3 offset-lg-1 text-center mb-3">
+            <img class="rounded" width="100%" src="@(Model != null ? $"https://drive.google.com/thumbnail?id={Model.Form.ImageId}" : "~/Images/pharmacy-post-banner-background.jpg")" />
+        </div>
+        <div class="col-12 col-lg-6 offset-lg-1">
+            <h5 class="text-uppercase text-secondary"><strong>@Model.Form.Title</strong></h5>
+            <p><small>@Html.Raw(Model.Form.Description)</small></p>
+        </div>
+    </div>
+
+    <div class="table-responsive mb-3">
+        <table id="tblData" class="table table-bordered table-striped table-hover table-responsive" style="width:100%; overflow:auto">
+            <thead>
+                <tr>
+                    <th>Contributor</th>
+                    @foreach (var question in Model.Questions)
+                    {
+                        <th>@question.Text</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var filler in Model.FormFillers)
+                {
+                    <tr>
+                        <td>@filler.ApplicationUser.Email</td>
+                        @foreach (var response in filler.Responses.ToList())
+                        {
+                            @if (response.Answer.Contains("https"))
+                            {
+                                <td>
+                                    
+                                </td>
+                            }
+                            else
+                            {
+                                <td>@response.Answer</td>
+                            }
+
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

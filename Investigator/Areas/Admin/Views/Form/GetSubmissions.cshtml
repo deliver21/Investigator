@@ -38,16 +38,17 @@
                     <h3 class="text-white">@localizer["Submissionslist"]</h3>
                 </div>
                 <div class="col-2">
-                    <button id="exportButton" title="Export submissions to a cvs file" type="button" class="btn btn-primary">
-                        <i class="bi bi-box-arrow-in-down"></i>
-                    </button>
+                <button id="exportButton" data-form-id="@Model.Form.FormId" title="Export submissions to a CSV file" class="btn btn-primary">
+                    <i class="bi bi-box-arrow-in-down"></i>
+                </button>
+
                 </div>
             </div>
             <div class="row border-bottom pb-3">
-                <div class="d-none d-lg-block col-lg-1 text-center py-2">
-                <img class="rounded" width="100%" src="@(Model != null ? $"https://drive.google.com/thumbnail?id={Model.Form.ImageId}" : "~/Images/pharmacy-post-banner-background.jpg")" />
+                <div class="col-12 col-lg-3 offset-lg-1 text-center mb-3">
+                      <img class="rounded" width="100%" src="@(Model != null ? $"https://drive.google.com/thumbnail?id={Model.Form.ImageId}" : "~/Images/pharmacy-post-banner-background.jpg")" />
                 </div>
-                <div class="col-12 col-lg-6 pt-md-3">
+                <div class="col-12 col-lg-6 offset-lg-1">
                     <h5 class="text-uppercase text-secondary"><strong>@Model.Form.Title</strong></h5>
                     <p><small>@Html.Raw(Model.Form.Description)</small></p>
                 </div>
@@ -89,8 +90,20 @@
                             <tr>
                                 <td>@filler.ApplicationUser.Email</td>
                                 @foreach (var response in filler.Responses.ToList())
-                                {                                    
-                                    <td>@response.Answer</td>
+                                {
+                                    @if(response.Answer.Contains("https"))
+                                    {
+                                      <td>
+                                        @foreach(var link in response.Answer.Split("\n"))
+                                        {
+                                            <a href="@link" target="_blank">@link.Trim()</a>
+                                        }
+                                      </td>
+                                }else
+                                     {
+                                       <td>@response.Answer</td>
+                                     }
+                                
                                 }
                             </tr>
                         }

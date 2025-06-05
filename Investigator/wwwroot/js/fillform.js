@@ -1,4 +1,5 @@
-﻿document.getElementById('form').addEventListener('submit', async function (e) {
+﻿const baseUrl = document.getElementById("baseUrl").value;
+document.getElementById('form').addEventListener('submit', async function (e) {
     e.preventDefault();
 
     const form = e.target;
@@ -49,7 +50,7 @@
                 }
                 answers.push({
                     questionId: questionId,
-                    answer: Array.from(fileInput.files).map(f => f.name).join(', ')
+                    answer: Array.from(fileInput.files).map(f => f.name).join('||')
                 });
             } else if (isRequired && fileInput.files.length == 0) {
                 fileInput.classList.add("is-invalid");
@@ -91,20 +92,21 @@
     fetch('/Admin/Form/SubmitForm', {
         method: 'POST',
         body: formData
-    }).then(response => {
-        if (response.ok) {
-            toastr.succes('Form submitted successfully!');
-        } else {
-            toastr.error('Submission failed.');
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Failed to submit the form.");
         }
-    }).then(data => {
-        console.log("It did work");
-        toastr.success(data.message || "Form saved successfully!");
+        return response.json();
+    })
+    .then(data => {
+        toastr.success(data.message || "Form is submitted successfully!");
+        window.location = baseUrl + "/Admin/Form/SubmissionConfirmation?formId="+ formId;   
     })
     .catch(error => {
-        console.error('Submission error:', error);
-        alert('An error occurred during submission.');
-    });        
+        console.error("Error : ", error);
+        toastr.error("An error occurred during submission.");
+    });
     
 });
 

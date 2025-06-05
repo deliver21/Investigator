@@ -1,0 +1,14 @@
+﻿@model FormFiller
+
+<div class="container row mt-5 mb-5 pt-4">
+    <div class="col-12 text-center">
+        <h1 class="text-primary text-center">Form Submission is successfully done</h1>
+        Form Title : @Model.Form.Title <br /><br />
+        <img style="width: 175px; height:120px" src="@(Model != null ? $"https://drive.google.com/thumbnail?id={Model.Form.ImageId}" : "~/Images/pharmacy-post-banner-background.jpg")" />
+    </div>
+    <div class="col-12 text-center pb-4" style="color : maroon">
+        <br />
+        Form has been submitted succesfully <br />
+        <a asp-area="Admin" asp-controller="Form" asp-action="GetMySubmission" asp-route-formId="@Model.FormId">See your submission's answers' here</a>
+    </div>
+</div>

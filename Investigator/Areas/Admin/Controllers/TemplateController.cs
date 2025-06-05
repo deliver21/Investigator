@@ -86,7 +86,7 @@ namespace Investigator.Areas.Admin.Controllers
                     {
                         response = await _fileSaver.DeleteFileFromGoogleDrive(previousPicture);
                     }
-                    template.ImageId = response ? _fileSaver.UploadFilesToGoogleDrive(file) : "";
+                    template.ImageId = _fileSaver.UploadFilesToGoogleDrive(file);
                 }
                 else
                 {
@@ -272,7 +272,8 @@ namespace Investigator.Areas.Admin.Controllers
             }
             _unit.TemplateQuestion.Remove(question);
             _unit.Save();
-            return Ok("Question is successfully deleted");
+           return Ok(new { message = "Question is successfully deleted" });
+
         }
         #endregion
     }

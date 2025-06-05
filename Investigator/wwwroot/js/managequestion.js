@@ -42,8 +42,8 @@ document.getElementById("questions").addEventListener("click", (e) => {
                 })
                 .then(data => {
                     questionItem.remove();
-                    window.reload();
                     toastr.success(data.message || "Question is successfully deleted!");
+                    window.location.reload();
                 })
                  .catch (error => {
                      console.error("Error : ", error);

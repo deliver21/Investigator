@@ -1,8 +1,10 @@
 ﻿document.getElementById("exportButton").addEventListener("click", () => {
+    const formId = document.getElementById("exportButton").dataset.formId;
 
-    axios.post('/Form/Export', globalBooks, { responseType: 'blob' })
+    axios.post(`/Admin/Form/ExportToCvs?formId=${formId}`, null, { responseType: 'blob' })
         .then(response => {
-            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const blob = new Blob([response.data], { type: "text/csv" });
+            const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
             link.setAttribute('download', 'submissions.csv');
@@ -10,5 +12,8 @@
             link.click();
             document.body.removeChild(link);
         })
-        .catch(error => toastr.error("Error exporting submissions:", error));
+        .catch(error => {
+            console.error("Export error:", error);
+            toastr.error("Error exporting submissions. Please try again.");
+        });
 });

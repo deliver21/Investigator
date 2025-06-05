@@ -58,9 +58,9 @@
                                          </li>
                                          @if (User.IsInRole(SD.AdminRole))
                                          {
-                                             <li>
+                                            @* <li>
                                                  <a class="dropdown-item" asp-area="Admin" asp-controller="Tag" asp-action="Index">Tags</a>
-                                             </li>
+                                             </li>*@
                                              <li>
                                                  <a class="dropdown-item" asp-area="Admin" asp-controller="User" asp-action="Index">@localizer["Usermanagement"]</a>
                                              </li>

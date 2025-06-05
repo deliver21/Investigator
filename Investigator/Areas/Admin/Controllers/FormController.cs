@@ -173,7 +173,6 @@ namespace Investigator.Areas.Admin.Controllers
             return View(formDto);
         }
 
-        [HttpGet]
         [Authorize]
         [IsBlockedAuthorize]
         public async Task<IActionResult> GetSubmissions(int? formId)
@@ -203,7 +202,84 @@ namespace Investigator.Areas.Admin.Controllers
                 fillers[i].ApplicationUser = await _unit.ApplicationUser.Get(u => u.Id == fillers[i].Filler) ?? new();
             }
             FormFillers.FormFillers = fillers ?? new List<FormFiller>();
+            TempData["baseUrl"] = SD.AppBaseUrl;
             return View( FormFillers );
+        }
+
+        [Authorize]
+        [IsBlockedAuthorize]
+        public async Task<IActionResult> GetSubmissionList()
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            IEnumerable<FormFiller> formFillers = _unit.FormFiller.GetAll(u => u.Filler == userId);
+            List<Form> forms = new List<Form>();
+            foreach (var formFiller in formFillers)
+            {
+                var form = await _unit.Form.Get(u => u.FormId == formFiller.FormId);
+                if(string.IsNullOrEmpty(form.ImageId))
+                {
+                    form.ImageId = _unit.Template.Get(u => u.TemplateId == form.TemplateId).GetAwaiter().GetResult().ImageId;
+                }
+                forms.Add(form);
+            }
+            return View(forms);
+        }
+        [Authorize]
+        [IsBlockedAuthorize]
+        public async Task<IActionResult> GetMySubmission(int ? formId)
+        {
+            FormFillers = new();
+            FormFillers.Form = await _unit.Form.Get(u => u.FormId == formId);
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            FormFillers.FormFiller = await _unit.FormFiller.Get(u => u.Filler == userId && u.FormId == FormFillers.Form.FormId);
+
+            if (FormFillers.Form == null || FormFillers.FormFiller == null)
+            {
+                TempData["error"] = "Error while retrieving data";
+                RedirectToAction(nameof(GetSubmissionList));
+            }
+            if (string.IsNullOrEmpty(FormFillers.Form.ImageId))
+            {
+                FormFillers.Form.ImageId = _unit.Template.Get(u => u.TemplateId == FormFillers.Form.TemplateId).GetAwaiter().GetResult().ImageId ?? "";
+            }
+
+            FormFillers.Questions = _unit.Question.GetAll(u => u.FormId == formId).OrderBy(u => u.QuestionId);
+
+            List<FormFiller> fillers = new List<FormFiller>();
+            fillers = _unit.FormFiller.GetAll(u => u.FormId == formId && u.Filler == userId).ToList();
+            for (int i = 0; i < fillers.Count; i++)
+            {
+                fillers[i].Responses = _unit.Response.GetAll(u => u.Filler == fillers[i].Filler && u.FormId == formId).OrderBy(u => u.QuestionId).ToList();
+                fillers[i].ApplicationUser = await _unit.ApplicationUser.Get(u => u.Id == fillers[i].Filler) ?? new();
+            }
+            FormFillers.FormFillers = fillers ?? new List<FormFiller>();
+            return View(FormFillers);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SubmissionConfirmation(int? formId)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            FormFiller filler = await _unit.FormFiller.Get(u => u.Filler == userId && u.FormId == formId);
+            filler.Form = await _unit.Form.Get(u => u.FormId == filler.FormId);
+            if (filler == null || filler.Form == null)
+            {
+                TempData["error"] = "Error while retrieving data";
+                return NotFound(new { message = "Error while retrieving data" });
+            }
+
+            if (string.IsNullOrEmpty(filler.Form.ImageId))
+            {
+                var templateImageId = _unit.Template.Get(u => u.TemplateId == filler.Form.TemplateId).GetAwaiter().GetResult().ImageId;
+                if (!string.IsNullOrEmpty(templateImageId))
+                {
+                    filler.Form.ImageId = templateImageId;
+                }
+            }
+            return View(filler);
         }
 
         #region API's Calls
@@ -211,7 +287,7 @@ namespace Investigator.Areas.Admin.Controllers
         [HttpGet]
         [Authorize]
         [IsBlockedAuthorize]
-        public async Task <IActionResult> GetAll(string status)
+        public IActionResult GetAll(string status)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -244,7 +320,7 @@ namespace Investigator.Areas.Admin.Controllers
 
             if (await _unit.FormFiller.Get(u => u.Filler == userId && u.FormId == submission.FormId) != null)
             {
-                return Unauthorized("You have already submitted to this Form before :)");
+                return Unauthorized(new { message = "You have already submitted to this Form before :)" });
             }
 
             try
@@ -258,11 +334,20 @@ namespace Investigator.Areas.Admin.Controllers
                         Filler = userId,
                     };
 
-                    if (_unit.Question.Get(u => u.QuestionId == answer.QuestionId).GetAwaiter().GetResult().Type != SD.file)
+                    var questionTypeToCheck = _unit.Question.Get(u => u.QuestionId == answer.QuestionId).GetAwaiter().GetResult().Type;
+
+                    if (questionTypeToCheck != SD.file && questionTypeToCheck != SD.checkBoxType)
                     {
-                        response.Answer = answer.Answer;
+                        if(questionTypeToCheck == SD.phoneType)
+                        {
+                            response.Answer = answer.Answer.Length > 4 ? answer.Answer : "";
+                        }
+                        else
+                        {
+                            response.Answer = answer.Answer;
+                        }
                     }
-                    else if(_unit.Question.Get(u => u.QuestionId == answer.QuestionId).GetAwaiter().GetResult().Type != SD.checkBoxType)
+                    else if(questionTypeToCheck == SD.checkBoxType)
                     {
                         foreach (var optionId in answer.Answer.Split(','))
                         {
@@ -274,7 +359,7 @@ namespace Investigator.Areas.Admin.Controllers
                     {
                         foreach (var file in submission.Files)
                         {
-                            foreach(var fi in answer.Answer.Split(","))
+                            foreach (var fi in answer.Answer.Split("||"))
                             {
                                 if(file.FileName == fi.Trim())
                                 {
@@ -304,7 +389,7 @@ namespace Investigator.Areas.Admin.Controllers
             }
             catch(Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { message = ex.Message } );
             }            
 
             return Ok(new { message = "Form submitted successfully" });
@@ -493,7 +578,7 @@ namespace Investigator.Areas.Admin.Controllers
             return Ok("Question is successfully deleted");
         }
 
-        [HttpPost("Export")]
+        [HttpPost]
         public async Task<IActionResult> ExportToCvs(int formId)
         {
             Form form = await _unit.Form.Get(u => u.FormId == formId);
@@ -525,27 +610,25 @@ namespace Investigator.Areas.Admin.Controllers
             FormFillers.FormFillers = fillers ?? new List<FormFiller>();
             var cvs = new StringBuilder();  
             var header = new StringBuilder();
-            header.AppendJoin(',',"Contributor");
+
+            header.AppendJoin(',', "Contributor");
             foreach (var question in FormFillers.Questions)
             {
-                header.AppendJoin(',', question.Text);
+                header.AppendJoin(',', $",{question.Text}");
             }
-            cvs.AppendLine(header.ToString());
+            cvs.AppendLine(header.ToString().TrimStart(','));
             foreach(var filler in FormFillers.FormFillers) 
             {
                 var body = new StringBuilder();
                 body.AppendJoin(',', filler.ApplicationUser.Email);
                 foreach (var response in filler.Responses)
                 {
-                    body.AppendJoin(',', response.Answer);
+                    body.AppendJoin(',', $",{response.Answer}");
                 }
-                cvs.AppendLine(body.ToString());
+                cvs.AppendLine(body.ToString().TrimStart(','));
             }
-
             return File(Encoding.UTF8.GetBytes(cvs.ToString()), "text/cvs", "submissions.cvs");
         }
     }   
-    
-
     #endregion
 }

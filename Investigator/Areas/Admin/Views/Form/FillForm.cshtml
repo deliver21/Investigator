@@ -13,6 +13,7 @@
 }
 <form id="form" data-form-id="@Model.FormId" enctype="multipart/form-data" method="post">
     <input type="hidden" id="formId" value="@Model.FormId" />
+    <input type="hidden" id="baseUrl" value="@TempData["baseUrl"]" hidden>
     <div class="container mb-2">
         <div class="row pt-2">
             <div class="col-3 col-md-3">
