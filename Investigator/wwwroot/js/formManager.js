@@ -17,7 +17,8 @@ function loadDataTable(status) {
         "responsive": true,
         "ajax": { url: '/admin/form/getall?status=' + status },
         "columns": [
-            { data: 'title', "width": "40%" },
+            { data: 'title', "width": "25%" },
+            { data: 'status', "width": "15%" },
             {
                 data: "formId",
                 "render": function (data) {

@@ -18,6 +18,7 @@
         public static string phoneType = "Phone";
         public static string dateType = "Date";
         public static string file = "File";
+        public static string radioBoxType = "RadioBox";
 
         public const string EducationTopic = "Education";
         public const string PersonalTopic = "Personal";

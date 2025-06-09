@@ -20,6 +20,7 @@ function createQuestionElement() {
             <option value="MultiLine">Multi Line</option>
             <option value="Integer">Integer</option>
             <option value="CheckBox">Checkbox</option>
+            <option value="RadioBox">RadioBox</option>
             <option value="Phone">Phone</option>
             <option value="Date">Date</option>
             <option value="File">File</option>
@@ -63,7 +64,8 @@ function handleQuestionTypeChange(event, questionItem) {
                 <div class="new-options my-2" data-question-id="${questionItem.getAttribute('data-question-id')}"></div>
             `;
             questionItem.setAttribute('data-question-type', "CheckBox");
-            document.getElementById('questions-list').addEventListener('click', function (e) {
+           
+            document.addEventListener('click', function (e) {
                 if (e.target && e.target.classList.contains('add-option')) {
                     const button = e.target;
                     const questionId = button.getAttribute('data-question-id');
@@ -73,27 +75,39 @@ function handleQuestionTypeChange(event, questionItem) {
                         console.error(`Container not found for questionId: ${questionId}`);
                         return;
                     }
-                    else {
-                        console.log('it works !');
-                    }
 
                     addCheckboxOption(container, questionId);
                 }
             });
+
+            break;
+        case 'RadioBox':
+            responseContainer.innerHTML = `
+                <button type="button" class="btn btn-sm btn-secondary mb-1 add-option" data-question-id="${questionItem.getAttribute('data-question-id')}">Add Option</button>
+                <div class="new-options my-2" data-question-id="${questionItem.getAttribute('data-question-id')}"></div>
+            `;
+            questionItem.setAttribute('data-question-type', "CheckBox");
+
+            document.addEventListener('click', function (e) {
+                if (e.target && e.target.classList.contains('add-option')) {
+                    const button = e.target;
+                    const questionId = button.getAttribute('data-question-id');
+                    const container = document.querySelector(`.new-options[data-question-id="${questionId}"]`);
+
+                    if (!container) {
+                        console.error(`Container not found for questionId: ${questionId}`);
+                        return;
+                    }
+
+                    addRadioboxOption(container, questionId);
+                }
+            });
+
             break;
         case "Date":
             responseContainer.innerHTML = '<input type="date" class="form-control mb-1" placeholder="Select a date" required />';
             questionItem.setAttribute('data-question-type', "Date");
             break;
-        //case "Phone":
-        //    responseContainer.innerHTML = `< div class="input-group" >
-        //        < input class="input-group-text" type = "tel" id = "basic-addon1" value = "+375" style = "max-width:25px" >  
-        //                <input type="tel" id="phone" name="phone" maxlength="9" pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
-        //                    required disabled value="123456789" placeholder="123-456-789">
-        //                </div>
-        //    `;
-        //    questionItem.setAttribute('data-question-type', "Phone");            
-                    /*break;*/
 
         case "Phone":
                 responseContainer.innerHTML = `
@@ -168,7 +182,7 @@ function addCheckboxOption(container, questionId) {
     const optionId = `${questionId}-option-${optionCount}`;
 
     const optionElement = document.createElement('div');
-    optionElement.className = 'form-check';
+    optionElement.className = 'form-check mb-2 mt-2';
     optionElement.innerHTML = `
         <input class="form-check-input" type="checkbox" id="${optionId}">
         <input 
@@ -180,8 +194,29 @@ function addCheckboxOption(container, questionId) {
             style="display: inline-block; width: auto; margin-left: 10px;"
         />
     `;
+    const Container = document.querySelector(`.new-options[data-question-id="${questionId}"]`);
+    Container.appendChild(optionElement);
+}
 
-    container.appendChild(optionElement);
+function addRadioboxOption(container, questionId) {
+    const optionCount = container.querySelectorAll('.form-check').length + 1;
+    const optionId = `${questionId}-option-${optionCount}`;
+
+    const optionElement = document.createElement('div');
+    optionElement.className = 'form-check mb-2 mt-2';
+    optionElement.innerHTML = `
+        <input class="form-check-input" type="radio" id="${optionId}">
+        <input 
+            class="form-control form-check-label ms-2" 
+            type="text" 
+            value="Option ${optionCount}" 
+            placeholder="Enter option text" 
+            data-option-id="${optionId}" 
+            style="display: inline-block; width: auto; margin-left: 10px;"
+        />
+    `;
+    const Container = document.querySelector(`.new-options[data-question-id="${questionId}"]`);
+    Container.appendChild(optionElement);
 }
 
 document.addEventListener("click", (e) => {
@@ -222,8 +257,9 @@ questionsDiv.addEventListener("drop", (e) => {
 
 //CheckOptionsLenght
 function validateCheckboxQuestions() {
+    /*('.question-item[data-question-type="CheckBox"]')*/
     let isValid = true;
-    document.querySelectorAll('.question-item[data-question-type="CheckBox"]').forEach(q => {
+    document.querySelectorAll('.question-item[data-question-type="RadioBox"], .question-item[data-question-type="CheckBox"]').forEach(q => {
         const options = q.querySelectorAll('.new-options input[type="text"]');
         let filledOptions = 0;
 
@@ -281,6 +317,16 @@ document.getElementById('save-form').addEventListener('click', function () {
 
         // Handle options for CheckBox type
         if (type == 'CheckBox') {
+            questionElement.querySelectorAll('.form-check-input').forEach((optionElement, optionIndex) => {
+                const optionText = optionElement.nextElementSibling.value.trim(); // Use .value, not innerText
+                const optionId = parseInt(optionElement.dataset.optionId || "0");
+
+                formData.append(`questions[${index}].options[${optionIndex}].optionId`, optionId);
+                formData.append(`questions[${index}].options[${optionIndex}].optionId`, questionId);
+                formData.append(`questions[${index}].options[${optionIndex}].text`, optionText);
+            });
+        }
+        if (type == 'RadioBox') {
             questionElement.querySelectorAll('.form-check-input').forEach((optionElement, optionIndex) => {
                 const optionText = optionElement.nextElementSibling.value.trim(); // Use .value, not innerText
                 const optionId = parseInt(optionElement.dataset.optionId || "0");

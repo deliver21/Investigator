@@ -123,7 +123,7 @@ namespace Investigator.Areas.Admin.Controllers
             form.Questions = _unit.Question.GetAll(u => u.FormId == formId).ToList();
             foreach(var question in form.Questions)
             {
-                if(question.Type == SD.checkBoxType)
+                if(question.Type == SD.checkBoxType || question.Type == SD.radioBoxType)
                 {
                     question.Options = _unit.QuestionOption.GetAll(u => u.QuestionId == question.QuestionId).ToList();
                 }
@@ -336,18 +336,8 @@ namespace Investigator.Areas.Admin.Controllers
 
                     var questionTypeToCheck = _unit.Question.Get(u => u.QuestionId == answer.QuestionId).GetAwaiter().GetResult().Type;
 
-                    if (questionTypeToCheck != SD.file && questionTypeToCheck != SD.checkBoxType)
-                    {
-                        if(questionTypeToCheck == SD.phoneType)
-                        {
-                            response.Answer = answer.Answer.Length > 4 ? answer.Answer : "";
-                        }
-                        else
-                        {
-                            response.Answer = answer.Answer;
-                        }
-                    }
-                    else if(questionTypeToCheck == SD.checkBoxType)
+                    
+                    if(questionTypeToCheck == SD.checkBoxType || questionTypeToCheck == SD.radioBoxType)
                     {
                         foreach (var optionId in answer.Answer.Split(','))
                         {
@@ -355,7 +345,7 @@ namespace Investigator.Areas.Admin.Controllers
                             response.Answer += $"{option}\n";
                         }
                     }
-                    else
+                    else if(questionTypeToCheck == SD.file)
                     {
                         foreach (var file in submission.Files)
                         {
@@ -367,6 +357,17 @@ namespace Investigator.Areas.Admin.Controllers
                                     response.Answer += !String.IsNullOrEmpty(fileId) ? $"https://drive.google.com/file/d/{fileId}/view?usp=drivesdk\n" : "";
                                 }
                             }                            
+                        }
+                    }
+                    else
+                    {
+                        if (questionTypeToCheck == SD.phoneType)
+                        {
+                            response.Answer = answer.Answer.Length > 4 ? answer.Answer : "";
+                        }
+                        else
+                        {
+                            response.Answer = answer.Answer;
                         }
                     }
                     responses.Add(response);
@@ -449,7 +450,7 @@ namespace Investigator.Areas.Admin.Controllers
                 _unit.Save();
 
                 // Save Options
-                if(questionDto.Type == SD.checkBoxType && questionDto.Options.Any())
+                if((questionDto.Type == SD.checkBoxType || questionDto.Type == SD.radioBoxType) && questionDto.Options.Any())
                 {
                     foreach (var option in questionDto.Options)
                     {
@@ -627,7 +628,7 @@ namespace Investigator.Areas.Admin.Controllers
                 }
                 cvs.AppendLine(body.ToString().TrimStart(','));
             }
-            return File(Encoding.UTF8.GetBytes(cvs.ToString()), "text/cvs", "submissions.cvs");
+            return File(Encoding.UTF8.GetBytes(cvs.ToString()), "text/cvs", form.Title+"_submissions.cvs");
         }
     }   
     #endregion

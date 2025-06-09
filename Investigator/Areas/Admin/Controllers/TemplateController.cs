@@ -187,7 +187,11 @@ namespace Investigator.Areas.Admin.Controllers
             else
             {
                 templates = _unit.Template.GetAll(u => u.CreatorId == userId, null).ToList();
-            }            
+            } 
+            for(int i = 0; i < templates.Count; i++)
+            {
+                templates[i].VisibilityText = templates[i].Visibility == 0 ? SD.publicVisibility : SD.privateVisibility;
+            }
             return Json(new { data = templates });
         }
 

@@ -144,4 +144,7 @@
   <data name="Topic" xml:space="preserve">
     <value>Sujet</value>
   </data>
+  <data name="Visibility" xml:space="preserve">
+    <value>Visibilité</value>
+  </data>
 </root>

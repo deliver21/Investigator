@@ -46,24 +46,38 @@ function rejected() {
 connectionTemplateDetails.start().then(fullfilled, rejected);
 
 
-let fileInput = document.getElementById("file-input");
-let fileList = document.getElementById("files-list");
-let numOfFiles = document.getElementById("num-of-files");
+const fileInputsInitialized = new Set();
 
-fileInput?.addEventListener("change", () => {
-    fileList.innerHTML = "";
-    numOfFiles.textContent = `${fileInput.files.length} Files Selected`;
+function collectFiles(questionId) {
+    const fileInput = document.getElementById("file-input_" + questionId);
+    const fileList = document.getElementById("files-list_" + questionId);
+    const numOfFiles = document.getElementById("num-of-files_" + questionId);
 
-    for (i of fileInput.files) {
-        let reader = new FileReader();
-        let listItem = document.createElement("li");
-        let fileName = i.name;
-        let fileSize = (i.size / 1024).toFixed(1);
-        listItem.innerHTML = `<p>${fileName}</p><p>${fileSize}KB</p>`;
-        if (fileSize >= 1024) {
-            fileSize = (fileSize / 1024).toFixed(1);
-            listItem.innerHTML = `<p>${fileName}</p><p>${fileSize}MB</p>`;
+    if (!fileInput || fileInputsInitialized.has(questionId)) return;
+
+    fileInputsInitialized.add(questionId); // Mark as initialized
+
+    fileInput.addEventListener("change", () => {
+        fileList.innerHTML = "";
+        const files = fileInput.files;
+
+        if (files.length === 0) {
+            numOfFiles.textContent = "No Files Chosen";
+            return;
         }
-        fileList.appendChild(listItem);
-    }
-});
+
+        numOfFiles.textContent = `${files.length} File${files.length > 1 ? "s" : ""} Selected`;
+
+        for (let file of files) {
+            const listItem = document.createElement("li");
+            const fileName = file.name;
+            let fileSize = (file.size / 1024);
+            let fileSizeText = fileSize >= 1024
+                ? `${(fileSize / 1024).toFixed(1)} MB`
+                : `${fileSize.toFixed(1)} KB`;
+
+            listItem.innerHTML = `<p>${fileName}</p><p>${fileSizeText}</p>`;
+            fileList.appendChild(listItem);
+        }
+    });
+}

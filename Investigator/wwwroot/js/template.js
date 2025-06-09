@@ -20,23 +20,24 @@ function loadDataTable(status) {
         "ajax": { url: '/admin/template/getall?status='+status },
         "columns": [
             { data: 'title', "width": "25%" },
-            { data: 'topic', "width": "25%" },
+            { data: 'topic', "width": "20%" },
+            { data: 'visibilityText', "width": "20%" },
             {
                 data: "templateId",
                 "render": function (data) {
                     return `<div class="w-50 btn-group" role="group" style="font-size:12px;">
-                                   <a id="templateField" href="/Admin/Template/Upsert?id=${data}" class="btn btn-success mx-2 rounded-1">
-                                       <i class="bi bi-pencil-square"></i> <span style="font-size:12px"> ${editTemplateHeader} </span>
+                                   <a id="templateField" href="/Admin/Template/Upsert?id=${data}" title="${editTemplateHeader}" class="btn btn-success mx-2 rounded-1">
+                                       <i class="bi bi-pencil-square"></i> <span style="font-size:12px"> </span>
                                    </a>
-                                   <a id="templateField" href="/Admin/Template/ManageQuestions?id=${data}" class="btn btn-primary mx-2 rounded-1">
-                                       <i class="bi bi-pencil-square"></i> <span style="font-size:12px"> ${manageQuestions} </span>
+                                   <a id="templateField" href="/Admin/Template/ManageQuestions?id=${data}" title="${manageQuestions}" class="btn btn-primary mx-2 rounded-1">
+                                       <i class="bi bi-pencil-square"></i> <span style="font-size:12px"></span>
                                    </a>                                    
-                                   <a id="templateField" onClick=Delete('/Admin/Template/Delete?id=${data}') class="btn btn-danger mx-2 rounded-1">
-                                        <i class="bi bi-trash-fill"></i> <span style="font-size:12px"> ${deleteTemplate} </span>
+                                   <a id="templateField" onClick=Delete('/Admin/Template/Delete?id=${data}') title="${deleteTemplate}" class="btn btn-danger mx-2 rounded-1">
+                                        <i class="bi bi-trash-fill"></i> <span style="font-size:12px"> </span>
                                    </a>
                              </div>`
                 },
-                "width": "50%"
+                "width": "35%"
             }
         ]
     });

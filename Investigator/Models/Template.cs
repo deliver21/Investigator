@@ -26,6 +26,8 @@ namespace Investigator.Models
         }
         [Required]
         public VisibilityType Visibility { get; set; } = VisibilityType.Public;
+        [NotMapped]
+        public string VisibilityText { get; set; }
         public string? ImageId { get; set; }
 
         [Required]

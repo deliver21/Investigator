@@ -12,6 +12,7 @@ document.getElementById("addQuestion").addEventListener("click", () => {
                 <option value="MultiLine">Multi Line</option>
                 <option value="Integer">Integer</option>
                 <option value="CheckBox">CheckBox</option>
+                <option value="RadioBox">RadioBox</option>
                 <option value="Phone">Phone</option>
                 <option value="Date">Date</option>
                 <option value="File">File</option>
@@ -37,16 +38,19 @@ document.getElementById("questions").addEventListener("click", (e) => {
                 .then(response => {
                     if (!response.ok) {
                         throw new Error("Failed to delete question.");
+                        console.log("First error");
                     }
                     return response.json();
                 })
                 .then(data => {
                     questionItem.remove();
+                    console.log("it did delete a question");
                     toastr.success(data.message || "Question is successfully deleted!");
-                    window.location.reload();
+                    /*window.location.reload();*/
                 })
                  .catch (error => {
                      console.error("Error : ", error);
+                     console.log("Last error");
                      toastr.error("Failed to delete question. Please try again.");
                  });
         } else {

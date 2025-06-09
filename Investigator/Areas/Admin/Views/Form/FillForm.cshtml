@@ -76,6 +76,19 @@
                                     }                                
                                 </div>
                                 break;
+                            case "RadioBox":
+                                <div class="form-check">
+                                    @foreach (var option in question.Options)
+                                    {
+                                        <div class="form-check text-start ps-2 ms-3">
+                                            <input class="form-check-input me-2" type="radio" name="flexRadioOption_@question.QuestionId" value="@option.OptionId" id="@option.OptionId">
+                                            <label class="form-check-label ms-2" for="@option.OptionId">
+                                                @option.Text
+                                            </label>
+                                        </div>
+                                    }
+                                </div>
+                                break;
                             case "Date":
                                 <input type="date" class="form-control mb-1" placeholder="Select a date" required="@(!question.IsOptional)" />
                                 break;
@@ -95,13 +108,13 @@
                                 break;
                             case "File":
                                 <div class="container-file">
-                                    <input type="file" id="file-input" multiple required="@(!question.IsOptional)" />
-                                    <label id="label-file" for="file-input" name="questions[@question.QuestionId].text" value="@question.Text" class="form-control text-start mb-2 font-weight-bold">
+                                    <input type="file" id="file-input_@question.QuestionId" data-question-id="@question.QuestionId" multiple required="@(!question.IsOptional)" />
+                                    <label id="label-file" for="file-input_@question.QuestionId" onClick="collectFiles(@question.QuestionId)" name="questions[@question.QuestionId].text" value="@question.Text" class="form-control text-start mb-2 font-weight-bold">
                                         <i class="fa-solid fa-arrow-up-from-bracket"></i>
                                         @question.Text
                                     </label>
-                                    <div id="num-of-files">No Files Choosen</div>
-                                    <ul id="files-list"></ul>
+                                    <div class="num-of-files" id="num-of-files_@question.QuestionId">No Files Choosen</div>
+                                    <ul id="files-list_@question.QuestionId"></ul>
                                 </div>
                                 break;
                         }

@@ -22,10 +22,6 @@ document.getElementById('form').addEventListener('submit', async function (e) {
             const phoneNumberInput = q.querySelector('input[name="phone"]');
             if (countryCodeInput && phoneNumberInput) {
                 const fullNumber = `${countryCodeInput.value}${phoneNumberInput.value}`;
-                //answers.push({
-                //    questionId: questionId,
-                //    answer: fullNumber
-                //});
                 if (isRequired === "true" && phoneNumberInput.value.trim() === "") {
                     phoneNumberInput.classList.add("is-invalid");
                     formIsValid = false;
@@ -56,10 +52,11 @@ document.getElementById('form').addEventListener('submit', async function (e) {
                 fileInput.classList.add("is-invalid");
                 formIsValid = false;
             }
-        } else if (input.type === 'checkbox') {
+        }
+        if (input.type === 'checkbox') {
             const checkboxes = q.querySelectorAll('input[type="checkbox"]:checked');
             const values = Array.from(checkboxes).map(cb => cb.value);
-            if (isRequired && values.length === 0) {
+            if (isRequired && values.length === 0){
                 input.classList.add("is-invalid");
                 formIsValid = false;
             } else {
@@ -68,11 +65,27 @@ document.getElementById('form').addEventListener('submit', async function (e) {
                     answer: values.join(', ')
                 });
             }            
-        } else {
-            if (isRequired && input.value.trim() === "") {
+        }
+        else if (input.type === 'radio') {
+            const radioboxes = q.querySelectorAll('input[type="radio"]:checked');
+            const values = Array.from(radioboxes).map(cb => cb.value);
+            if (isRequired && values.length === 0) {
                 input.classList.add("is-invalid");
                 formIsValid = false;
             } else {
+                answers.push({
+                    questionId: questionId,
+                    answer: values.join(', ')
+                });
+            }
+        }
+        else {
+            if(isRequired && input.value.trim() === "") {
+                input.classList.add("is-invalid");
+                formIsValid = false;
+            }
+            else
+            {
                 answers.push({
                     questionId: questionId,
                     answer: input.value
@@ -111,25 +124,44 @@ document.getElementById('form').addEventListener('submit', async function (e) {
 });
 
 // manage files input in UI
-let fileInput = document.getElementById("file-input");
-let fileList = document.getElementById("files-list");
-let numOfFiles = document.getElementById("num-of-files");
 
-fileInput?.addEventListener("change", () => {
-    fileList.innerHTML = "";
-    numOfFiles.textContent = `${fileInput.files.length} Files Selected`;
+// Keep track of which inputs have already had the event listener attached
+const fileInputsInitialized = new Set();
 
-    for (i of fileInput.files) {
-        let reader = new FileReader();
-        let listItem = document.createElement("li");
-        let fileName = i.name;
-        let fileSize = (i.size / 1024).toFixed(1);
-        listItem.innerHTML = `<p>${fileName}</p><p>${fileSize}KB</p>`;
-        if (fileSize >= 1024) {
-            fileSize = (fileSize / 1024).toFixed(1);
-            listItem.innerHTML = `<p>${fileName}</p><p>${fileSize}MB</p>`;
+function collectFiles(questionId) {
+    const fileInput = document.getElementById("file-input_" + questionId);
+    const fileList = document.getElementById("files-list_" + questionId);
+    const numOfFiles = document.getElementById("num-of-files_" + questionId);
+
+    if (!fileInput || fileInputsInitialized.has(questionId)) return;
+
+    fileInputsInitialized.add(questionId); // Mark as initialized
+
+    fileInput.addEventListener("change", () => {
+        fileList.innerHTML = "";
+        const files = fileInput.files;
+
+        if (files.length === 0) {
+            numOfFiles.textContent = "No Files Chosen";
+            return;
         }
-        fileList.appendChild(listItem);
-    }
-});
+
+        numOfFiles.textContent = `${files.length} File${files.length > 1 ? "s" : ""} Selected`;
+
+        for (let file of files) {
+            const listItem = document.createElement("li");
+            const fileName = file.name;
+            let fileSize = (file.size / 1024);
+            let fileSizeText = fileSize >= 1024
+                ? `${(fileSize / 1024).toFixed(1)} MB`
+                : `${fileSize.toFixed(1)} KB`;
+
+            listItem.innerHTML = `<p>${fileName}</p><p>${fileSizeText}</p>`;
+            fileList.appendChild(listItem);
+        }
+    });
+}
+
+
+
 

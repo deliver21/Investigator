@@ -28,7 +28,7 @@ input[type="file"] {
     cursor: pointer;
 }
 
-#num-of-files {
+.num-of-files {
     font-weight: 400;
     text-align: center;
     margin: 1.25em 0 1.87em 0;

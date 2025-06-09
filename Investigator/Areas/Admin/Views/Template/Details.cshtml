@@ -125,6 +125,20 @@
                                               </label>
                                           </div>
                                         break;
+                                    case "RadioBox":
+                                        <div class="form-check text-start ps-3 ms-4">
+                                            <input class="form-check-input" type="radio" name="flexRadioOption" id="flexRadioOption1" checked>
+                                            <label class="form-check-label ms-2" for="flexRadioOption1">
+                                                option 1
+                                            </label>
+                                        </div>
+                                        <div class="form-check text-start ms-4 ps-3">
+                                            <input class="form-check-input" type="radio" name="flexRadioOption" id="flexRadioOption2">
+                                            <label class="form-check-label ms-2" for="flexRadioOption2">
+                                                option 2
+                                            </label>
+                                        </div>
+                                        break;
                                     case "Date":    
                                     <input type="date" class="form-control mb-1" placeholder="Select a date" required="@(!question.IsOptional)" />
                                         break;
@@ -137,15 +151,15 @@
                                         </div>                                        
                                         break;                                   
                                     case "File":
-                                    <div class="container-file">
-                                         <input type="file" id="file-input" multiple required="@(!question.IsOptional)" />
-                                         <label id="label-file" for="file-input" name="questions[@question.TemplateQuestionId].text" value="@question.Text" class="form-control text-start mb-2 font-weight-bold">
-                                          <i class="fa-solid fa-arrow-up-from-bracket"></i>
-                                           @question.Text
-                                         </label>                                         
-                                        <div id="num-of-files">No Files Choosen</div>
-                                        <ul id="files-list"></ul>
-                                    </div>
+                                        <div class="container-file">
+                                            <input type="file" id="file-input_@question.TemplateQuestionId" data-question-id="@question.TemplateQuestionId" multiple required="@(!question.IsOptional)" />
+                                            <label id="label-file" for="file-input_@question.TemplateQuestionId" onClick="collectFiles(@question.TemplateQuestionId)" name="questions[@question.TemplateQuestionId].text" value="@question.Text" class="form-control text-start mb-2 font-weight-bold">
+                                                <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                                                @question.Text
+                                            </label>
+                                            <div class="num-of-files" id="num-of-files_@question.TemplateQuestionId">No Files Choosen</div>
+                                            <ul id="files-list_@question.TemplateQuestionId"></ul>
+                                        </div>
                                         break;
                                 }
                             </div>
