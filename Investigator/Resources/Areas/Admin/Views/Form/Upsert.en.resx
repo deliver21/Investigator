@@ -141,6 +141,9 @@
   <data name="Setvisibility" xml:space="preserve">
     <value>Set Visibility</value>
   </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
   <data name="Update" xml:space="preserve">
     <value>Update</value>
   </data>

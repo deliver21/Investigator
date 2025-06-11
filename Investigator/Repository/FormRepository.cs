@@ -14,7 +14,14 @@ namespace Investigator.Repository
 
         public void Update(Form form)
         {
-            _context.Forms.Update(form);
+            try
+            {
+                _context.Forms.Update(form);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }

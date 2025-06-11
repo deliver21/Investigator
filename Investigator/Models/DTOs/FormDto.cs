@@ -5,6 +5,7 @@ namespace Investigator.Models.DTOs
     public class FormDto
     {
         public int FormId { get; set; }
+        public string IdHashed { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public int TemplateId { get; set; }

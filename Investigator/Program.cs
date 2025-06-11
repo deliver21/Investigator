@@ -103,6 +103,7 @@ builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddScoped<ISalesForceService, SalesForceService>();
 builder.Services.AddScoped<ITokenProvider, TokenProvider>();
 builder.Services.AddScoped<IJiraService, JiraService>();
+builder.Services.AddScoped<IHmacGenerator, HmacGenerator>();
 
 IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper); 

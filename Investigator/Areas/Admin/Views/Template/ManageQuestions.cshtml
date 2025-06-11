@@ -10,7 +10,7 @@
         <i class="bi bi-arrow-bar-left"></i> @localizer["Back"]
     </a>
     <div class="card">
-        <img src="@(Model != null ? $"https://drive.google.com/thumbnail?id={Model.ImageId}" : "https://via.placeholder.com/1200x300")"
+        <img src="@(Model != null ? $"https://drive.google.com/thumbnail?id={Model.ImageId}" : "~/Images/pharmacy-post-banner-background.jpg")"
              class="card-img-top" alt="Event Image" style="max-height:100px; object-fit: cover;">
         <div class="card-body">
             <h3 class="card-title text-center">@(Model != null && !string.IsNullOrEmpty(Model.Title) ? Model.Title : localizer["Emptytitle"]) – Template</h3>

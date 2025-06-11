@@ -65,19 +65,19 @@
             {
                 <div class="col-12 col-sm-6 col-md-4 p-2">
                     <div class="card border-0 p-3 shadow border-top border-5 rounded text-center">
-                        <img src="@(Model != null ? $"https://drive.google.com/thumbnail?id={form.Template.ImageId}" : "https://via.placeholder.com/1200x300")"
+                        <img src="@(Model != null ? $"https://drive.google.com/thumbnail?id={form.ImageId}" : "~/Images/pharmacy-post-banner-background.jpg")"
                          class="card-img-top" alt="Recent Form">
                         <div class="card-body">
                             <p class="card-text">@form.Title</p>
                             <div class ="row mt-2">
                                 <div class="col text-start">
                                     <a class="btn btn-primary rounded-circle p-2 py-1" asp-area="Admin" asp-controller="Form"
-                                   asp-action="FillForm" asp-route-formId="@form.FormId" target="_blank" title="fill the form">
+                                   asp-action="FillForm" asp-route-idHashed="@form.IdHashed" target="_blank" title="fill the form">
                                         <i class="bi bi-clipboard-check-fill"></i>
                                     </a>
                                 </div>
                                 <div class="col text-end">
-                                    <a asp-area="Admin" asp-controller="Form" asp-action="GetSubmissions" target="_blank" asp-route-formId="@form.FormId" class="btn btn-primary rounded-circle p-2 py-1" title="form submissions">
+                                    <a asp-area="Admin" asp-controller="Form" asp-action="GetSubmissions" target="_blank" asp-route-idHashed="@form.IdHashed" class="btn btn-primary rounded-circle p-2 py-1" title="form submissions">
                                         <i class="bi bi-info-circle"></i>
                                     </a>
                                 </div>

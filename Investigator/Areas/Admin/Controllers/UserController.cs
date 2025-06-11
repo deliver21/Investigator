@@ -55,13 +55,11 @@ namespace Investigator.Areas.Admin.Controllers
 
         #region APIs Calls
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public IActionResult GetAll()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var adminUser = await _unit.ApplicationUser.Get(u => u.Id == userId);
-            List<ApplicationUser> users = _unit.ApplicationUser.GetAll().ToList() ?? new List<ApplicationUser>();
-            users.Remove(adminUser);
+            List<ApplicationUser> users = _unit.ApplicationUser.GetAll(u => u.Id != userId).ToList() ?? new List<ApplicationUser>();
             foreach (ApplicationUser user in users)
             {
                 var formatTime = DateTimeFormat.FormatString(user.LastSeen);
@@ -71,6 +69,7 @@ namespace Investigator.Areas.Admin.Controllers
             }
             return Json(new { data = users.OrderByDescending(u => u.LastSeen) });
         }
+
         [Authorize]
         [IsBlockedAuthorize]
         [HttpPut]

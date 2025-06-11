@@ -2,6 +2,7 @@
 var editFormHeader = document.getElementById("editFormHeader").value;
 var deleteForm = document.getElementById("deleteForm").value;
 var formAnswers = document.getElementById("formAnswers").value;
+var manageQuestions = document.getElementById("manageQuestions").value;
 $(document).ready(function () {
     var url = window.location.search;
     if (url.includes("allForm")) {
@@ -28,18 +29,29 @@ function loadDataTable(status) {
                            </a>                                     
                     </div>`
                 },
-                "width": "20%"
+                "width": "15%"
             },
             {
                 data: "formId",
                 "render": function (data) {
                     return `<div class="w-75 btn-group text-center" role="group">
-                           <a id="templateField" href="/Admin/Form/GetSubmissions?formId=${data}" target="_blank" class="btn btn-secondary mx-2 rounded-1" title="${formAnswers}">
+                           <a id="templateField" href="/Admin/Form/ManageQuestions?id=${data}" class="btn btn-info-emphasis mx-2 rounded-1" title="${manageQuestions}">
+                               <i class="bi bi-pencil-square"></i> 
+                           </a>                                     
+                    </div>`
+                },
+                "width": "15%"
+            },
+            {
+                data: "idHashed",
+                "render": function (data, type, row) {
+                    return `<div class="w-75 btn-group text-center" role="group">
+                           <a id="templateField" href="/Admin/Form/GetSubmissions?idHashed=${row.idHashed}" target="_blank" class="btn btn-secondary mx-2 rounded-1" title="${formAnswers}">
                                <i class="bi bi-journal-text"></i>
                            </a>                                    
                     </div>`
                 },
-                "width": "20%"
+                "width": "15%"
             },
             {
                 data: "formId",
@@ -50,7 +62,7 @@ function loadDataTable(status) {
                            </a>                                  
                     </div>`
                 },
-                "width": "20%"
+                "width": "15%"
             }
         ]
     });

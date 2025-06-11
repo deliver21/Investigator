@@ -14,6 +14,7 @@ namespace Investigator.Models
         [ForeignKey(nameof(TemplateId))]
         [ValidateNever]
         public Template? Template { get; set; }
+        public string? IdHashed { get; set; }
 
         [Required]
         public string Title { get; set; }

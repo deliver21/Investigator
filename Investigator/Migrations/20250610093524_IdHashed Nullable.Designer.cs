@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Investigator.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250528064350_CreateDb")]
-    partial class CreateDb
+    [Migration("20250610093524_IdHashed Nullable")]
+    partial class IdHashedNullable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -77,6 +77,9 @@ namespace Investigator.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IdHashed")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageId")
@@ -695,7 +698,7 @@ namespace Investigator.Migrations
 
             modelBuilder.Entity("Investigator.Models.FormFiller", b =>
                 {
-                    b.HasOne("Investigator.Models.ApplicationUser", "ApllicationUser")
+                    b.HasOne("Investigator.Models.ApplicationUser", "ApplicationUser")
                         .WithMany()
                         .HasForeignKey("Filler");
 
@@ -705,7 +708,7 @@ namespace Investigator.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ApllicationUser");
+                    b.Navigation("ApplicationUser");
 
                     b.Navigation("Form");
                 });

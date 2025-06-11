@@ -27,14 +27,16 @@ namespace Investigator.Areas.Admin.Controllers
         private readonly IUnitOfWork _unit;
         private readonly IMapper _mapper;
         private readonly IFileSaver _fileSaver;
+        IHmacGenerator _hmacGenerator;
         [BindProperty]
         public FormFillerVM FormFillers { get; set; }
-        public FormController(IUnitOfWork unit, IMapper mapper, IHtmlLocalizer<FormController> localizer, IFileSaver fileSaver)
+        public FormController(IUnitOfWork unit, IMapper mapper, IHtmlLocalizer<FormController> localizer, IFileSaver fileSaver, IHmacGenerator hmacGenerator)
         {
             _unit = unit;
             _mapper = mapper;
             _localizer = localizer;
             _fileSaver = fileSaver;
+            _hmacGenerator = hmacGenerator;
         }
 
         [Authorize]
@@ -57,7 +59,7 @@ namespace Investigator.Areas.Admin.Controllers
         public async Task<IActionResult> Upsert(int? id)
         {
             Form form = new();
-                form = await _unit.Form.Get(u => u.FormId == id);
+            form = await _unit.Form.Get(u => u.FormId == id);
             if (form == null) return RedirectToAction(nameof(Index));
             if(string.IsNullOrEmpty(form.ImageId))
             {
@@ -73,7 +75,7 @@ namespace Investigator.Areas.Admin.Controllers
         {
             if (form.FormId == 0)
             {
-                TempData["success"] = "Form has successfully been created";
+                TempData["error"] = "the Form is not found";
                 return RedirectToAction(nameof(Index));
             }
             else
@@ -102,23 +104,30 @@ namespace Investigator.Areas.Admin.Controllers
 
         public async Task<IActionResult> ManageQuestions(int? id)
         {
-            var form = await _unit.Form.Get(u => u.TemplateId == id, includeProperties: "Questions");
-            if(form == null || form.FormId == 0) 
+            var form = await _unit.Form.Get(u => u.FormId == id, includeProperties: "Questions");
+            if (form == null || form.FormId == 0)
             {
                 TempData["success"] = "Form not found";
                 return RedirectToAction("Index");
             }
-            form.Questions = new List<Question>();
-            form.Questions = _unit.Question.GetAll(u => u.FormId == form.FormId).ToList();
+            form.Questions = _unit.Question.GetAll(u => u.FormId == form.FormId).ToList() ?? new List<Question>();
+            foreach(Question question in form.Questions)
+            {
+                if(question.Type == SD.checkBoxType || question.Type == SD.radioBoxType)
+                {
+                    question.Options = _unit.QuestionOption.GetAll(u => u.QuestionId == question.QuestionId).ToList();
+                }
+            }
             TempData["baseUrl"] = SD.AppBaseUrl;
             return View(form);
         }
 
         [Authorize]
         [IsBlockedAuthorize]
-        public async Task<IActionResult> FillForm(int formId)
+        public async Task<IActionResult> FillForm(string idHashed)
         {
-            var form = await _unit.Form.Get(u => u.FormId == formId);
+            var form = await _unit.Form.Get(u => u.IdHashed == idHashed);
+            var formId = form.FormId;
             form.Template = await _unit.Template.Get(u => u.TemplateId == form.TemplateId);
             form.Questions = _unit.Question.GetAll(u => u.FormId == formId).ToList();
             foreach(var question in form.Questions)
@@ -175,10 +184,11 @@ namespace Investigator.Areas.Admin.Controllers
 
         [Authorize]
         [IsBlockedAuthorize]
-        public async Task<IActionResult> GetSubmissions(int? formId)
+        public async Task<IActionResult> GetSubmissions(string? idHashed)
         {
             FormFillers = new();
-            FormFillers.Form =  await _unit.Form.Get(u => u.FormId == formId);            
+            FormFillers.Form =  await _unit.Form.Get(u => u.IdHashed == idHashed);
+            var formId = FormFillers.Form.FormId;
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             if (FormFillers.Form == null || FormFillers.Form.CreatorId != userId)
@@ -212,7 +222,7 @@ namespace Investigator.Areas.Admin.Controllers
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-            IEnumerable<FormFiller> formFillers = _unit.FormFiller.GetAll(u => u.Filler == userId);
+            IEnumerable<FormFiller> formFillers = _unit.FormFiller.GetAll(u => u.Filler == userId).OrderByDescending(u => u.FormId);
             List<Form> forms = new List<Form>();
             foreach (var formFiller in formFillers)
             {
@@ -227,10 +237,10 @@ namespace Investigator.Areas.Admin.Controllers
         }
         [Authorize]
         [IsBlockedAuthorize]
-        public async Task<IActionResult> GetMySubmission(int ? formId)
+        public async Task<IActionResult> GetMySubmission(string ? idHashed)
         {
             FormFillers = new();
-            FormFillers.Form = await _unit.Form.Get(u => u.FormId == formId);
+            FormFillers.Form = await _unit.Form.Get(u => u.IdHashed == idHashed);
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             FormFillers.FormFiller = await _unit.FormFiller.Get(u => u.Filler == userId && u.FormId == FormFillers.Form.FormId);
@@ -240,6 +250,8 @@ namespace Investigator.Areas.Admin.Controllers
                 TempData["error"] = "Error while retrieving data";
                 RedirectToAction(nameof(GetSubmissionList));
             }
+            var formId = FormFillers.Form.FormId;
+
             if (string.IsNullOrEmpty(FormFillers.Form.ImageId))
             {
                 FormFillers.Form.ImageId = _unit.Template.Get(u => u.TemplateId == FormFillers.Form.TemplateId).GetAwaiter().GetResult().ImageId ?? "";
@@ -416,12 +428,19 @@ namespace Investigator.Areas.Admin.Controllers
                     CreatorId = userId
                 };
                 await _unit.Form.Add(formToSave);
+                _unit.Save();
+
+                var createdForm = await _unit.Form.Get(u => u.CreatedDate == form.CreatedDate && u.CreatorId == userId, null, true);
+                createdForm.IdHashed = _hmacGenerator.GenerateHmac(createdForm.FormId);
                 var template = await _unit.Template.Get(u => u.TemplateId == form.TemplateId);
+
                 if (template != null)
                 {
                     template.Point += 1;
                     _unit.Template.Update(template);
                 }
+
+                _unit.Form.Update(createdForm);
                 _unit.Save();
             }
 

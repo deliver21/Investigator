@@ -1,0 +1,145 @@
+﻿@model Form
+
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
+@{
+    ViewData["Title"] = "Manage Form questions";
+    string? serializeData = JsonConvert.SerializeObject(Model);
+    int questionIdCount = 0;
+}
+<input type="hidden" id="baseUrl" value="@TempData["baseUrl"]" hidden>
+<input type="hidden" id="formId" value="@Model.FormId" hidden>
+
+<div class="form-container mb-2">
+    <div class="row pt-2">
+        <div class="col-3 col-md-3">
+            <a class="m-1 p-2 px-2 text-start text-center btn btn-sm btn-outline-info rounded-1" asp-area="Admin" asp-controller="Form" asp-action="Index">
+                <i class="bi bi-arrow-bar-left"></i> Back
+            </a>
+        </div>
+        <div class="col-6"></div>
+    </div>
+    <div class="card">
+        <img src="@(Model != null ? $"https://drive.google.com/thumbnail?id={Model.ImageId}" : "~/Images/pharmacy-post-banner-background.jpg")"
+             class="card-img-top" alt="Event Image" style="max-height:100px; object-fit: cover;">
+        <div class="card-body">
+            <h3 class="card-title text-center">
+                @(Model != null && !string.IsNullOrEmpty(Model.Title) ? Model.Title : "Empty title") – Form
+            </h3>
+            <hr>
+            <p class="text-center">
+                @(Model != null ? Html.Raw(Model.Description) : "")
+            </p>
+            <input name="formId" value="@Model.FormId" hidden>
+            <input name="templateId" value="@Model.TemplateId" hidden>
+            <input name="creatorId" value="@Model.CreatorId" hidden>
+        </div>
+    </div>
+
+    <div id="questions-list" class="list-group">
+        @foreach (var question in Model.Questions.OrderBy(q => q.Order))
+        {
+            <div class="question-item list-group-item mb-1 mt-1" data-question-id="@question.QuestionId" data-question-type="@question.Type">
+                @if (question.Type != "File")
+                {
+                    <input type="text" name="questions[@question.QuestionId].text" value="@question.Text"
+                   placeholder="Question text" class="form-control mb-2 font-weight-bold" required>
+                }
+
+                <div class="response-container">
+                    @switch (question.Type)
+                    {
+                        case "SingleLine":
+                            <input type="text" class="form-control mb-1" placeholder="Response text" required="@(!question.IsOptional)" />
+                            break;
+                        case "MultiLine":
+                            <textarea name="MultiLine" class="form-control mb-1" placeholder="Response text" required="@(!question.IsOptional)"></textarea>
+                            break;
+                        case "Integer":
+                            <input type="number" min="0" class="form-control mb-1" placeholder="0" required="@(!question.IsOptional)" />
+                            break;
+                        case "CheckBox":
+                            @*<div class="form-check">*@
+                            <button type="button" class="btn btn-sm btn-secondary p-0 mb-1 add-option"
+                        onclick="addCheckboxOption(this,@questionIdCount)"
+                        data-question-id="@questionIdCount">
+                                Add Option
+                            </button>
+                            <div class="new-options my-2" data-question-id="@questionIdCount">
+                                @foreach (var option in question.Options)
+                                {
+                                    <input class="form-check-input" type="checkbox" id="@option.OptionId">
+                                    <input class="form-control form-check-label" type="text" value="@option.Text" placeholder="Enter option text"
+                           data-option-id="@option.OptionId" style="display: inline-block; width: auto; margin-left: 10px;" />
+                                }
+                            </div>
+                            @* </div> *@
+                            break;
+                        case "RadioBox":
+                            @*<div class="form-check">*@
+                            <button type="button" class="btn btn-sm btn-secondary p-0 mb-1 add-option"
+                        onclick="addRadioboxOption(this,@questionIdCount)"
+                        data-question-id="@questionIdCount">
+                                Add Option
+                            </button>
+                            <div class="new-options my-2" data-question-id="@questionIdCount">
+                                @foreach (var option in question.Options)
+                                {
+                                    <input class="form-check-input" type="checkbox" id="@option.OptionId">
+                                    <input class="form-control form-check-label" type="text" value="@option.Text" placeholder="Enter option text"
+                                     data-option-id="@option.OptionId" style="display: inline-block; width: auto; margin-left: 10px;" />
+                                }
+                            </div>
+                            @* </div> *@
+                            break;
+                        case "Date":
+                            <input type="date" class="form-control mb-1" placeholder="Select a date" required="@(!question.IsOptional)" />
+                            break;
+                        case "Phone":
+                            <div class="input-group">
+                                <input class="input-group-text" type="tel" id="basic-addon1" value="+375" style="max-width:25px">
+                                <input type="tel" id="phone" name="phone" maxlength="11"
+                           oninput="this.value = this.value
+                                                         .replace(/\D/g, '')
+                                                         .replace(/(\d{3})(\d{0,3})(\d{0,3})/, function(_, a, b, c) {
+                                                           return [a, b, c].filter(Boolean).join('-');
+                                                         });
+                                                     "
+                           pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}" required="@(!question.IsOptional)" placeholder="123-456-789">
+                            </div>
+                            break;
+                        case "File":
+                            <div class="container-file">
+                                <input type="file" id="file-input" multiple required="@(!question.IsOptional)" />
+                                <label disabled id="label-file" for="file-input" name="questions[@question.QuestionId].text" value="@question.Text" class="form-control text-start mb-2 font-weight-bold">
+                                    <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                                    @question.Text
+                                </label>
+                            </div>
+                            break;
+                    }
+                </div>
+                <button class="btn btn-sm btn-warning text-start toggle-required" onclick="toggleRequired(event)">
+                    @(question.IsOptional ? "Mark Required" : "Mark Optional")
+                </button>
+                <button type="button" class="btn btn-sm btn-danger text-end m-1 delete-question">
+                    <i class="bi bi-file-earmark-x"></i> Delete Question
+                </button>
+            </div>
+            questionIdCount++;
+        }
+    </div>
+
+    <button id="add-question" class="btn btn-primary mt-1 mb-5 pt-2 text-center"><i class="bi bi-file-earmark-plus"></i> Add Question</button>
+    <button id="save-form" type="submit" class="btn btn-success mt-1 mb-5 pt-2 text-center"><i class="bi bi-floppy"></i> Save Form</button>
+</div>
+
+@section Scripts{
+    <script src="~/js/formManageQuestion.js"></script>
+    <script src="~/js/intlTelInput.js"></script>
+    <script>
+        var input = document.querySelector("#basic-addon1");
+        if (input) {
+            window.intlTelInput(input, {});
+        }
+    </script>
+}

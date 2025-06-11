@@ -1,6 +1,12 @@
 ﻿@model Form
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
-
+@{
+    IEnumerable<SelectListItem> StatusList = new List<SelectListItem>()
+    {
+        new SelectListItem{Value = SD.ActiveStatus , Text = SD.ActiveStatus},
+        new SelectListItem{Value = SD.InactiveStatus , Text = SD.InactiveStatus}
+    };
+}
 <div class="card shadow border-0 mb-5 mt-1 pt-1">
     <div class="card-header bg-primary bg-gradient ml-0 py-3">
         <div class="row">
@@ -22,6 +28,7 @@
                         <input asp-for="FormId" type="hidden"? />
                         <input asp-for="TemplateId" type="hidden" />
                         <input asp-for="CreatorId" type="hidden"/>
+                        <input asp-for="IdHashed" type="hidden" />
                         <div class="mb-3 form-floating col-12 bg-white">
                             <input asp-for="Title" class="form-control border-0 shadow ps-lg-2" />
                             <label asp-for="Title" class="p-0"></label>
@@ -34,6 +41,13 @@
                         <div class="mb-3 form-floating col-12">
                             <input type="file" name="file" placeholder="@localizer["Chooseimage"]" class="form-control border-0 shadow ps-lg-4" />
                             <label asp-for="ImageId" class="ms-2">@localizer["Formimage"]</label>
+                        </div>
+                        <div class="mb-3 form-floating col-12">
+                            <select asp-for="Status" asp-items="@StatusList" class="form-select border-0 shadow ps-lg-4">
+                                <option disabled selected>----@localizer["Status"]----</option>
+                            </select>
+                            <label asp-for="Status" class="ms-2"></label>
+                            <span asp-validation-for="Status" class="text-danger"></span>
                         </div>
                         <div class="row pt-2">
                             <div class="col-3 col-md-3">
