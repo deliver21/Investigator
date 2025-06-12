@@ -119,7 +119,8 @@ namespace Investigator.Areas.Admin.Controllers
                 }
             }
             TempData["baseUrl"] = SD.AppBaseUrl;
-            return View(form);
+            var formDto = _mapper.Map<FormDto>(form);
+            return View(formDto);
         }
 
         [Authorize]
@@ -143,10 +144,8 @@ namespace Investigator.Areas.Admin.Controllers
 
         [Authorize]
         [IsBlockedAuthorize]
-        public async Task<IActionResult> Generate(int? templateId, FormDto? formData)
-        {
-            formData = JsonConvert.DeserializeObject<FormDto>(Convert.ToString(TempData["formData"]));
-            if (formData != null && formData.Template != null) return View(formData);
+        public async Task<IActionResult> Generate(int? templateId)
+        {            
             var templateForm = await _unit.Template.Get(u => u.TemplateId == templateId);
             if (templateForm == null)
             {
@@ -510,6 +509,12 @@ namespace Investigator.Areas.Admin.Controllers
             _unit.Save();
             return Ok(new { message = "Form saved successfully." });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateForm([FromForm] FormDto form)
+        {
+            return Ok();
+        }
         [HttpDelete]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -581,21 +586,30 @@ namespace Investigator.Areas.Admin.Controllers
             }
 
         }
-        [HttpDelete("DeleteQuestion/{questionId:int}")]
+        [HttpDelete]
         public async Task<IActionResult> DeleteQuestion(int? questionId)
         {
-            if (questionId == null)
-            {
-                return NotFound(new { message = "Question not found." });
-            }
             var question = await _unit.Question.Get(u => u.QuestionId == questionId);
             if (question == null)
             {
-                return NotFound(new { message = "Question not found." });
+                return NotFound(new { message = "Question is not found." });
             }
             _unit.Question.Remove(question);
             _unit.Save();
-            return Ok("Question is successfully deleted");
+            return Ok(new { message = "Question is successfully deleted" });
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteQuestionOption(int? optionId)
+        {
+            var questionOption = await _unit.QuestionOption.Get(u => u.OptionId == optionId);
+            if (questionOption == null)
+            {
+                return NotFound(new { message = "Option is not found." });
+            }
+            _unit.QuestionOption.Remove(questionOption);
+            _unit.Save();
+            return Ok(new { message = "Option is successfully deleted" });
         }
 
         [HttpPost]

@@ -1,6 +1,7 @@
 ﻿const questionsList = document.getElementById('questions-list');
 const addQuestionButton = document.getElementById('add-question');
 const baseUrl = document.getElementById("baseUrl").value;
+const questionsDiv = document.getElementById("questions-list");
 
 let questionCounter = document.querySelectorAll('.question-item').length + 1;
 
@@ -28,8 +29,8 @@ function createQuestionElement() {
         <div class="response-container">
             <input type="text" class="form-control mb-1" placeholder="Response text" required>
         </div>
-        <button class="btn btn-sm btn-warning text-start toggle-required">Mark Optional</button>
-        <button type="button" class="btn btn-sm btn-danger text-end m-1 delete-question">
+        <button class="btn btn-sm btn-warning rounded-1 text-start toggle-required">Mark Optional</button>
+        <button type="button" class="btn btn-sm rounded-1 btn-danger text-end m-1 delete-question">
             <i class="bi bi-file-earmark-x"></i> Delete Question
         </button>
     `;
@@ -237,7 +238,7 @@ addQuestionButton.addEventListener('click', () => {
     questionsList.appendChild(newQuestion);
 });
 
-const questionsDiv = document.getElementById("questions-list");
+
 questionsDiv.addEventListener("dragstart", (e) => {
     e.dataTransfer.setData("text/plain", e.target.dataset.questionId);
 });

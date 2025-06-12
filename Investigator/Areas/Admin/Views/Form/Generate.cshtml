@@ -118,18 +118,18 @@
                             break;
                     }
                 </div>
-                <button class="btn btn-sm btn-warning text-start toggle-required" onclick="toggleRequired(event)">
+                <button class="btn btn-sm btn-warning rounded-1 text-start toggle-required" onclick="toggleRequired(event)">
                     @(question.IsOptional ? "Mark Required" : "Mark Optional")
                     </button>
-                <button type="button" class="btn btn-sm btn-danger text-end m-1 delete-question">
+                <button type="button" class="btn btn-sm btn-danger rounded-1 text-end m-1 delete-question">
                     <i class="bi bi-file-earmark-x"></i> Delete Question
                 </button>
             </div>
             questionIdCount++;
         }
     </div>
-    <button id="add-question" class="btn btn-primary mt-1 mb-5 pt-2 text-center"><i class="bi bi-file-earmark-plus"></i> Add Question</button>
-    <button id="save-form" type="submit"  class="btn btn-success mt-1 mb-5 pt-2 text-center" ><i class="bi bi-floppy"></i> Save Form</button>
+    <button id="add-question" class="btn btn-primary rounded-1 mt-1 mb-5 pt-2 text-center"><i class="bi bi-file-earmark-plus"></i> Add Question</button>
+    <button id="save-form" type="submit" class="btn btn-success rounded-1 mt-1 mb-5 pt-2 text-center"><i class="bi bi-floppy"></i> Save Form</button>
 </div>
 @section Scripts{
     <script src="~/js/form.js"></script>
