@@ -132,4 +132,7 @@
   <data name="Savequestions" xml:space="preserve">
     <value>Сохранить вопросы</value>
   </data>
+  <data name="Template" xml:space="preserve">
+    <value>Шаблон</value>
+  </data>
 </root>

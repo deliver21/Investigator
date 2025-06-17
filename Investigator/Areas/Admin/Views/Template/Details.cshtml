@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity;
 @model TemplateDetailsVM
 @inject UserManager<IdentityUser> UserManager
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
 @{
     string? userId = Convert.ToString(TempData["userId"]);
     if(string.IsNullOrEmpty(userId))

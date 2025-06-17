@@ -13,7 +13,7 @@
         <img src="@(Model != null ? $"https://drive.google.com/thumbnail?id={Model.ImageId}" : "~/Images/pharmacy-post-banner-background.jpg")"
              class="card-img-top" alt="Event Image" style="max-height:100px; object-fit: cover;">
         <div class="card-body">
-            <h3 class="card-title text-center">@(Model != null && !string.IsNullOrEmpty(Model.Title) ? Model.Title : localizer["Emptytitle"]) – Template</h3>
+            <h3 class="card-title text-center">@(Model != null && !string.IsNullOrEmpty(Model.Title) ? Model.Title : localizer["Emptytitle"]) – @localizer["Template"]</h3>
             <hr>
             <p class="text-center">
                 @(Model != null ? Html.Raw(Model.Description) :"")

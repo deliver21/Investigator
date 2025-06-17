@@ -3,7 +3,9 @@
 #nullable disable
 
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Investigator.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,15 +18,24 @@ namespace Investigator.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LogoutModel> _logger;
+        private readonly IUnitOfWork _unit;
 
-        public LogoutModel(SignInManager<IdentityUser> signInManager, ILogger<LogoutModel> logger)
+        public LogoutModel(SignInManager<IdentityUser> signInManager, ILogger<LogoutModel> logger, IUnitOfWork unit)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _unit = unit;
         }
 
         public async Task<IActionResult> OnPost(string returnUrl = null)
         {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var currentUser = await _unit.ApplicationUser.Get(u => u.Id == userId, null, true);
+            currentUser.LastSeen = DateTime.Now;
+            _unit.ApplicationUser.Update(currentUser);
+            _unit.Save();
+
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User logged out.");
             if (returnUrl != null)

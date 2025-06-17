@@ -120,11 +120,17 @@
   <data name="Deleteselectedusers" xml:space="preserve">
     <value>Delete selected users</value>
   </data>
+  <data name="Email" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
   <data name="Lastseen" xml:space="preserve">
     <value>Last seen</value>
   </data>
   <data name="Name" xml:space="preserve">
     <value>Name</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Role</value>
   </data>
   <data name="Userslist" xml:space="preserve">
     <value>Users List</value>

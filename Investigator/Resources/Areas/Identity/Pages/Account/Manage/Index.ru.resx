@@ -120,6 +120,9 @@
   <data name="Clickthisbuttontogetverifiedtooursalesforceservice" xml:space="preserve">
     <value>Нажмите эту кнопку, чтобы пройти проверку в вашей службе Salesforce.</value>
   </data>
+  <data name="MobilePhone" xml:space="preserve">
+    <value>Мобильный телефон</value>
+  </data>
   <data name="Pleasechooseyourusername" xml:space="preserve">
     <value>Пожалуйста, выберите свое имя пользователя.</value>
   </data>
@@ -131,6 +134,9 @@
   </data>
   <data name="Save" xml:space="preserve">
     <value>Сохранять</value>
+  </data>
+  <data name="UserName" xml:space="preserve">
+    <value>Имя пользователя</value>
   </data>
   <data name="Youraccountisverifiedinoursalesforceservice" xml:space="preserve">
     <value>Ваша учетная запись проверена в нашей службе Salesforce</value>

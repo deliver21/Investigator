@@ -117,28 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Email" xml:space="preserve">
-    <value>E-mail</value>
+  <data name="ChangeEmail" xml:space="preserve">
+    <value>Изменить адрес электронной почты</value>
   </data>
-  <data name="Forgotyourpassword" xml:space="preserve">
-    <value>Mot de passe oublié</value>
+  <data name="ManageEmail" xml:space="preserve">
+    <value>Управление электронной почтой</value>
   </data>
-  <data name="Login" xml:space="preserve">
-    <value>Se Connecter</value>
+  <data name="NewEmail" xml:space="preserve">
+    <value>Новый адрес электронной почты</value>
   </data>
-  <data name="Password" xml:space="preserve">
-    <value>Mot de passe</value>
+  <data name="PleaseEnterYourEmail" xml:space="preserve">
+    <value>Пожалуйста, введите свой адрес электронной почты</value>
   </data>
-  <data name="Registerasanewuser" xml:space="preserve">
-    <value>S'inscrire à nouveau</value>
+  <data name="SendVerificationEmail" xml:space="preserve">
+    <value>Отправить подтверждение по электронной почте</value>
   </data>
-  <data name="Rememberme" xml:space="preserve">
-    <value>Se souvenir de moi</value>
-  </data>
-  <data name="Resendemailconfirmation" xml:space="preserve">
-    <value>Renvoyez l'email de confirmation</value>
-  </data>
-  <data name="ShowPassword" xml:space="preserve">
-    <value>Montrez le mot de passe</value>
+  <data name="YourEmail" xml:space="preserve">
+    <value>Ваш адрес электронной почты</value>
   </data>
 </root>

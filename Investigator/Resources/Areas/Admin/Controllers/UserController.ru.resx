@@ -117,28 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Email" xml:space="preserve">
-    <value>E-mail</value>
+  <data name="ErrorOccuredWhileVerifyingTheAccountToSalesForce" xml:space="preserve">
+    <value>Произошла ошибка при проверке учетной записи в SalesForce</value>
   </data>
-  <data name="Forgotyourpassword" xml:space="preserve">
-    <value>Mot de passe oublié</value>
+  <data name="LastSeen" xml:space="preserve">
+    <value>Последний раз видели</value>
   </data>
-  <data name="Login" xml:space="preserve">
-    <value>Se Connecter</value>
+  <data name="TheAccountIsSuccessfullyVerifiedToSalesForce" xml:space="preserve">
+    <value>Учетная запись успешно подтверждена в SalesForce</value>
   </data>
-  <data name="Password" xml:space="preserve">
-    <value>Mot de passe</value>
-  </data>
-  <data name="Registerasanewuser" xml:space="preserve">
-    <value>S'inscrire à nouveau</value>
-  </data>
-  <data name="Rememberme" xml:space="preserve">
-    <value>Se souvenir de moi</value>
-  </data>
-  <data name="Resendemailconfirmation" xml:space="preserve">
-    <value>Renvoyez l'email de confirmation</value>
-  </data>
-  <data name="ShowPassword" xml:space="preserve">
-    <value>Montrez le mot de passe</value>
+  <data name="TryOneMoreTime" xml:space="preserve">
+    <value>Попробуйте еще раз.</value>
   </data>
 </root>

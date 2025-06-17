@@ -117,11 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="account" xml:space="preserve">
+    <value>аккаунт</value>
+  </data>
+  <data name="Admin" xml:space="preserve">
+    <value>Администратор</value>
+  </data>
   <data name="Adminportal" xml:space="preserve">
     <value>Портал администратора</value>
   </data>
   <data name="Confirmpassword" xml:space="preserve">
     <value>Подтвердите пароль</value>
+  </data>
+  <data name="Customer" xml:space="preserve">
+    <value>Клиент</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Электронная почта</value>
   </data>
   <data name="Fullname" xml:space="preserve">
     <value>Полное имя</value>
@@ -134,5 +146,8 @@
   </data>
   <data name="Signup" xml:space="preserve">
     <value>Зарегистрироваться</value>
+  </data>
+  <data name="SignUpUsingYour" xml:space="preserve">
+    <value>Зарегистрируйтесь, используя ваш</value>
   </data>
 </root>

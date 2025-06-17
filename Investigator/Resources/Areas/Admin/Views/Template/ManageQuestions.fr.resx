@@ -132,4 +132,7 @@
   <data name="Savequestions" xml:space="preserve">
     <value>Sauvegardez les questions</value>
   </data>
+  <data name="Template" xml:space="preserve">
+    <value>Template</value>
+  </data>
 </root>

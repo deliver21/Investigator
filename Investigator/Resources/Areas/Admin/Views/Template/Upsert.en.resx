@@ -129,6 +129,9 @@
   <data name="Createtemplate" xml:space="preserve">
     <value>Create Template</value>
   </data>
+  <data name="Public" xml:space="preserve">
+    <value>Public</value>
+  </data>
   <data name="Restricted" xml:space="preserve">
     <value>Restricted</value>
   </data>

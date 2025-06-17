@@ -117,11 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="account" xml:space="preserve">
+    <value>compte</value>
+  </data>
+  <data name="Admin" xml:space="preserve">
+    <value>Administrateur</value>
+  </data>
   <data name="Adminportal" xml:space="preserve">
     <value>Portail Administrateur</value>
   </data>
   <data name="Confirmpassword" xml:space="preserve">
     <value>Confirmez le mot de passe</value>
+  </data>
+  <data name="Customer" xml:space="preserve">
+    <value>Client</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>E-mail</value>
   </data>
   <data name="Fullname" xml:space="preserve">
     <value>Nom Complet</value>
@@ -134,5 +146,8 @@
   </data>
   <data name="Signup" xml:space="preserve">
     <value>S'inscrire</value>
+  </data>
+  <data name="SignUpUsingYour" xml:space="preserve">
+    <value>Connectez vous en utilisant votre</value>
   </data>
 </root>

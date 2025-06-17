@@ -8,6 +8,7 @@ using Investigator.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Localization;
 using System.Security.Claims;
 
 namespace Investigator.Areas.Admin.Controllers
@@ -20,11 +21,13 @@ namespace Investigator.Areas.Admin.Controllers
         private readonly IUnitOfWork _unit;
         private readonly ISalesForceService _salesForce;
         private readonly UserManager<IdentityUser> _userManager;
-        public UserController(IUnitOfWork unit, ISalesForceService salesForce, UserManager<IdentityUser> userManager) 
+        private readonly IHtmlLocalizer<UserController> _localizer;
+        public UserController(IUnitOfWork unit, ISalesForceService salesForce, UserManager<IdentityUser> userManager, IHtmlLocalizer<UserController> localizer)
         {
             _unit = unit;
             _salesForce = salesForce;
             _userManager = userManager;
+            _localizer = localizer;
         }
         [Authorize]
         [IsBlockedAuthorize]
@@ -42,11 +45,11 @@ namespace Investigator.Areas.Admin.Controllers
                     var sucess = await _salesForce.CreateUserToSalesForce(user);
                     if(sucess)
                     {
-                        TempData["success"] = "The account is successfully verified to salesForce";
+                        TempData["success"] = _localizer["TheAccountIsSuccessfullyVerifiedToSalesForce"].Value;
                     }
                     else
                     {
-                        TempData["error"] = "Error occured while verifying the account to salesForce\nTry one more time";
+                        TempData["error"] = $"{_localizer["ErrorOccuredWhileVerifyingTheAccountToSalesForce"].Value}\n{_localizer["TryOneMoreTime"].Value}";
                     }
                 }
             }
@@ -63,7 +66,7 @@ namespace Investigator.Areas.Admin.Controllers
             foreach (ApplicationUser user in users)
             {
                 var formatTime = DateTimeFormat.FormatString(user.LastSeen);
-                user.Interval = $"Last seen {Interval.SetInterval(user.LastSeen)}";
+                user.Interval = $"{_localizer["LastSeen"].Value} {Interval.SetInterval(user.LastSeen)}";
                 user.LastSeen = DateTime.Parse(formatTime);
                 user.Role = _userManager.GetRolesAsync(user).GetAwaiter().GetResult().FirstOrDefault();
             }
@@ -76,7 +79,7 @@ namespace Investigator.Areas.Admin.Controllers
         public async Task<IActionResult> SwitchRole(string? id)
         {
             IdentityResult result;
-            var userToUpdate = await _unit.ApplicationUser.Get(u => u.Id == id,null,true);
+            var userToUpdate = await _unit.ApplicationUser.Get(u => u.Id == id, null, true);
             if (userToUpdate == null)
             {
                 return Json(new { success = false, message = "Error while changing role" });
@@ -86,14 +89,12 @@ namespace Investigator.Areas.Admin.Controllers
             result = oldRole == SD.CustomerRole ? _userManager.AddToRoleAsync(userToUpdate, SD.AdminRole).GetAwaiter().GetResult() 
                 : _userManager.AddToRoleAsync(userToUpdate, SD.CustomerRole).GetAwaiter().GetResult();
 
-            if (!result.Succeeded)
-            {
-                return Json(new { success = false, message = $"An error occured while changing user {userToUpdate.UserName} role" });
-            }
+            
             if (!string.IsNullOrEmpty(oldRole))
             {
                 result = _userManager.RemoveFromRoleAsync(userToUpdate, oldRole).GetAwaiter().GetResult();
             }
+
             if (!result.Succeeded)
             {
                 return Json(new { success = false, message = $"An error occured while changing user {userToUpdate.UserName} role" });

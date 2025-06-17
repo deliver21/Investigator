@@ -120,11 +120,17 @@
   <data name="Deleteselectedusers" xml:space="preserve">
     <value>Удалить выбранных пользователей</value>
   </data>
+  <data name="Email" xml:space="preserve">
+    <value>Э.Почта</value>
+  </data>
   <data name="Lastseen" xml:space="preserve">
     <value>Последний раз видели</value>
   </data>
   <data name="Name" xml:space="preserve">
     <value>Имя</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Роль</value>
   </data>
   <data name="Userslist" xml:space="preserve">
     <value>Список пользователей</value>

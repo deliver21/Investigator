@@ -9,7 +9,7 @@ namespace Investigator.Models
         [Required]
         public string DisplayName { get; set; }
         public bool IsBlocked { get; set; } = false;
-        public DateTime LastSeen { get; set; }
+        public DateTime LastSeen { get; set; } = DateTime.Now;
         public string? SalesForceUserId { get; set; }    
         [NotMapped]
         public string Interval { get; set; }
