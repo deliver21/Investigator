@@ -1,7 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Http;
 @inject IViewLocalizer localizer
 @{
-    string currentUrl = Context.Request.Path;
+    //string currentUrl = Context.Request.Path;
+    var currentUrl = string.IsNullOrWhiteSpace(Context.Request.Path) ? "~/" : $"{Context.Request.Path.Value}{Context.Request.QueryString}";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -45,22 +46,24 @@
                                      </a>
                                      <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                          <li class="nav-item">
-                                             <a class="dropdown-item" asp-area="Admin" asp-controller="Template" asp-action="Index">Templates</a>
+                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Template" asp-action="Index">@localizer["Templates"]</a>
                                          </li>
                                          <li class="nav-item">
                                              <a class="dropdown-item" asp-area="Admin" asp-controller="Form" asp-action="Index">@localizer["Forms"]</a>
                                          </li>
                                          <li class="nav-item">
-                                               <a class="dropdown-item" asp-area="Admin" asp-controller="Support" asp-action="Index">
-                                                   <img src="~/Images/Icon/jira.png" style="width:10px;height:10px"/> 
-                                                   Tickets 
-                                               </a>
+                                             <a class="dropdown-item" asp-area="Admin" asp-controller="Template" asp-action="GetFavoriteTemplates">
+                                                 <i class="bi bi-hand-thumbs-up-fill"></i> @localizer["FavouriteTemplate"]</a>
+                                         </li>
+                                    
+                                         <li class="nav-item">
+                                             <a class="dropdown-item" asp-area="Admin" asp-controller="Support" asp-action="Index">
+                                                 <img src="~/Images/Icon/jira.png" style="width:10px;height:10px"/>
+                                                 @localizer["Tickets"]
+                                             </a>
                                          </li>
                                          @if (User.IsInRole(SD.AdminRole))
                                          {
-                                            @* <li>
-                                                 <a class="dropdown-item" asp-area="Admin" asp-controller="Tag" asp-action="Index">Tags</a>
-                                             </li>*@
                                              <li>
                                                  <a class="dropdown-item" asp-area="Admin" asp-controller="User" asp-action="Index">@localizer["Usermanagement"]</a>
                                              </li>
@@ -74,7 +77,7 @@
                             @if (User.Identity.IsAuthenticated)
                              {
                                  <li class="nav-item">
-                                <a class="nav-link text-white " title="My forms submissions" asp-area="Admin" asp-controller="Form" asp-action="GetSubmissionList"><i class="bi bi-journal-text"></i></a>
+                                <a class="nav-link text-white btn btn-outline-light" title="@localizer["MyFormsSubmissions"]" asp-area="Admin" asp-controller="Form" asp-action="GetSubmissionList"><i class="bi bi-journal-text"></i></a>
                                  </li>
                              }
 
@@ -94,9 +97,9 @@
         </header>
         <div class="container">
             <main role="main" class="mt-0 mb-3">
-                @if (User.Identity.IsAuthenticated)
+                @if (User.Identity.IsAuthenticated || !currentUrl.Contains("Support"))
                 {
-                    <partial name="_JiraHelpPartial" model="SD.AppBaseUrl+@currentUrl" />
+                    <partial name="_JiraHelpPartial" model="SD.AppBaseUrl + currentUrl" />
                 }
                 <partial name="_Notification"/>            
                 @RenderBody()

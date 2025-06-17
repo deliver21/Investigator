@@ -7,7 +7,7 @@
 }
  @* call returnUrl in the route*@
     <div class="m-0 p-1">
-        <form asp-area="Customer" asp-action="CultureManagement" asp-controller="Home"  method="post" asp-route-returnUrl="@returnUrl">
+    <form asp-area="Customer" asp-action="CultureManagement" asp-controller="Home" method="post" asp-route-returnCultureUrl="@returnUrl">
             <select name="culture" asp-for="@culture.RequestCulture.UICulture.Name" asp-items="@cultureList" style="max-width:80px"
             onchange="this.form.submit();">
             </select>

@@ -1,10 +1,11 @@
 ﻿@model Template
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
 <div class="card h-100">
     <img src="@(Model != null ? $"https://drive.google.com/thumbnail?id={Model.ImageId}" : "~/Images/pharmacy-post-banner-background.jpg")"
          class="card-img-top" alt="Event Image">
     <div class="card-body">
         <h6 class="card-title text-center">
-            @(Model != null && !string.IsNullOrEmpty(Model.Title) ? Model.Title : "Empty title") – Template
+            @(Model != null && !string.IsNullOrEmpty(Model.Title) ? Model.Title : localizer["Emptytitle"]) – @localizer["Template"]
         </h6>
         <hr>
         <p class="text-center">

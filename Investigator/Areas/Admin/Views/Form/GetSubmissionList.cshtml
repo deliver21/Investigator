@@ -1,4 +1,5 @@
 ﻿@model List<Form>
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
 <div class="container m-2">
     @if (Model.Count > 0)
     {
@@ -17,13 +18,27 @@
                     </div>
                     <div class="col-6 col-sm-4 col-lg-6 pt-2">
                         <div class="w-75 btn-group" role="group">
-                            <a asp-action="GetMySubmission" asp-route-idHashed="@form.IdHashed" class="btn btn-outline-primary bg-gradient py-2 rounded-1" title="Visualize your submission">
+                            <a asp-action="GetMySubmission" asp-route-idHashed="@form.IdHashed" class="btn btn-outline-primary bg-gradient py-2 rounded-1" title="@localizer["Visualizeyoursubmission"]">
                                 <i class="bi bi-binoculars"></i>
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
+                       
         }
+    }
+    else
+    {
+        <div class="row my-5"></div>
+        <div class="row my-3"></div>
+        <div class="row text-center">
+            <div class="col-4"></div>
+            <div class="col-4">
+                    <h6 class="text-center mt-2"> @Localizer["YouHaventContributedYetToAnyForms"] :)</h6>
+                </div>
+            <div class="col-4"></div>
+
+        </div>
     }
 </div>

@@ -1,4 +1,5 @@
 ﻿@model FormDto
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
 @{
     ViewData["Title"] = "Generate form";
     string? serializeData = JsonConvert.SerializeObject(Model);
@@ -14,7 +15,7 @@
     <div class="row pt-2">
         <div class="col-3 col-md-3">
             <a class="m-1 p-2 px-2 text-start text-center btn btn-sm btn-outline-info rounded-1" asp-area="Customer" asp-controller="Home" asp-action="Index">
-                <i class="bi bi-arrow-bar-left"></i> Back
+                <i class="bi bi-arrow-bar-left"></i> @localizer["Back"]
             </a>
         </div>
         <div class="col-6"></div>
@@ -24,7 +25,7 @@
              class="card-img-top" alt="Event Image" style="max-height:100px; object-fit: cover;">
         <div class="card-body">
             <h3 class="card-title text-center">
-                @(Model != null && !string.IsNullOrEmpty(Model.Title) ? Model.Template.Title : "Empty title") – Form
+                @(Model != null && !string.IsNullOrEmpty(Model.Title) ? Model.Template.Title : localizer["Emptytitle"]) – Form
             </h3>
             <hr>
             <p class="text-center">
@@ -49,16 +50,15 @@
                     @switch (question.Type)
                     {
                         case "SingleLine":
-                            <input type="text" class="form-control mb-1" placeholder="Response text" required="@(!question.IsOptional)" />
+                            <input type="text" class="form-control mb-1" placeholder="@localizer["Responsetext"]" required="@(!question.IsOptional)" />
                             break;
                         case "MultiLine":
-                            <textarea name="MultiLine" class="form-control mb-1" placeholder="Response text" required="@(!question.IsOptional)"></textarea>
+                            <textarea name="MultiLine" class="form-control mb-1" placeholder="@localizer["Responsetext"]" required="@(!question.IsOptional)"></textarea>
                             break;
                         case "Integer":
                             <input type="number" min="0" class="form-control mb-1" placeholder="0" required="@(!question.IsOptional)" />
                             break;
                         case "CheckBox":
-                            @*<div class="form-check">*@
                                 <button type="button" class="btn btn-sm btn-secondary p-0 mb-1 add-option"
                                     onclick="addCheckboxOption(this,@questionIdCount)"
                                     data-question-id="@questionIdCount">
@@ -68,31 +68,28 @@
                                     @foreach (var option in question.Options)
                                     {
                                          <input class="form-check-input" type="checkbox" id="@option.OptionId">
-                                         <input class="form-control form-check-label" type="text" value="@option.Text" placeholder="Enter option text"
+                                    <input class="form-control form-check-label" type="text" value="@option.Text" placeholder="@localizer["Enteroptiontext"]"
                                          data-option-id="@option.OptionId" style="display: inline-block; width: auto; margin-left: 10px;" />
                                     }
                                 </div>
-                           @* </div> *@  
                             break;
                          case "RadioBox":
-                                @*<div class="form-check">*@
                                 <button type="button" class="btn btn-sm btn-secondary p-0 mb-1 add-option"
                                    onclick="addRadioboxOption(this,@questionIdCount)"
                                    data-question-id="@questionIdCount">
-                                    Add Option
+                                    @localizer["AddOption"]
                                 </button>
                                 <div class="new-options my-2" data-question-id="@questionIdCount">
                                     @foreach (var option in question.Options)
                                     {
                                         <input class="form-check-input" type="checkbox" id="@option.OptionId">
-                                        <input class="form-control form-check-label" type="text" value="@option.Text" placeholder="Enter option text"
+                                        <input class="form-control form-check-label" type="text" value="@option.Text" placeholder="@localizer["Enteroptiontext"]"
                                          data-option-id="@option.OptionId" style="display: inline-block; width: auto; margin-left: 10px;" />
                                     }
                                 </div>
-                                @* </div> *@
                              break;
                         case "Date":
-                            <input type="date" class="form-control mb-1" placeholder="Select a date" required="@(!question.IsOptional)" />
+                            <input type="date" class="form-control mb-1" placeholder="@localizer["Selectadate"]" required="@(!question.IsOptional)" />
                             break;
                         case "Phone":
                             <div class="input-group">
@@ -122,14 +119,14 @@
                     @(question.IsOptional ? "Mark Required" : "Mark Optional")
                     </button>
                 <button type="button" class="btn btn-sm btn-danger rounded-1 text-end m-1 delete-question">
-                    <i class="bi bi-file-earmark-x"></i> Delete Question
+                    <i class="bi bi-file-earmark-x"></i> @localizer["DeleteQuestion"]
                 </button>
             </div>
             questionIdCount++;
         }
     </div>
-    <button id="add-question" class="btn btn-primary rounded-1 mt-1 mb-5 pt-2 text-center"><i class="bi bi-file-earmark-plus"></i> Add Question</button>
-    <button id="save-form" type="submit" class="btn btn-success rounded-1 mt-1 mb-5 pt-2 text-center"><i class="bi bi-floppy"></i> Save Form</button>
+    <button id="add-question" class="btn btn-primary rounded-1 mt-1 mb-5 pt-2 text-center"><i class="bi bi-file-earmark-plus"></i> @localizer["AddQuestion"]</button>
+    <button id="save-form" type="submit" class="btn btn-success rounded-1 mt-1 mb-5 pt-2 text-center"><i class="bi bi-floppy"></i> @localizer["SaveForm"]</button>
 </div>
 @section Scripts{
     <script src="~/js/form.js"></script>

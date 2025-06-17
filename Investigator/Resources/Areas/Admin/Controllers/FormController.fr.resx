@@ -123,10 +123,19 @@
   <data name="Editformheader" xml:space="preserve">
     <value>Editez l'entete du formulaire</value>
   </data>
+  <data name="ErrorWhileRetrievingData" xml:space="preserve">
+    <value>Erreur lors de la récupération des données</value>
+  </data>
   <data name="Formanswers" xml:space="preserve">
     <value>Reponses du formulaire</value>
   </data>
+  <data name="FormHasSuccessfullyBeenUpdated" xml:space="preserve">
+    <value>Le formulaire a été mise à jour avec success</value>
+  </data>
   <data name="Managequestions" xml:space="preserve">
     <value>Gerez les questions</value>
+  </data>
+  <data name="TheFormHasNotBeenFound" xml:space="preserve">
+    <value>Le formulaire n'a pas été trouver</value>
   </data>
 </root>

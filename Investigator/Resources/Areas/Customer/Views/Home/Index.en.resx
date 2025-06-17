@@ -123,8 +123,17 @@
   <data name="Createtemplate" xml:space="preserve">
     <value>Create Template</value>
   </data>
+  <data name="FillTheForm" xml:space="preserve">
+    <value>Fill the form</value>
+  </data>
+  <data name="FormSubmissions" xml:space="preserve">
+    <value>Form submissions</value>
+  </data>
   <data name="Recentforms" xml:space="preserve">
     <value>Recent Forms</value>
+  </data>
+  <data name="TemplateDetails" xml:space="preserve">
+    <value>Template details</value>
   </data>
   <data name="Templategallery" xml:space="preserve">
     <value>Template Gallery</value>

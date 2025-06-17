@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity;
 @model Form
 @inject UserManager<IdentityUser> UserManager
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
 @{
     ViewData["Title"] = "Form Filler";
 }
@@ -18,7 +19,7 @@
         <div class="row pt-2">
             <div class="col-3 col-md-3">
                 <a class="m-1 p-2 px-2 text-start text-center btn btn-sm btn-outline-info rounded-1" asp-area="Customer" asp-controller="Home" asp-action="Index">
-                    <i class="bi bi-arrow-bar-left"></i> Back
+                    <i class="bi bi-arrow-bar-left"></i> @localizer["Back"]
                 </a>
             </div>
             <div class="col-6"></div>
@@ -35,7 +36,7 @@
                 <input name="formId" value="@Model.FormId" hidden>
     
                 <div class="row d-flex m-1 p-2 text-start">
-                    <span class="h-50 text-info"> Contributor : </span>
+                    <span class="h-50 text-info"> @localizer["Contributor"] : </span>
                     <input type="button" disabled value="@UserManager.GetUserName(User)"/>
                 </div>            
             </div>
@@ -49,7 +50,7 @@
                         <label name="questions[@question.QuestionId].text" value="@question.Text" class="form-control text-start mb-2 font-weight-bold bg-light">
                             @question.Text
                         </label>
-                        <div class="invalid-feedback">Please upload a file.</div>
+                        <div class="invalid-feedback">@localizer["Pleaseuploadafile."]</div>
                     }
                     <div class="response-container">
                         @switch (question.Type)
@@ -90,7 +91,7 @@
                                 </div>
                                 break;
                             case "Date":
-                                <input type="date" class="form-control mb-1" placeholder="Select a date" required="@(!question.IsOptional)" />
+                                <input type="date" class="form-control mb-1" placeholder="@localizer["Selectadate"]" required="@(!question.IsOptional)" />
                                 break;
                             case "Phone":
                                 <small class="text-info">Format: 123-456-789</small>
@@ -113,7 +114,7 @@
                                         <i class="fa-solid fa-arrow-up-from-bracket"></i>
                                         @question.Text
                                     </label>
-                                    <div class="num-of-files" id="num-of-files_@question.QuestionId">No Files Choosen</div>
+                                    <div class="num-of-files" id="num-of-files_@question.QuestionId">@localizer["NoFilesChoosen"]</div>
                                     <ul id="files-list_@question.QuestionId"></ul>
                                 </div>
                                 break;
@@ -125,7 +126,7 @@
         <div class="row text-center mb-3">
             <div class="col-12 text-center">
                 <button id="login-submit" type="submit" class="w-50 btn btn-lg btn-primary rounded-1 mt-2 pt-2 mb-3 p-3 text-center" disabled="@(string.IsNullOrEmpty(UserManager.GetUserName(User)) ? true : false)">
-                    <i class="bi bi-binoculars-fill"></i> Submit
+                    <i class="bi bi-binoculars-fill"></i> @localizer["Submit"]
                 </button>
             </div>
         </div>

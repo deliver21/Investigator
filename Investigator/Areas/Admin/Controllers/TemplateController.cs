@@ -49,7 +49,7 @@ namespace Investigator.Areas.Admin.Controllers
         public async Task<IActionResult> Upsert(int ? id)
         {
             var topicList = new List<SelectListItem>()
-            { new SelectListItem{Text = SD.EducationTopic, Value = SD.EducationTopic},
+            { new SelectListItem{Text = _localizer["Education"].Value, Value = SD.EducationTopic},
               new SelectListItem{Text = _localizer["Personal"].Value, Value = SD.PersonalTopic},
               new SelectListItem{Text = _localizer["Professional"].Value, Value = SD.ProfessionalTopic}
             };
@@ -73,7 +73,7 @@ namespace Investigator.Areas.Admin.Controllers
                 template.CreatedDate = DateTime.Now;
                 template.ImageId = file != null ? _fileSaver.UploadFilesToGoogleDrive(file) : "";
                 await _unit.Template.Add(template);
-                TempData["success"] = "Template has successfully been created";
+                TempData["success"] = _localizer["TemplateHasSuccessfullyBeenCreated"].Value;
             }
             else
             {
@@ -94,7 +94,7 @@ namespace Investigator.Areas.Admin.Controllers
                 }
                 template.ModifiedDate = DateTime.Now;
                 _unit.Template.Update(template);
-                TempData["success"] = "Template has successfully been updated";
+                TempData["success"] = _localizer["TemplateHasSuccessfullyBeenUpdated"].Value;
             }
             _unit.Save();            
             return RedirectToAction("Index");
@@ -131,6 +131,7 @@ namespace Investigator.Areas.Admin.Controllers
             if (claims.Claims.Any())
             {
                 var userId = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
+                TempData["userId"] = userId;
             }
             return View(TemplateDetails);
         }
@@ -144,11 +145,13 @@ namespace Investigator.Areas.Admin.Controllers
             {
                 return Redirect($"/Customer/Home/Index");
             }
+            template.Creator = await _unit.ApplicationUser.Get(u => u.Id == template.CreatorId); 
             var claims = (ClaimsIdentity) User.Identity;
 
             if(claims.Claims.Any())
             {
                 var userId = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
+                TempData["userId"] = userId;
                 var likeToDelete = await _unit.Like.Get(u => u.LikerId == userId);
                 if (likeToDelete == null)
                 {
@@ -165,12 +168,35 @@ namespace Investigator.Areas.Admin.Controllers
                 }
                 _unit.Save();
             }
-            int? passId = templateId;
-            return RedirectToAction(nameof(Details), passId);
+            TemplateDetails = new()
+            {
+                Template = template,
+                LikesCount = _unit.Like.GetAll(u => u.TemplateId == templateId).Count(),
+                CommentsCount = _unit.Comment.GetAll(u => u.TemplateId == templateId).Count(),
+                Likes = _unit.Like.GetAll(u => u.TemplateId == templateId),
+                Comments = _unit.Comment.GetAll(u => u.TemplateId == templateId)
+            };
+            return View("Details", TemplateDetails);
+        }
+
+        [Authorize]
+        [IsBlockedAuthorize]
+       public async Task<IActionResult> GetFavoriteTemplates()
+        {
+            var claims = (ClaimsIdentity)User.Identity;
+            var userId = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
+            List<Like> myLikes = new List<Like>();
+            myLikes = _unit.Like.GetAll(u => u.LikerId == userId).ToList();
+
+            foreach(var like in myLikes)
+            {
+                like.Template = await _unit.Template.Get(u => u.TemplateId == like.TemplateId) ?? new();
+            }
+            return View(myLikes);
         }
 
         #region Api's Calls
-        
+
         [Authorize]
         [IsBlockedAuthorize]
         [HttpGet]

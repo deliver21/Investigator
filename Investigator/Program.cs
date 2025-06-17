@@ -58,6 +58,7 @@ builder.Services.AddLogging(logging =>
     logging.AddDebug();
 });
 
+
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(100);
@@ -90,7 +91,8 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     var supportedCultures = new List<CultureInfo>
     {
         new CultureInfo("en"),
-        new CultureInfo("fr")
+        new CultureInfo("fr"),
+        new CultureInfo("ru")
     };
     options.DefaultRequestCulture = new RequestCulture("en");
     options.SupportedCultures = supportedCultures;

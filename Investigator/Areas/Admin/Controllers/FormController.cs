@@ -75,7 +75,7 @@ namespace Investigator.Areas.Admin.Controllers
         {
             if (form.FormId == 0)
             {
-                TempData["error"] = "the Form is not found";
+                TempData["error"] = _localizer["TheFormHasNotBeenFound"].Value;
                 return RedirectToAction(nameof(Index));
             }
             else
@@ -96,7 +96,7 @@ namespace Investigator.Areas.Admin.Controllers
                 }
                 form.ModifiedDate = DateTime.Now;
                 _unit.Form.Update(form);
-                TempData["success"] = "Form has successfully been updated";
+                TempData["success"] = _localizer["FormHasSuccessfullyBeenUpdated"];
             }
             _unit.Save();
             return RedirectToAction("Index");
@@ -107,7 +107,7 @@ namespace Investigator.Areas.Admin.Controllers
             var form = await _unit.Form.Get(u => u.FormId == id, includeProperties: "Questions");
             if (form == null || form.FormId == 0)
             {
-                TempData["success"] = "Form not found";
+                TempData["success"] = _localizer["TheFormHasNotBeenFound"].Value;
                 return RedirectToAction("Index");
             }
             form.Questions = _unit.Question.GetAll(u => u.FormId == form.FormId).ToList() ?? new List<Question>();
@@ -192,7 +192,7 @@ namespace Investigator.Areas.Admin.Controllers
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             if (FormFillers.Form == null || FormFillers.Form.CreatorId != userId)
             {
-                TempData["error"] = "Error while retrieving data";
+                TempData["error"] = _localizer["ErrorWhileRetrievingData"].Value;
                 RedirectToAction(nameof(Index));
             }
             FormFillers.Form.Creator = await _unit.ApplicationUser.Get(u => u.Id == FormFillers.Form.CreatorId);
@@ -246,7 +246,7 @@ namespace Investigator.Areas.Admin.Controllers
 
             if (FormFillers.Form == null || FormFillers.FormFiller == null)
             {
-                TempData["error"] = "Error while retrieving data";
+                TempData["error"] = _localizer["ErrorWhileRetrievingData"].Value;
                 RedirectToAction(nameof(GetSubmissionList));
             }
             var formId = FormFillers.Form.FormId;
@@ -278,8 +278,8 @@ namespace Investigator.Areas.Admin.Controllers
             filler.Form = await _unit.Form.Get(u => u.FormId == filler.FormId);
             if (filler == null || filler.Form == null)
             {
-                TempData["error"] = "Error while retrieving data";
-                return NotFound(new { message = "Error while retrieving data" });
+                TempData["error"] = _localizer["ErrorWhileRetrievingData"].Value;
+                return NotFound(new { message = _localizer["ErrorWhileRetrievingData"].Value });
             }
 
             if (string.IsNullOrEmpty(filler.Form.ImageId))
@@ -411,7 +411,7 @@ namespace Investigator.Areas.Admin.Controllers
         public async Task<IActionResult> SaveForm([FromForm] FormDto form)
         {
             TempData["baseUrl"] = SD.AppBaseUrl;
-            form.Description = _unit.Template.Get(u => u.TemplateId == form.TemplateId).GetAwaiter().GetResult().Description;
+            var template = await _unit.Template.Get(u => u.TemplateId == form.TemplateId, null, true);
             if (form == null) return BadRequest("Invalid form data.");
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -424,14 +424,14 @@ namespace Investigator.Areas.Admin.Controllers
                     Description = form.Description,
                     TemplateId = form.TemplateId,
                     CreatedDate = form.CreatedDate,
-                    CreatorId = userId
+                    CreatorId = userId,
+                    ImageId = !String.IsNullOrEmpty(template.ImageId) ? template.ImageId : ""
                 };
                 await _unit.Form.Add(formToSave);
                 _unit.Save();
 
                 var createdForm = await _unit.Form.Get(u => u.CreatedDate == form.CreatedDate && u.CreatorId == userId, null, true);
                 createdForm.IdHashed = _hmacGenerator.GenerateHmac(createdForm.FormId);
-                var template = await _unit.Template.Get(u => u.TemplateId == form.TemplateId);
 
                 if (template != null)
                 {
@@ -513,8 +513,82 @@ namespace Investigator.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateForm([FromForm] FormDto form)
         {
-            return Ok();
+            TempData["baseUrl"] = SD.AppBaseUrl;
+            var formToUpdate = await _unit.Form.Get(u => u.FormId == form.FormId);
+            if (formToUpdate == null)
+            {
+                return NotFound(new { Message = "Form is not found" });
+            }
+            formToUpdate.ModifiedDate = DateTime.Now;
+            foreach (var questionDto in form.Questions)
+            {
+                Question questionToSave = new()
+                {
+                    QuestionId = questionDto.QuestionId,
+                    Text = questionDto.Text,
+                    Type = questionDto.Type,
+                    Order = questionDto.Order,
+                    IsOptional = questionDto.IsOptional,
+                    FormId = formToUpdate.FormId
+                };
+
+                if (questionDto.QuestionId == 0)
+                {
+                    await _unit.Question.Add(questionToSave);
+                } else {
+                    _unit.Question.Update(questionToSave);
+                }
+                _unit.Save();
+
+                if ((questionDto.Type == SD.checkBoxType || questionDto.Type == SD.radioBoxType) && questionDto.Options.Any())
+                {
+                    foreach (var option in questionDto.Options)
+                    {
+                        QuestionOption questionOptionToSave = new()
+                        {
+                            OptionId = option.OptionId,
+                            Text = option.Text,
+                        };
+
+                        if (option.QuestionId == 0)
+                        {
+                            if (questionDto.QuestionId != 0)
+                            {
+                                questionOptionToSave.QuestionId = questionDto.QuestionId;
+                            }
+                            else
+                            {
+                                int questionId = _unit.Question.Get(u => u.Text == questionDto.Text && u.Order == questionDto.Order).
+                                    GetAwaiter().GetResult().QuestionId;
+                                if (questionId > 0)
+                                {
+                                    questionOptionToSave.QuestionId = questionId;
+                                }
+                            }
+
+                            await _unit.QuestionOption.Add(questionOptionToSave);
+                        }
+                        else
+                        {
+                            questionOptionToSave.QuestionId = option.QuestionId;
+                            if (option.OptionId == 0)
+                            {                                
+                                await _unit.QuestionOption.Add(questionOptionToSave);
+                            }
+                            else
+                            {
+                                _unit.QuestionOption.Update(questionOptionToSave);
+                            }                           
+                            
+                        }
+                        _unit.Save();
+                    }
+                }
+            }
+            _unit.Save();
+            return Ok(new { message = "Form updated successfully." });
         }
+
         [HttpDelete]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -540,53 +614,7 @@ namespace Investigator.Areas.Admin.Controllers
             return Ok(new { success = true, message = "Deletion successfully performed" });
         }
 
-
-        [HttpPost("SaveQuestions/{formId:int}")]
-        public async Task<IActionResult> SaveQuestions(int formId, [FromBody] IEnumerable<QuestionDto> questions)
-        {
-            if (_unit.Form.Get(t => t.FormId == formId).GetAwaiter().GetResult().FormId == 0)
-                return NotFound(new { message = "Form not found." });
-            try
-            {
-                foreach (var question in questions)
-                {
-                    if (question.QuestionId == 0)
-                    {
-                        var questionToSave = new Question();
-                        questionToSave.Type = question.Type;
-                        questionToSave.Text = question.Text;
-                        questionToSave.Order = question.Order;
-                        questionToSave.IsOptional = question.IsOptional;
-                        questionToSave.FormId = formId;
-
-                        await _unit.Question.Add(questionToSave);
-                    }
-                    else
-                    {
-                        if (_unit.Question.Get(u => u.QuestionId == question.QuestionId).GetAwaiter().GetResult() != null)
-                        {
-                            var questionToSave = new Question();
-                            questionToSave.Type = question.Type;
-                            questionToSave.Text = question.Text;
-                            questionToSave.Order = question.Order;
-                            questionToSave.IsOptional = question.IsOptional;
-                            questionToSave.FormId = formId;
-
-                            _unit.Question.Update(questionToSave);
-                        }
-                    }
-                    _unit.Save();
-                }
-
-                return Ok(new { message = "Questions are successfully saved!" });
-            }
-            catch
-            {
-                return NotFound(new { message = "An error occurred while saving questions." });
-            }
-
-        }
-        [HttpDelete]
+        [HttpDelete("{questionId:int}")]
         public async Task<IActionResult> DeleteQuestion(int? questionId)
         {
             var question = await _unit.Question.Get(u => u.QuestionId == questionId);
@@ -599,7 +627,7 @@ namespace Investigator.Areas.Admin.Controllers
             return Ok(new { message = "Question is successfully deleted" });
         }
 
-        [HttpDelete]
+        [HttpDelete("{optionId:int}")]
         public async Task<IActionResult> DeleteQuestionOption(int? optionId)
         {
             var questionOption = await _unit.QuestionOption.Get(u => u.OptionId == optionId);

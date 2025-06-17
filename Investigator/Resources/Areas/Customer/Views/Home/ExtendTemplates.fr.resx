@@ -129,6 +129,9 @@
   <data name="Professional" xml:space="preserve">
     <value>Professionel</value>
   </data>
+  <data name="TemplateDetails" xml:space="preserve">
+    <value>Les détails du template</value>
+  </data>
   <data name="Try" xml:space="preserve">
     <value>Essayez</value>
   </data>

@@ -45,7 +45,7 @@
                             <textarea data-bs-theme="light" asp-for="Description" class="form-control border-0 shadow ps-lg-4"></textarea>
                         </div>
                         <div class="mb-3 form-floating col-12">
-                            <input type="file" name="file" placeholder="@localizer["Chooseimage"]" class="form-control border-0 shadow ps-lg-4" />
+                            <input type="file" name="file" accept="image/png, image/gif, image/jpeg" placeholder="@localizer["Chooseimage"]" class="form-control border-0 shadow ps-lg-4" />
                             <label asp-for="ImageId" class="ms-2">@localizer["Templateimage"]</label>
                         </div>
                         <div class="mb-3 form-floating col-12">

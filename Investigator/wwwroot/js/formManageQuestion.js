@@ -60,8 +60,10 @@ function handleQuestionTypeChange(event, questionItem) {
             break;
         case 'CheckBox':
             responseContainer.innerHTML = `
-                <button type="button" class="btn btn-sm btn-secondary mb-1 add-option" data-question-id="${questionItem.getAttribute('data-question-id')}">Add Option</button>
-                <div class="new-options my-2" data-question-id="${questionItem.getAttribute('data-question-id')}"></div>
+                <div class="question-container">
+                   <button type="button" class="btn btn-sm btn-secondary mb-1 add-option" data-question-id="${questionItem.getAttribute('data-question-id')}">Add Option</button>
+                   <div class="new-options my-2" data-question-id="${questionItem.getAttribute('data-question-id')}"></div>
+                </div>
             `;
             questionItem.setAttribute('data-question-type', "CheckBox");
 
@@ -83,10 +85,12 @@ function handleQuestionTypeChange(event, questionItem) {
             break;
         case 'RadioBox':
             responseContainer.innerHTML = `
+              <div class="question-container">
                 <button type="button" class="btn btn-sm btn-secondary mb-1 add-option" data-question-id="${questionItem.getAttribute('data-question-id')}">Add Option</button>
                 <div class="new-options my-2" data-question-id="${questionItem.getAttribute('data-question-id')}"></div>
+              </div>
             `;
-            questionItem.setAttribute('data-question-type', "CheckBox");
+            questionItem.setAttribute('data-question-type', "RadioBox");
 
             document.addEventListener('click', function (e) {
                 if (e.target && e.target.classList.contains('add-option')) {
@@ -147,29 +151,7 @@ function handleQuestionTypeChange(event, questionItem) {
     }
 }
 
-//function addCheckboxOption(container, questionId) {
-//    const optionCount = container.querySelectorAll('.form-check').length + 1;
-//    const optionId = `${questionId}-option-${optionCount}`;
 
-//    const optionElement = document.createElement('div');
-//    optionElement.className = 'form-check mb-2 mt-2';
-//    optionElement.innerHTML = `
-//        <input class="form-check-input" type="checkbox" id="${optionId}">
-//        <input 
-//            class="form-control form-check-label" 
-//            type="text" 
-//            value="Option ${optionCount}" 
-//            placeholder="Enter option text" 
-//            data-option-id="${optionId}" 
-//            style="display: inline-block; width: auto; margin-left: 10px;"
-//        />
-//       <button type="button" data-option-id="${optionId}" deleteCheckboxOption(button, ${questionId})  class="btn btn-sm btn-danger rounded-1 text-end m-1 delete-question">
-//           <i class="bi bi-file-earmark-x"></i>
-//       </button>
-//    `;
-//    const Container = document.querySelector(`.new-options[data-question-id="${questionId}"]`);
-//    Container.appendChild(optionElement);
-//}
 function addCheckboxOption(button, questionId) {
     const container = button.closest(".question-container");
     const optionsContainer = container.querySelector(`.new-options[data-question-id="${questionId}"]`);
@@ -187,53 +169,24 @@ function addCheckboxOption(button, questionId) {
             value="Option ${optionCount}" 
             placeholder="Enter option text" 
             data-option-id="${optionId}" 
-            style="display: inline-block; width: auto; margin-left: 10px;"
+            style="display: inline-block; width: auto; margin-left: 10px;"            
         />
         <button type="button"
-                class="btn btn-sm btn-danger rounded-1 text-end m-1 delete-question"
-                data-option-id="${optionId}"
-                data-question-id="${questionId}"
-                onclick="deleteCheckboxOption(this, '${questionId}', '${optionId}')">
+            class="btn btn-sm btn-danger rounded-1 text-end m-1 delete-questionOption"
+            data-option-id="${optionId}"
+            data-question-id="${questionId}"
+            >
             <i class="bi bi-file-earmark-x"></i>
         </button>
     `;
     optionsContainer.appendChild(optionElement);
 }
 
-//function deleteCheckboxOption(button, questionId) {
-//    const optionId = button.getAttribute("data-option-id");
-
-//    // Find and remove the DOM element (the full option container)
-//    const optionElement = button.closest(".form-check");
-
-//    if (questionId > 0) {
-//        // Delete from server
-//        fetch(`/Admin/Form/DeleteQuestionOption/${optionId}`, {
-//            method: "DELETE",
-//        })
-//            .then((response) => {
-//                if (!response.ok) {
-//                    throw new Error("Failed to delete option.");
-//                }
-//                return response.json();
-//            })
-//            .then(() => {
-//                if (optionElement) optionElement.remove();
-//            })
-//            .catch((error) => {
-//                console.error("Error:", error);
-//                alert("Failed to delete option. Please try again.");
-//            });
-//    } else {
-//        // Delete only in frontend (question not saved yet)
-//        if (optionElement) optionElement.remove();
-//    }
-//}
 function deleteCheckboxOption(button, questionId, optionId) {
     const optionElement = button.closest(".form-check");
 
     // If it's from DB (real ID), delete from backend
-    if (parseInt(questionId) > 0) {
+    if (parseInt(questionId) > 0 && optionId > 0) {
         fetch(`/Admin/Form/DeleteQuestionOption/${optionId}`, {
             method: "DELETE"
         })
@@ -257,9 +210,11 @@ function deleteCheckboxOption(button, questionId, optionId) {
 }
 
 
+function addRadioboxOption(button, questionId) {
+    const container = button.closest(".question-container");
+    const optionsContainer = container.querySelector(`.new-options[data-question-id="${questionId}"]`);
 
-function addRadioboxOption(container, questionId) {
-    const optionCount = container.querySelectorAll('.form-check').length + 1;
+    const optionCount = optionsContainer.querySelectorAll('.form-check').length + 1;
     const optionId = `${questionId}-option-${optionCount}`;
 
     const optionElement = document.createElement('div');
@@ -274,41 +229,41 @@ function addRadioboxOption(container, questionId) {
             data-option-id="${optionId}" 
             style="display: inline-block; width: auto; margin-left: 10px;"
         />
-        <button type="button" data-option-id="${optionId}"  class="btn btn-sm btn-danger rounded-1 text-end m-1 delete-question">
+        <button type="button"
+             class="btn btn-sm btn-outline-danger rounded-1 text-end m-1 delete-questionOption"
+             data-option-id="${optionId}"
+             data-question-id="${questionId}"
+             >
             <i class="bi bi-file-earmark-x"></i>
         </button>
     `;
-    const Container = document.querySelector(`.new-options[data-question-id="${questionId}"]`);
-    Container.appendChild(optionElement);
+    optionsContainer.appendChild(optionElement);
 }
 
-function deleteRadioboxOption(button, questionId) {
-    const optionId = button.getAttribute("data-option-id");
 
-    // Find and remove the DOM element (the full option container)
-    const optionElement = button.closest(".form-check");
+function deleteRadioboxOption(button, questionId, optionId) {
 
-    if (questionId > 0) {
-        // Delete from server
+    // If it's from DB (real ID), delete from backend
+    if (parseInt(questionId) > 0 && optionId > 0) {
         fetch(`/Admin/Form/DeleteQuestionOption/${optionId}`, {
-            method: "DELETE",
+            method: "DELETE"
         })
-            .then((response) => {
+            .then(response => {
                 if (!response.ok) {
                     throw new Error("Failed to delete option.");
                 }
                 return response.json();
             })
             .then(() => {
-                if (optionElement) optionElement.remove();
+                optionElement?.remove();
             })
-            .catch((error) => {
+            .catch(error => {
                 console.error("Error:", error);
                 alert("Failed to delete option. Please try again.");
             });
     } else {
-        // Delete only in frontend (question not saved yet)
-        if (optionElement) optionElement.remove();
+        // If question isn't saved yet — remove just from UI
+        optionElement?.remove();
     }
 }
 
@@ -441,10 +396,10 @@ document.getElementById('update-form').addEventListener('click', function () {
         if (type == 'CheckBox') {
             questionElement.querySelectorAll('.form-check-input').forEach((optionElement, optionIndex) => {
                 const optionText = optionElement.nextElementSibling.value.trim(); // Use .value, not innerText
-                const optionId = parseInt(optionElement.dataset.optionId || "0");
+                const optionId = parseInt(optionElement.getAttribute('data-option-id') || "0");
 
                 formData.append(`questions[${index}].options[${optionIndex}].optionId`, optionId);
-                formData.append(`questions[${index}].options[${optionIndex}].optionId`, questionId);
+                formData.append(`questions[${index}].options[${optionIndex}].questionId`, questionId);
                 formData.append(`questions[${index}].options[${optionIndex}].text`, optionText);
             });
         }
@@ -454,7 +409,7 @@ document.getElementById('update-form').addEventListener('click', function () {
                 const optionId = parseInt(optionElement.dataset.optionId || "0");
 
                 formData.append(`questions[${index}].options[${optionIndex}].optionId`, optionId);
-                formData.append(`questions[${index}].options[${optionIndex}].optionId`, questionId);
+                formData.append(`questions[${index}].options[${optionIndex}].questionId`, questionId);
                 formData.append(`questions[${index}].options[${optionIndex}].text`, optionText);
             });
 

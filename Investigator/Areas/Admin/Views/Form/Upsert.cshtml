@@ -3,8 +3,8 @@
 @{
     IEnumerable<SelectListItem> StatusList = new List<SelectListItem>()
     {
-        new SelectListItem{Value = SD.ActiveStatus , Text = SD.ActiveStatus},
-        new SelectListItem{Value = SD.InactiveStatus , Text = SD.InactiveStatus}
+        new SelectListItem{Value = SD.ActiveStatus , Text = localizer["Active"] },
+        new SelectListItem{Value = SD.InactiveStatus , Text = localizer["Inactive"] }
     };
 }
 <div class="card shadow border-0 mb-5 mt-1 pt-1">
@@ -25,7 +25,7 @@
                 <div class="col-10">
                     <div class="border p-2 mt-4">
                         <div asp-validation-summary="All" class="text-danger-emphasis"></div>
-                        <input asp-for="FormId" type="hidden"? />
+                        <input asp-for="FormId" type="hidden"/>
                         <input asp-for="TemplateId" type="hidden" />
                         <input asp-for="CreatorId" type="hidden"/>
                         <input asp-for="IdHashed" type="hidden" />
@@ -39,7 +39,7 @@
                             <textarea data-bs-theme="light" asp-for="Description" class="form-control border-0 shadow ps-lg-4"></textarea>
                         </div>
                         <div class="mb-3 form-floating col-12">
-                            <input type="file" name="file" placeholder="@localizer["Chooseimage"]" class="form-control border-0 shadow ps-lg-4" />
+                            <input type="file" name="file" accept="image/png, image/gif, image/jpeg" placeholder="@localizer["Chooseimage"]" class="form-control border-0 shadow ps-lg-4" />
                             <label asp-for="ImageId" class="ms-2">@localizer["Formimage"]</label>
                         </div>
                         <div class="mb-3 form-floating col-12">

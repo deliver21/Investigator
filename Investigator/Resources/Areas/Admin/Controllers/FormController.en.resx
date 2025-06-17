@@ -123,10 +123,19 @@
   <data name="Editformheader" xml:space="preserve">
     <value>Edit form header</value>
   </data>
+  <data name="ErrorWhileRetrievingData" xml:space="preserve">
+    <value>Error while retrieving data</value>
+  </data>
   <data name="Formanswers" xml:space="preserve">
     <value>Form Answers</value>
   </data>
+  <data name="FormHasSuccessfullyBeenUpdated" xml:space="preserve">
+    <value>The form has successfully been updated</value>
+  </data>
   <data name="Managequestions" xml:space="preserve">
     <value>Manage questions</value>
+  </data>
+  <data name="TheFormHasNotBeenFound" xml:space="preserve">
+    <value>The form has not been found</value>
   </data>
 </root>

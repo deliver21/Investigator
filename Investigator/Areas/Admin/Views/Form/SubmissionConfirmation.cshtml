@@ -1,14 +1,14 @@
 ﻿@model FormFiller
-
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
 <div class="container row mt-5 mb-5 pt-4">
     <div class="col-12 text-center">
-        <h1 class="text-success text-center">Your submission is successfully done :)</h1>
+        <h1 class="text-success text-center">@localizer["YourSubmissionIsSuccessfullyDone"] :)</h1>
         Form Title : @Model.Form.Title <br /><br />
         <img style="width: 175px; height:120px" src="@(Model != null ? $"https://drive.google.com/thumbnail?id={Model.Form.ImageId}" : "~/Images/pharmacy-post-banner-background.jpg")" />
     </div>
     <div class="col-12 text-center pb-4" style="color : maroon">
         <br />
-        Form has been submitted succesfully <br />
-        <a asp-area="Admin" asp-controller="Form" asp-action="GetMySubmission" asp-route-idHashed="@Model.Form.IdHashed">See your submission's answers' here</a>
+        @localizer["FormHasBeenSubmittedSuccesfully"] <br />
+        <a asp-area="Admin" asp-controller="Form" asp-action="GetMySubmission" asp-route-idHashed="@Model.Form.IdHashed">@Localizer["SeeYourSubmissionsAnswersHere"]</a>
     </div>
 </div>

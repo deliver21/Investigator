@@ -126,11 +126,17 @@
   <data name="Createuser" xml:space="preserve">
     <value>Créer un utilisateur</value>
   </data>
+  <data name="FavouriteTemplate" xml:space="preserve">
+    <value>Templates favoris</value>
+  </data>
   <data name="Forms" xml:space="preserve">
     <value>Formulaires</value>
   </data>
   <data name="Home" xml:space="preserve">
     <value>Accueil</value>
+  </data>
+  <data name="MyFormsSubmissions" xml:space="preserve">
+    <value>Mes soumissions des formulaires</value>
   </data>
   <data name="Privacy" xml:space="preserve">
     <value>Confidentialité</value>
@@ -140,6 +146,12 @@
   </data>
   <data name="Searchtemplates" xml:space="preserve">
     <value>Cherchez des templates</value>
+  </data>
+  <data name="Templates" xml:space="preserve">
+    <value>Templates</value>
+  </data>
+  <data name="Tickets" xml:space="preserve">
+    <value>Tickets</value>
   </data>
   <data name="Usermanagement" xml:space="preserve">
     <value>Gestion d'utilisateurs</value>

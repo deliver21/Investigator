@@ -30,7 +30,7 @@
 
             <div class="row m-1 text-end">
             <div class="col-2">
-                <a asp-area="Admin" asp-controller="Form" asp-action="Index" title="back to your form list" class="m-1 p-2 px-2 text-start text-center btn btn-sm btn-outline-info rounded-1">
+                <a asp-area="Admin" asp-controller="Form" asp-action="Index" title="@localizer["backtoyourformlist"]" class="m-1 p-2 px-2 text-start text-center btn btn-sm btn-outline-info rounded-1">
                     <i class="bi bi-arrow-bar-left"></i>
                 </a>
             </div>
@@ -38,7 +38,7 @@
                     <h3 class="text-white">@localizer["Submissionslist"]</h3>
                 </div>
                 <div class="col-2">
-                <button id="exportButton" data-form-id="@Model.Form.FormId" title="Export submissions to a CSV file" class="btn btn-primary">
+                <button id="exportButton" data-form-id="@Model.Form.FormId" title="@localizer["ExportsubmissionstoaCSVfile"]" class="btn btn-primary">
                     <i class="bi bi-box-arrow-in-down"></i>
                 </button>
 
@@ -57,19 +57,19 @@
             <div class="row m-3">
                 <div class="col-lg-3 col-md-6 mb-2 form-floating">
                     <input type="text" id="creator" class="form-control pb-2 pt-3" value="@Model.Form.Creator.Email" readonly>
-                    <label for="creator" class="ms-2">Creator:</label>
+                <label for="creator" class="ms-2">@localizer["Creator"]:</label>
                 </div>
             <div class="col-lg-3 col-md-6 mb-2 form-floating">
                 <input type="text" id="createdDate" class="form-control pb-2 pt-3" value="@Model.Form.CreatedDate" readonly>
-                    <label for="createdDate" class="ms-2">Date of creation:</label>
+                <label for="createdDate" class="ms-2">@localizer["Dateofcreation"]:</label>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-2 form-floating">                    
                     <input id="questions" class="form-control" type="number" value="@Model.Questions.Count()" readonly>
-                    <label for="questions" class="ms-2">Questions : </label>
+                    <label for="questions" class="ms-2">@localizer["Questions"] : </label>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-2 form-floating">
                     <input id="contributors" class="form-control" type="number" value="@Model.FormFillers.Count()" readonly >
-                    <label for="contributors" class="ms-2">Contributors: </label>
+                    <label for="contributors" class="ms-2">@localizer["Contributors"]: </label>
                 </div>
             </div>
                 
@@ -77,7 +77,7 @@
                 <table id="tblData" class="table table-bordered table-striped table-hover table-responsive" style="width:100%; overflow:auto">
                     <thead>
                         <tr>
-                            <th>Contributor</th>
+                            <th>@localizer["Contributor"]</th>
                             @foreach (var question in Model.Questions)
                             {
                                 <th>@question.Text</th>

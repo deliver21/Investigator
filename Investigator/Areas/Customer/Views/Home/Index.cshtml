@@ -46,7 +46,7 @@
                         <div class="col text-end">
                             <a class="btn btn-primary rounded-circle p-2 py-1"
                            asp-area="Admin" asp-controller="Template" asp-action="Details" asp-route-templateId="@template.TemplateId"
-                           title="Template Details">
+                           title="@localizer["TemplateDetails"]">
                                 <i class="bi bi-info-circle"></i>
                             </a>
                         </div>
@@ -72,12 +72,12 @@
                             <div class ="row mt-2">
                                 <div class="col text-start">
                                     <a class="btn btn-primary rounded-circle p-2 py-1" asp-area="Admin" asp-controller="Form"
-                                   asp-action="FillForm" asp-route-idHashed="@form.IdHashed" target="_blank" title="fill the form">
+                                   asp-action="FillForm" asp-route-idHashed="@form.IdHashed" target="_blank" title="@localizer["FillTheForm"]">
                                         <i class="bi bi-clipboard-check-fill"></i>
                                     </a>
                                 </div>
                                 <div class="col text-end">
-                                    <a asp-area="Admin" asp-controller="Form" asp-action="GetSubmissions" target="_blank" asp-route-idHashed="@form.IdHashed" class="btn btn-primary rounded-circle p-2 py-1" title="form submissions">
+                                    <a asp-area="Admin" asp-controller="Form" asp-action="GetSubmissions" target="_blank" asp-route-idHashed="@form.IdHashed" class="btn btn-primary rounded-circle p-2 py-1" title="@localizer["FormSubmissions"]">
                                         <i class="bi bi-info-circle"></i>
                                     </a>
                                 </div>

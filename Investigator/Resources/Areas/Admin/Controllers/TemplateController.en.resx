@@ -123,6 +123,9 @@
   <data name="Edittemplateheader" xml:space="preserve">
     <value>Edit template header</value>
   </data>
+  <data name="Education" xml:space="preserve">
+    <value>Education</value>
+  </data>
   <data name="Managequestions" xml:space="preserve">
     <value>Manage questions</value>
   </data>
@@ -131,5 +134,11 @@
   </data>
   <data name="Professional" xml:space="preserve">
     <value>Professional</value>
+  </data>
+  <data name="TemplateHasSuccessfullyBeenCreated" xml:space="preserve">
+    <value>Template has successfully been created</value>
+  </data>
+  <data name="TemplateHasSuccessfullyBeenUpdated" xml:space="preserve">
+    <value>Template has successfully been updated</value>
   </data>
 </root>

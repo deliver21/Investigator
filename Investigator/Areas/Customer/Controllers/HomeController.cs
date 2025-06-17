@@ -63,11 +63,11 @@ namespace Investigator.Controllers
         }
         
         [HttpPost]
-        public IActionResult CultureManagement(string culture, string returnUrl)
+        public IActionResult CultureManagement(string culture, string returnCultureUrl)
         {
             Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName, CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
                 new CookieOptions { Expires = DateTimeOffset.Now.AddDays(30) });
-            return LocalRedirect(returnUrl);
+            return LocalRedirect(returnCultureUrl);
         }
         public IActionResult ExtendTemplate()
         {
