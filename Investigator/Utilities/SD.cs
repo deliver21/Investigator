@@ -29,6 +29,9 @@
         public const string AppIdFacebook = "353431303785337";
         public const string AppSecretFacebook = "1374ec31638332c70d1fed8183616f68";
 
+        public const string Subject = "Investigator";
+        public const string Message = "Thank you for Participating to the survey\n To visualize your answer, click the link below : \n\n";
+
         //Form Status
         public const string ActiveStatus = "Active";
         public const string InactiveStatus = "Inactive";

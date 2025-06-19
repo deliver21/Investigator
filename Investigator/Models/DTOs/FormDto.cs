@@ -12,7 +12,7 @@ namespace Investigator.Models.DTOs
         public Template Template { get; set; }
         public string CreatorId { get; set; }
         public string ImageId { get; set; }
-        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
         public ICollection<QuestionDto> Questions { get; set; }
     }
 }

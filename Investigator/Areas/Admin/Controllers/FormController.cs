@@ -27,16 +27,20 @@ namespace Investigator.Areas.Admin.Controllers
         private readonly IUnitOfWork _unit;
         private readonly IMapper _mapper;
         private readonly IFileSaver _fileSaver;
-        IHmacGenerator _hmacGenerator;
+        private readonly IHmacGenerator _hmacGenerator;
+        private readonly IEmailSender _emailSender;
+        
         [BindProperty]
         public FormFillerVM FormFillers { get; set; }
-        public FormController(IUnitOfWork unit, IMapper mapper, IHtmlLocalizer<FormController> localizer, IFileSaver fileSaver, IHmacGenerator hmacGenerator)
+        public FormController(IUnitOfWork unit, IMapper mapper, IHtmlLocalizer<FormController> localizer,
+            IFileSaver fileSaver, IHmacGenerator hmacGenerator, IEmailSender emailSender)
         {
             _unit = unit;
             _mapper = mapper;
             _localizer = localizer;
             _fileSaver = fileSaver;
             _hmacGenerator = hmacGenerator;
+            _emailSender = emailSender;
         }
 
         [Authorize]
@@ -212,7 +216,7 @@ namespace Investigator.Areas.Admin.Controllers
             }
             FormFillers.FormFillers = fillers ?? new List<FormFiller>();
             TempData["baseUrl"] = SD.AppBaseUrl;
-            return View( FormFillers );
+            return View(FormFillers);
         }
 
         [Authorize]
@@ -238,35 +242,30 @@ namespace Investigator.Areas.Admin.Controllers
         [IsBlockedAuthorize]
         public async Task<IActionResult> GetMySubmission(string ? idHashed)
         {
-            FormFillers = new();
-            FormFillers.Form = await _unit.Form.Get(u => u.IdHashed == idHashed);
+            FillerVM filler = new();
+            filler.Form = await _unit.Form.Get(u => u.IdHashed == idHashed);
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-            FormFillers.FormFiller = await _unit.FormFiller.Get(u => u.Filler == userId && u.FormId == FormFillers.Form.FormId);
+            filler.FormFiller = await _unit.FormFiller.Get(u => u.Filler == userId && u.FormId == filler.Form.FormId);
 
-            if (FormFillers.Form == null || FormFillers.FormFiller == null)
+            if (filler.Form == null || filler.FormFiller == null)
             {
                 TempData["error"] = _localizer["ErrorWhileRetrievingData"].Value;
                 RedirectToAction(nameof(GetSubmissionList));
             }
-            var formId = FormFillers.Form.FormId;
+            var formId = filler.Form.FormId;
 
-            if (string.IsNullOrEmpty(FormFillers.Form.ImageId))
+            if (string.IsNullOrEmpty(filler.Form.ImageId))
             {
-                FormFillers.Form.ImageId = _unit.Template.Get(u => u.TemplateId == FormFillers.Form.TemplateId).GetAwaiter().GetResult().ImageId ?? "";
+                filler.Form.ImageId = _unit.Template.Get(u => u.TemplateId == filler.Form.TemplateId).GetAwaiter().GetResult().ImageId ?? "";
             }
 
-            FormFillers.Questions = _unit.Question.GetAll(u => u.FormId == formId).OrderBy(u => u.QuestionId);
-
-            List<FormFiller> fillers = new List<FormFiller>();
-            fillers = _unit.FormFiller.GetAll(u => u.FormId == formId && u.Filler == userId).ToList();
-            for (int i = 0; i < fillers.Count; i++)
-            {
-                fillers[i].Responses = _unit.Response.GetAll(u => u.Filler == fillers[i].Filler && u.FormId == formId).OrderBy(u => u.QuestionId).ToList();
-                fillers[i].ApplicationUser = await _unit.ApplicationUser.Get(u => u.Id == fillers[i].Filler) ?? new();
-            }
-            FormFillers.FormFillers = fillers ?? new List<FormFiller>();
-            return View(FormFillers);
+            filler.Questions = _unit.Question.GetAll(u => u.FormId == formId).OrderBy(u => u.QuestionId);
+            filler.FormFiller = await _unit.FormFiller.Get(u => u.FormId == formId && u.Filler == userId);
+            filler.FormFiller.ApplicationUser = await _unit.ApplicationUser.Get(u => u.Id == userId);
+            filler.FormFiller.Responses = _unit.Response.GetAll(u => u.Filler == filler.FormFiller.Filler && u.FormId == formId).OrderBy(u => u.QuestionId).ToList();
+                
+            return View(filler);
         }
 
         [HttpGet]
@@ -316,12 +315,12 @@ namespace Investigator.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SubmitForm([FromForm] FormSubmissionDto submission)
+        public IActionResult SubmitForm([FromForm] FormSubmissionDto submission)
         {
             if (submission == null || submission.ParsedAnswers == null)
                 return BadRequest("Invalid submission");
 
-            var checkedForm = await _unit.Form.Get(u => u.FormId == submission.FormId);
+            var checkedForm = _unit.Form.Get(u => u.FormId == submission.FormId).GetAwaiter().GetResult();
             if (checkedForm == null || checkedForm.Status == SD.InactiveStatus)
                 return NotFound("Form is deleted or is no longer active");
 
@@ -329,7 +328,7 @@ namespace Investigator.Areas.Admin.Controllers
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value; // fallback if user not logged in
 
-            if (await _unit.FormFiller.Get(u => u.Filler == userId && u.FormId == submission.FormId) != null)
+            if (_unit.FormFiller.Get(u => u.Filler == userId && u.FormId == submission.FormId).GetAwaiter().GetResult() != null)
             {
                 return Unauthorized(new { message = "You have already submitted to this Form before :)" });
             }
@@ -387,7 +386,7 @@ namespace Investigator.Areas.Admin.Controllers
                 // Save to DB
                 foreach (var response in responses)
                 {
-                    await _unit.Response.Add(response);
+                    _unit.Response.Add(response).GetAwaiter().GetResult();
                 }
                 _unit.Save();
                 FormFiller filler = new()
@@ -396,22 +395,28 @@ namespace Investigator.Areas.Admin.Controllers
                     FormId = submission.FormId,
                     SubmissionDate = DateTime.Now,
                 };
-                await _unit.FormFiller.Add(filler);
+                _unit.FormFiller.Add(filler).GetAwaiter().GetResult();
                 _unit.Save();
             }
             catch(Exception ex)
             {
                 return BadRequest(new { message = ex.Message } );
-            }            
+            }
 
+            var email = _unit.ApplicationUser.Get(u => u.Id == userId).GetAwaiter().GetResult().Email;
+            if(!string.IsNullOrEmpty(email))
+            {
+                _emailSender.SendEmailAsync(email.ToLower(), SD.Subject,
+                    $"{SD.Message}{SD.AppBaseUrl}/Admin/Form/GetMySubmission?idHashed={checkedForm.IdHashed}").GetAwaiter().GetResult();
+            }            
             return Ok(new { message = "Form submitted successfully" });
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveForm([FromForm] FormDto form)
+        public IActionResult SaveForm([FromForm] FormDto form)
         {
             TempData["baseUrl"] = SD.AppBaseUrl;
-            var template = await _unit.Template.Get(u => u.TemplateId == form.TemplateId, null, true);
+            var template = _unit.Template.Get(u => u.TemplateId == form.TemplateId, null, true).GetAwaiter().GetResult();
             if (form == null) return BadRequest("Invalid form data.");
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -421,18 +426,18 @@ namespace Investigator.Areas.Admin.Controllers
                 {
                     FormId = form.FormId,
                     Title = form.Title,
-                    Description = form.Description,
+                    Description = form.Description ?? "",
                     TemplateId = form.TemplateId,
                     CreatedDate = form.CreatedDate,
                     CreatorId = userId,
                     ImageId = !String.IsNullOrEmpty(template.ImageId) ? template.ImageId : ""
                 };
-                await _unit.Form.Add(formToSave);
+                _unit.Form.Add(formToSave).GetAwaiter().GetResult();
                 _unit.Save();
 
-                var createdForm = await _unit.Form.Get(u => u.CreatedDate == form.CreatedDate && u.CreatorId == userId, null, true);
+                 var createdForm = _unit.Form.Get(u => u.CreatedDate == form.CreatedDate && u.CreatorId == userId, null, true).GetAwaiter().GetResult();
                 createdForm.IdHashed = _hmacGenerator.GenerateHmac(createdForm.FormId);
-
+                
                 if (template != null)
                 {
                     template.Point += 1;
@@ -459,7 +464,7 @@ namespace Investigator.Areas.Admin.Controllers
 
                 if (questionDto.QuestionId == 0)
                 {                    
-                    await _unit.Question.Add(questionToSave);
+                    _unit.Question.Add(questionToSave).GetAwaiter().GetResult();
                 }
                 else
                 {
@@ -494,7 +499,7 @@ namespace Investigator.Areas.Admin.Controllers
                                 }
                             }
                             
-                            await _unit.QuestionOption.Add(questionOptionToSave);
+                            _unit.QuestionOption.Add(questionOptionToSave).GetAwaiter().GetResult();
                         }
                         else{
                                 questionOptionToSave.QuestionId = option.QuestionId;
@@ -511,10 +516,10 @@ namespace Investigator.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateForm([FromForm] FormDto form)
+        public IActionResult UpdateForm([FromForm] FormDto form)
         {
             TempData["baseUrl"] = SD.AppBaseUrl;
-            var formToUpdate = await _unit.Form.Get(u => u.FormId == form.FormId);
+            var formToUpdate = _unit.Form.Get(u => u.FormId == form.FormId).GetAwaiter().GetResult();
             if (formToUpdate == null)
             {
                 return NotFound(new { Message = "Form is not found" });
@@ -534,7 +539,7 @@ namespace Investigator.Areas.Admin.Controllers
 
                 if (questionDto.QuestionId == 0)
                 {
-                    await _unit.Question.Add(questionToSave);
+                    _unit.Question.Add(questionToSave).GetAwaiter().GetResult();
                 } else {
                     _unit.Question.Update(questionToSave);
                 }
@@ -566,14 +571,14 @@ namespace Investigator.Areas.Admin.Controllers
                                 }
                             }
 
-                            await _unit.QuestionOption.Add(questionOptionToSave);
+                            _unit.QuestionOption.Add(questionOptionToSave).GetAwaiter().GetResult();
                         }
                         else
                         {
                             questionOptionToSave.QuestionId = option.QuestionId;
                             if (option.OptionId == 0)
                             {                                
-                                await _unit.QuestionOption.Add(questionOptionToSave);
+                                _unit.QuestionOption.Add(questionOptionToSave).GetAwaiter().GetResult();
                             }
                             else
                             {

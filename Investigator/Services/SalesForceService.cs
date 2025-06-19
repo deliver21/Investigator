@@ -23,7 +23,7 @@ namespace Investigator.Services
                  config.GetSection("SalesForceCredentials").GetValue<string>("ConsumerKey"),
                  config.GetSection("SalesForceCredentials").GetValue<string>("ConsumerSecret"),
                  config.GetSection("SalesForceCredentials").GetValue<string>("Username"),
-                 config.GetSection("SalesForceCredentials").GetValue<string>("Password")
+                 "DelivreMateCode2."
              ).GetAwaiter().GetResult();
         }
         public async Task<bool> CreateUserToSalesForce(ApplicationUser user)

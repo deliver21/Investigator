@@ -1,4 +1,4 @@
-﻿@model FormFillerVM
+﻿@model FillerVM
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
 
 <div class="container mb-4">
@@ -36,11 +36,10 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var filler in Model.FormFillers)
-                {
+                
                     <tr>
-                        <td>@filler.ApplicationUser.Email</td>
-                        @foreach (var response in filler.Responses.ToList())
+                        <td>@Model.FormFiller.ApplicationUser.Email</td>
+                        @foreach (var response in Model.FormFiller.Responses.ToList())
                         {
                             @if (response.Answer.Contains("https"))
                             {
@@ -55,7 +54,7 @@
 
                         }
                     </tr>
-                }
+                
             </tbody>
         </table>
     </div>

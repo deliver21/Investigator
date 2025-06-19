@@ -1,10 +1,14 @@
 ﻿@model FormDto 
-
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
 @{
     ViewData["Title"] = "Manage Form questions";
     string? serializeData = JsonConvert.SerializeObject(Model);
     int questionIdCount = 0;
+}
+@section Stylesheets {
+    <link href="~/css/details.css" rel="stylesheet" />
+    <link href="~/css/intlTelInput.css" rel="stylesheet" />
+    <link href="~/css/demo.css" rel="stylesheet" />
 }
 <input type="hidden" id="baseUrl" value="@TempData["baseUrl"]" hidden>
 <input type="hidden" id="formId" value="@Model.FormId" hidden>
@@ -150,8 +154,8 @@
         }
     </div>
 
-    <button id="add-question" class="btn btn-primary rounded-1 mt-1 mb-5 pt-2 text-center"><i class="bi bi-file-earmark-plus"></i> @localizer["AddQuestion"]</button>
-    <button id="update-form" type="submit" class="btn btn-success rounded-1 mt-1 mb-5 pt-2 text-center"><i class="bi bi-floppy"></i>@localizer["UpdateForm"] </button>
+    <button id="add-question" class="btn btn-primary rounded-1 mt-1 mb-5 pt-2 text-center"><i class="bi bi-file-earmark-plus"></i>  @localizer["AddQuestion"]</button>
+    <button id="update-form" type="submit" class="btn btn-success rounded-1 mt-1 mb-5 pt-2 text-center"><i class="bi bi-floppy"></i> @localizer["UpdateForm"] </button>
 </div>
 
 @section Scripts{

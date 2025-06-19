@@ -106,6 +106,7 @@ builder.Services.AddScoped<ISalesForceService, SalesForceService>();
 builder.Services.AddScoped<ITokenProvider, TokenProvider>();
 builder.Services.AddScoped<IJiraService, JiraService>();
 builder.Services.AddScoped<IHmacGenerator, HmacGenerator>();
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper); 
